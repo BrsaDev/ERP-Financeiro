@@ -1,0 +1,273 @@
+<div id="container-sidebar" class="col-sm-12 col-md-5 col-xl-2 bg-red-pk menu-sidebar scroll animation-fadein">
+    <div class="close-menu">
+        <i class="bi bi-x-square text-white"></i>
+    </div>
+    <div id="container-submenu" class="scroll bg-red-pk submenu d-none card card-body animation-fadein border-1 border-top-0 border-end-0 border-bottom-0 border-white rounded-0 shadow-sm"></div>
+    <div class="d-flex flex-column align-items-start pt-2 text-white vh-100">
+        <div class="w-100 bg-red-pk sticky-top">
+            <a href="/" class=" d-flex align-items-start pb-3 mb-md-0 mt-2 me-md-auto text-white text-decoration-none">
+                <span class="fs-5 d-sm-inline"> <img class="logo" src="/img/logo-3.png" alt="logo"></span>
+            </a>
+        </div>
+        <ul class="rem0888 nav nav-pills flex-column mb-sm-auto mb-0 align-items-start rem0788" id="menu">
+            <li class="nav-item">
+                <a href="/" class="nav-link align-middle px-0 text-white fst-normal">
+                    <i class="fs-4 bi-house text-white"></i>
+                    <span>Início</span>
+                </a>
+            </li>
+            <li>
+                <div id="menu-cadastro" class="nav-link px-0 align-middle text-white fst-normal cursor-seta">
+                    <i class="fs-4 bi bi-file-earmark-plus"></i>
+                    <span>Cadastro</span>
+                </div>
+                
+            </li>
+            <li>
+                <div id="menu-listagem" class="nav-link px-0 align-middle text-white fst-normal cursor-seta">
+                    <i class="fs-4 bi-card-checklist"></i>
+                    <span>Relatórios</span>
+                </div>
+            </li>
+            <li>
+                <div id="menu-configuracao" class="nav-link px-0 align-middle text-white fst-normal cursor-seta">
+                    <i class="fs-4 bi-grid"></i>
+                    <span>Configuração</span>
+                </div>
+            </li>
+        </ul>
+        <hr>
+        {{#if user}}
+        <div class="pb-4 rem0788">
+            <a href="#dropUser" data-bs-toggle="collapse"
+                class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                data-toggle="dropdown">
+                <img src="https://img.freepik.com/vetores-premium/icone-de-perfil-de-usuario-em-estilo-plano-ilustracao-em-vetor-avatar-membro-em-fundo-isolado-conceito-de-negocio-de-sinal-de-permissao-humana_157943-15752.jpg"
+                    alt="img-user" width="30" height="30" class="rounded-circle">
+                <span class="d-sm-inline mx-1">{{user.dataValues.nickname}}</span>
+            </a>
+            <ul class="collapse nav flex-column ms-1" id="dropUser" aria-labelledby="dropUser" data-bs-parent="#menu">
+                <li>
+                    <a class="nav-link p-0 pt-2 text-gray" href="#dropUser">Config</a>
+                </li>
+                <li>
+                    <a class="nav-link p-0 pt-1 text-gray" href="/admin/logout">Sair</a>
+                </li>
+
+            </ul>
+        </div>
+        {{else}}
+        <div class="d-flex flex-column flex-md-row justify-content-between pb-4 w-100 rem0788">
+            <a class="d-flex align-items-center text-white text-decoration-none">
+                <img src="https://img.freepik.com/vetores-premium/icone-de-perfil-de-usuario-em-estilo-plano-ilustracao-em-vetor-avatar-membro-em-fundo-isolado-conceito-de-negocio-de-sinal-de-permissao-humana_157943-15752.jpg"
+                    alt="img-user" width="30" height="30" class="rounded-circle">
+                <span class="d-sm-inline mx-1">User</span>
+            </a>
+        </div>
+        {{/if}}
+    </div>
+</div>
+<script>
+    let containerSubmenu = document.querySelector("#container-submenu")
+    let containerSidebar = document.querySelector("#container-sidebar")
+    let menu = document.querySelector("#menu")
+
+    containerSidebar.addEventListener('click', function (e) {
+        containerSidebar.classList.remove("col-xl-3")
+        containerSidebar.classList.add("col-xl-2")
+        containerSubmenu.classList.add('d-none')
+        removeLinhaMarcacaoItemMenu('sem id')
+    })
+
+    document.querySelector("#menu-cadastro").addEventListener('mouseover', function (e) {
+        document.querySelector('#'+e.target.id).classList.add('border-b-white')
+        removeLinhaMarcacaoItemMenu(e.target.id)
+        containerSidebar.classList.remove("col-xl-2")
+        containerSidebar.classList.add("col-xl-3")
+        containerSubmenu.innerHTML = `
+            <span class="text-white">Cadastro</span>
+            <hr class="bg-white fw-bold">
+            <ul class="nav flex-column ms-1">
+                <li class="w-100">
+                    <a href="/fornecedor/cadastrar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Cliente e Fornecedor</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/departamento/cadastrar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Departamento</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/cargo/cadastrar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Cargo</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/usuario/cadastrar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Usuário</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/descricao/cadastrar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Descrição</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/conta/cadastrar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Histórico</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/forma-pagamento/cadastrar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Forma de Pagamento</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/banco/cadastrar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Banco</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/empresa/cadastrar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Empresa</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/categoria/cadastrar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Categoria</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/sistema/cadastrar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Sistema</span>
+                    </a>
+                </li>            
+            </ul>
+        `
+        containerSubmenu.classList.remove("d-none")
+    })
+    
+    document.querySelector("#menu-listagem").addEventListener('mouseover', function (e) {
+        document.querySelector('#'+e.target.id).classList.add('border-b-white')
+        removeLinhaMarcacaoItemMenu(e.target.id)
+        containerSidebar.classList.remove("col-xl-2")
+        containerSidebar.classList.add("col-xl-3")
+        containerSubmenu.innerHTML = `
+            <span class="text-white">Relatórios</span>
+            <hr class="bg-white fw-bold">
+            <ul class="nav flex-column ms-1">
+                <li class="w-100">
+                    <a href="/conta/listar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Histórico</span>
+                    </a>
+                </li> 
+                <li class="w-100">
+                    <a href="/conta/listar?page=page-dre" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Dre´s</span>
+                    </a>
+                </li> 
+                <li class="w-100">
+                    <a href="/fornecedor/listar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Cliente Fornecedor</span>
+                    </a>
+                </li> 
+                <li class="w-100">
+                    <a href="/departamento/listar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Departamento</span>
+                    </a>
+                </li> 
+                <li class="w-100">
+                    <a href="/cargo/listar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Cargo</span>
+                    </a>
+                </li> 
+                <li class="w-100">
+                    <a href="/usuario/listar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Usuário</span>
+                    </a>
+                </li> 
+                <li class="w-100">
+                    <a href="/descricao/listar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Descrição</span>
+                    </a>
+                </li> 
+                <li class="w-100">
+                    <a href="/forma-pagamento/listar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Forma de Pagamento</span>
+                    </a>
+                </li> 
+                <li class="w-100">
+                    <a href="/banco/listar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Banco</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/sistema/listar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Sistema</span>
+                    </a>
+                </li> 
+                <li class="w-100">
+                    <a href="/categoria/listar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Categoria</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/empresa/listar" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Empresa</span>
+                    </a>
+                </li>           
+            </ul>
+        `
+        containerSubmenu.classList.remove("d-none")
+    })
+    
+    document.querySelector("#menu-configuracao").addEventListener('mouseover', function (e) {
+        document.querySelector('#'+e.target.id).classList.add('border-b-white')
+        removeLinhaMarcacaoItemMenu(e.target.id)
+        containerSidebar.classList.remove("col-xl-2")
+        containerSidebar.classList.add("col-xl-3")
+        containerSubmenu.innerHTML = `
+            <span class="text-white">Configuração</span>
+            <hr class="bg-white fw-bold">
+            <ul class="nav flex-column ms-1">
+                <li class="w-100">
+                    <a href="/configuracao/itens-conta" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Itens Conta</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/configuracao/pagina-home" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Tela Inicial</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/configuracao/chave-pix" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Chave Pix</span>
+                    </a>
+                </li>
+                <li class="w-100">
+                    <a href="/configuracao/backup" class="nav-link px-0 text-nowrap rem0888">
+                        <span class="text-white fst-italic">_Backup</span>
+                    </a>
+                </li>
+            </ul>
+        `
+        containerSubmenu.classList.remove("d-none")
+    })
+    
+    function removeLinhaMarcacaoItemMenu(id) {
+        let lis = menu.getElementsByTagName('li')
+        for ( let li of lis ) {
+            if ( li.getElementsByTagName('div').length > 0 && li.getElementsByTagName('div')[0].id != id ) {
+              li.getElementsByTagName('div')[0].classList.remove("border-b-white")
+            }
+        }
+    }
+
+    document.querySelector("#teste-forn").addEventListener('mouseout', function (e) {
+        e.target.classList.remove("bg-white")
+        e.target.classList.remove("text-red-pk")
+        containerSubmenu.classList.add("d-none")
+    })
+</script>

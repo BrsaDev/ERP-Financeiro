@@ -1,0 +1,149 @@
+{{#each erros}}
+    <div id="alert-{{@key}}" class="alert alert-danger shadow"><strong onclick="closeAlert({{@key}})" class="cursor-pointer fs-5 text-dark">X </strong><span>{{text}}</span></div>
+{{else}}
+
+{{/each}}
+
+<div class="d-flex direction-column mt-2">
+    <div>
+        <a href="/" class="nav-link align-start p-0 me-4">
+            <i class="fs-5 bi-house text-black"></i>
+        </a>
+    </div>
+    <div><h5>Gerenciamento de Backup do Banco de Dados</h5></div>
+ </div>   
+ <div class="mt-2 mb-5"><span class="rem0888">Versão do banco de dados em uso: <span id="show-versao-bd" class="text-secondary fw-bolder">Original</span></span></div>
+
+<div class="row">
+    <div class="row mb-2 p-4">
+        <div id="select_backup_criar" onclick="selectTipoSituacaoBackup('criar')"
+            class="mb-2 col-6 col-sm-3 col-md-3 border-b-dark d-flex align-items-center justify-content-center">
+            <label name="select-tipo-backup" class="form-check-label my-bold rem0888">
+                Criar Backup
+            </label>
+        </div>
+        <div id="select_backup_restaurar" onclick="selectTipoSituacaoBackup('restaurar')"
+            class="mb-2 col-6 col-sm-3 col-md-3 border-b-dark d-flex align-items-center justify-content-center">
+            <label name="select-tipo-backup" class="form-check-label my-bold rem0888">
+                Restaurar Backup
+            </label>
+        </div>
+    </div>
+</div>
+<div id="container-options-criar-backup" class="col-12 col-md-6 col-lg-4">
+    <label for="situacao" class="col-form-label">Último Backup criado em: <span id="span-ultimo-backup-criado" class="text-secondary fw-bolder rem0888"></span></label>
+    <div class="col-sm-12 col-md-6 col-lg-3 mb-2 d-flex justify-content-center w-100 mt-2">
+        <a id="btn-criar-backup" class="btn btn-primary btn-sm fw-bold w-100 rem0888">Criar Novo <img id="gif-criar-backup" class="d-none" width="20" height="20" src="/img/gif-criar-backup.gif"></a>
+    </div>
+</div>
+<div id="container-options-restaurar-backups" class="col-12 col-md-6 col-lg-4 d-none">
+    <label for="situacao" class="col-form-label">Backups</label>
+    <div class="card shadow-lg">
+        <div class="col-sm-12 input-group input-group-sm">
+            <select class="form-select form-select-sm" id="select_backups" required></select>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 mb-2 d-flex justify-content-center w-100 mt-2">
+        <a id="btn-restaurar-backup" class="btn btn-warning btn-sm fw-bold w-100 rem0888"  data-bs-toggle="modal" data-bs-target="#modalBackup">Restaurar <img id="gif-restore-backup" class="d-none" width="20" height="20" src="/img/gif-restore-backup.webp"></a>
+    </div>
+</div>
+
+<script>
+    let nomesBackups = {{{nomesBackup}}}
+    const baseUrl = "http://localhost:8089"
+    document.querySelector("#select_backup_criar").classList.add('border-b-blue')
+    if ( nomesBackups.length ) {
+       document.querySelector("#span-ultimo-backup-criado").innerText = nomesBackups[nomesBackups.length-1] || ""
+    }
+    if ( localStorage.getItem('versaoBd') ) {
+        document.querySelector("#show-versao-bd").innerText = localStorage.getItem('versaoBd')
+    }
+    
+
+    function selectTipoSituacaoBackup(tipo) {
+        let selectBackups = document.getElementsByName("select-tipo-backup")
+        for (  let select of selectBackups ) {
+            if ( select.parentNode.id == 'select_backup_' + tipo ) {
+                select.parentNode.classList.add("border-b-blue")
+                select.parentNode.classList.remove("border-b-dark")
+            }else {
+                select.parentNode.classList.remove("border-b-blue")
+                select.parentNode.classList.add("border-b-dark")
+            }
+        }
+        if ( tipo == "restaurar" ) {
+            let selectBackups = document.querySelector("#select_backups")
+            let optionsBackups = ""
+            for ( let nome of nomesBackups ) {
+                optionsBackups += `<option value="${nome}">${nome}</option>`
+            }
+            selectBackups.innerHTML = optionsBackups
+            document.querySelector("#container-options-restaurar-backups").classList.remove("d-none")
+            document.querySelector("#container-options-criar-backup").classList.add("d-none")
+        }else {
+            document.querySelector("#container-options-restaurar-backups").classList.add("d-none")
+            document.querySelector("#container-options-criar-backup").classList.remove("d-none")
+
+            document.querySelector("#span-ultimo-backup-criado").innerText = nomesBackups[nomesBackups.length-1] || ""
+        }
+    }
+
+    document.querySelector("#btn-criar-backup").addEventListener('click', async function(e) {
+        let gifCriarBackup = document.querySelector('#gif-criar-backup')
+        gifCriarBackup.classList.remove('d-none')
+        await sleep(2000)
+        let resultado = await fetch(`${ baseUrl }/configuracao/criar-backup`)
+        resultado = await resultado.json()
+        if ( !resultado.erro  ) {
+            nomesBackups = resultado.nomesBackup
+            gifCriarBackup.classList.add('d-none')
+            document.querySelector("#span-ultimo-backup-criado").innerText = nomesBackups[nomesBackups.length-1] || ""
+            document.querySelector("#span-ultimo-backup-criado").classList.add('fa-pisca')
+            setTimeout(function(){
+                document.querySelector("#span-ultimo-backup-criado").classList.remove('fa-pisca')
+            }, 4000)
+        }
+        return true
+    })
+    
+    async function onlyRestore() {
+        await restaurarBackup("não")
+        return true
+    }
+    async function backupRestore() {
+        await restaurarBackup("sim")
+        return true
+    }
+    async function restaurarBackup(isBackup) {
+        let gifRestore = document.querySelector('#gif-restore-backup')
+        gifRestore.classList.remove('d-none')
+        let select = document.querySelector("#select_backups")
+        let valueSetado = select.value
+        if ( valueSetado && valueSetado != "" ) {
+            let resultado = await fetch(`${ baseUrl }/configuracao/restore-backup?nome=${valueSetado}&isbackup=${isBackup}`)
+            resultado = await resultado.json()
+            if ( !resultado.erro ) {
+                
+                let textoVersaoBd = document.querySelector("#show-versao-bd")
+                localStorage.setItem('versaoBd', valueSetado)
+                gifRestore.classList.add('d-none')
+                textoVersaoBd.innerText = valueSetado
+                textoVersaoBd.classList.add('fa-pisca')
+                if ( isBackup == "sim" ) {
+                    nomesBackups = resultado.resultado.nomesBackup
+                    let nomeBackup = nomesBackups[nomesBackups.length-1]
+                    select.innerHTML += `<option value="${nomeBackup}">${nomeBackup}</option>`
+                    select.value = valueSetado
+                }
+                setTimeout(function(){
+                    textoVersaoBd.classList.remove('fa-pisca')
+                }, 4000)
+            }
+        }
+
+        return true
+    }
+    async function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+</script>

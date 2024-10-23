@@ -1,0 +1,26 @@
+{{#each erros}}
+    <div id="alert-{{@key}}" class="alert alert-danger shadow"><strong onclick="closeAlert({{@key}})" class="cursor-pointer fs-5 text-dark">X </strong><span>{{text}}</span></div>
+{{else}}
+
+{{/each}}
+
+<h4>Recuparar Senha</h4>
+<div class="card shadow-lg h-auto">
+    <div class="card-body p-4">
+        <form action="/admin/recuperar-senha" method="post">
+            <div class="row rem0948">
+                <div class="mb-3 row">
+                    <label for="email" class="col-sm-4 col-form-label">Email cadastrado:</label>
+                    <div class="col-sm-12">
+                        <input type="email" class="form-control form-control-sm" name="email" autofocus placeholder="email.cadastrado@exemplo.com"
+                            value="{{dados.email}}">
+                    </div>
+                </div>
+                <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-center">
+                    <button class="btn btn-primary mb-1 fw-bold">Recuperar</button>
+                    <a class="links mr-26" href="/admin/login"><span class="text-danger">voltar para login</span></a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

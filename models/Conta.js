@@ -1,0 +1,65 @@
+const db = require('./db')
+
+const Conta = db.sequelize.define('contas', {
+
+    id:              { type: db.Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
+    numero_conta:    { type: db.Sequelize.STRING },
+    historico:       { type: db.Sequelize.STRING },
+    fornecedor:      { type: db.Sequelize.STRING },
+    chave:           { type: db.Sequelize.STRING },
+    via_pagamento:   { type: db.Sequelize.STRING },
+    descricao:       { type: db.Sequelize.STRING },
+    departamento:    { type: db.Sequelize.STRING },
+    valor_conta:     { type: db.Sequelize.STRING },
+    valor_dre:       { type: db.Sequelize.STRING },
+    rateio_dre:      { type: db.Sequelize.STRING },
+    vinculado_dre:   { type: db.Sequelize.STRING },
+    vinculado:       { type: db.Sequelize.STRING },
+    categoria:       { type: db.Sequelize.STRING },
+    grupo:           { type: db.Sequelize.STRING },
+    subgrupo:        { type: db.Sequelize.STRING },
+    forma_pagamento: { type: db.Sequelize.STRING },
+    agendamento:     { type: db.Sequelize.STRING },
+    pagamento:       { type: db.Sequelize.STRING },
+    agencia:         { type: db.Sequelize.STRING },
+    conta_corrente:  { type: db.Sequelize.STRING },
+    num_cartao_cred: { type: db.Sequelize.STRING },
+    cheque_compens:  { type: db.Sequelize.STRING },
+    situacao:        { type: db.Sequelize.STRING },
+    banco:           { type: db.Sequelize.STRING },
+    protocolo_banco: { type: db.Sequelize.STRING },
+    comprovante_pag: { type: db.Sequelize.STRING },
+    cadastramento:   { type: db.Sequelize.STRING },
+    doc_pagamento:   { type: db.Sequelize.STRING },
+    vencimento:      { type: db.Sequelize.STRING },
+    referencia:      { type: db.Sequelize.STRING },
+    relacao:         { type: db.Sequelize.STRING },
+    numero_parcelas: { type: db.Sequelize.STRING },
+    numero_dias:     { type: db.Sequelize.STRING },
+    fixar_parcelas:  { type: db.Sequelize.STRING },
+    numero_parcela:  { type: db.Sequelize.STRING },
+    valor_parcela:   { type: db.Sequelize.STRING },
+    vencimento_parcela:  { type: db.Sequelize.STRING },
+    observacao:          { type: db.Sequelize.STRING },
+    rateio:              { type: db.Sequelize.STRING },
+    reembolso:           { type: db.Sequelize.STRING },
+    num_pedido_compra:   { type: db.Sequelize.STRING },
+    data_compra:         { type: db.Sequelize.STRING },
+    emissao_nf:          { type: db.Sequelize.STRING },
+    num_comprovante:     { type: db.Sequelize.STRING },
+    data_entrega_mercad: { type: db.Sequelize.STRING },
+    mercadoria_entregue: { type: db.Sequelize.STRING },
+    comprovante_mercad:  { type: db.Sequelize.STRING },
+    sistema_1:           { type: db.Sequelize.STRING },
+    num_sistema_1:       { type: db.Sequelize.STRING },
+    sistema_2:           { type: db.Sequelize.STRING },
+    num_sistema_2:       { type: db.Sequelize.STRING },
+    sistema_3:           { type: db.Sequelize.STRING },
+    num_sistema_3:       { type: db.Sequelize.STRING }
+
+}, { timestamps: false } )
+
+// Conta.sync({force: true})
+
+module.exports = Conta
+

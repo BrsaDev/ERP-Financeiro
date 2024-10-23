@@ -1,0 +1,447 @@
+{{#each erros}}
+<div id="alert-{{@key}}" class="alert alert-danger shadow"><strong onclick="closeAlert({{@key}})"
+        class="cursor-pointer fs-5 text-dark">X </strong><span>{{text}}</span></div>
+{{else}}
+
+{{/each}}
+
+<div class="d-flex direction-column">
+    <div>
+        <a href="/" class="nav-link align-start p-0 me-4">
+            <i class="fs-5 bi-house text-black"></i>
+        </a>
+    </div>
+    <div><h5>Obrigatoriedade de cadastro de itens da conta</h5></div>
+</div>
+<div class="card card-body shadow-lg h-pkflex-80">
+    <div class="card-body overflow-auto scroll">
+        <form action="/configuracao/itens-conta" method="post">
+            <div class="col-12 p-2 bg-gray-1 shadow-sm">
+                <div class="col-12 col-md-6 mb-3">
+                    <label for="tipo_situacao" class="col-form-label">Situação:</label>
+                    <div class="col-sm-12 input-group input-group-sm rem0948">
+                        <select class="form-select form-select-sm" name="tipo_situacao" onchange="selectTipoSituacao(this)" required>
+                            <option selected>{{itensConta.tipo_situacao}}</option>
+                            <option value="Aberto">Aberto</option>
+                            <option value="Pago">Pago</option>
+                            <option value="Em andamento">Em andamento</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="col rem0888 mt-2">
+                        <div class="form-check form-switch">
+                            <label class="form-check-label">Marcar/Desmarcar todos</label>
+                            <input class="form-check-input" type="checkbox" id="marca_desmarca_todos" onclick="checkAll()">
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="col-12 p-2 mt-2">
+                <div class="row rem0888">
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="historico">Histórico</label>
+                        {{#if itensConta.historico}}
+                        <input class="form-check-input" type="checkbox" id="historico" name="historico" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="historico" name="historico">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="fornecedor">Fornecedor</label>
+                        {{#if itensConta.fornecedor}}
+                        <input class="form-check-input" type="checkbox" id="fornecedor" name="fornecedor" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="fornecedor" name="fornecedor">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="chave">Chave</label>
+                        {{#if itensConta.chave}}
+                        <input class="form-check-input" type="checkbox" id="chave" name="chave" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="chave" name="chave">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="via_pagamento">Via de pagamento</label>
+                        {{#if itensConta.via_pagamento}}
+                        <input class="form-check-input" type="checkbox" id="via_pagamento" name="via_pagamento" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="via_pagamento" name="via_pagamento">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="descricao">Descrição</label>
+                        {{#if itensConta.descricao}}
+                        <input class="form-check-input" type="checkbox" id="descricao" name="descricao" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="descricao" name="descricao">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="departamento">Departamento</label>
+                        {{#if itensConta.departamento}}
+                        <input class="form-check-input" type="checkbox" id="departamento" name="departamento" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="departamento" name="departamento">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label">Valor DRE</label>
+                        {{#if itensConta.valor_dre}}
+                        <input class="form-check-input" type="checkbox" id="valor_dre" name="valor_dre" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="valor_dre" name="valor_dre">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="rateio_dre">Rateio DRE</label>
+                        {{#if itensConta.rateio_dre}}
+                        <input class="form-check-input" type="checkbox" id="rateio_dre" name="rateio_dre" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="rateio_dre" name="rateio_dre">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="vinculado_dre">Vinculado DRE</label>
+                        {{#if itensConta.vinculado_dre}}
+                        <input class="form-check-input" type="checkbox" id="vinculado_dre" name="vinculado_dre" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="vinculado_dre" name="vinculado_dre">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="categoria">Categoria</label>
+                        {{#if itensConta.categoria}}
+                        <input class="form-check-input" type="checkbox" id="categoria" name="categoria" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="categoria" name="categoria">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="grupo">Grupo</label>
+                        {{#if itensConta.grupo}}
+                        <input class="form-check-input" type="checkbox" id="grupo" name="grupo" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="grupo" name="grupo">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="subgrupo">SubGrupo</label>
+                        {{#if itensConta.subgrupo}}
+                        <input class="form-check-input" type="checkbox" id="subgrupo" name="subgrupo" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="subgrupo" name="subgrupo">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="cadastramento">Cadastramento</label>
+                        {{#if itensConta.cadastramento}}
+                        <input class="form-check-input" type="checkbox" id="cadastramento" name="cadastramento" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="cadastramento" name="cadastramento">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="doc_pagamento">Documento pagamento</label>
+                        {{#if itensConta.doc_pagamento}}
+                        <input class="form-check-input" type="checkbox" id="doc_pagamento" name="doc_pagamento" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="doc_pagamento" name="doc_pagamento">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="vencimento">Vencimento</label>
+                        {{#if itensConta.vencimento}}
+                        <input class="form-check-input" type="checkbox" id="vencimento" name="vencimento" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="vencimento" name="vencimento">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="referencia">Referência</label>
+                        {{#if itensConta.referencia}}
+                        <input class="form-check-input" type="checkbox" id="referencia" name="referencia" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="referencia" name="referencia">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="relacao">Relação</label>
+                        {{#if itensConta.relacao}}
+                        <input class="form-check-input" type="checkbox" id="relacao" name="relacao" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="relacao" name="relacao">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="observacao">Observação</label>
+                        {{#if itensConta.observacao}}
+                        <input class="form-check-input" type="checkbox" id="observacao" name="observacao" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="observacao" name="observacao">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label">Número de Parcelas</label>
+                        {{#if itensConta.numero_parcelas}}
+                        <input class="form-check-input" type="checkbox" id="numero_parcelas" name="numero_parcelas" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="numero_parcelas" name="numero_parcelas">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label">Fixar Parcelas</label>
+                        {{#if itensConta.fixar_parcelas}}
+                        <input class="form-check-input" type="checkbox" id="fixar_parcelas" name="fixar_parcelas" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="fixar_parcelas" name="fixar_parcelas">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label">Número de Dias</label>
+                        {{#if itensConta.numero_dias}}
+                        <input class="form-check-input" type="checkbox" id="numero_dias" name="numero_dias" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="numero_dias" name="numero_dias">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="forma_pagamento">Forma de pagamento</label>
+                        {{#if itensConta.forma_pagamento}}
+                        <input class="form-check-input" type="checkbox" id="forma_pagamento" name="forma_pagamento" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="forma_pagamento" name="forma_pagamento">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="num_cartao_cred">Número cartão de crédito</label>
+                        {{#if itensConta.num_cartao_cred}}
+                        <input class="form-check-input" type="checkbox" id="num_cartao_cred" name="num_cartao_cred" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="num_cartao_cred" name="num_cartao_cred">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="agendamento">Agendamento</label>
+                        {{#if itensConta.agendamento}}
+                        <input class="form-check-input" type="checkbox" id="agendamento" name="agendamento" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="agendamento" name="agendamento">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="cheque_compens">Cheque compensado</label>
+                        {{#if itensConta.cheque_compens}}
+                        <input class="form-check-input" type="checkbox" id="cheque_compens" name="cheque_compens" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="cheque_compens" name="cheque_compens">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="pagamento">Pagamento</label>
+                        {{#if itensConta.pagamento}}
+                        <input class="form-check-input" type="checkbox" id="pagamento" name="pagamento" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="pagamento" name="pagamento">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="situacao">Situação</label>
+                        {{#if itensConta.situacao}}
+                        <input class="form-check-input" type="checkbox" id="situacao" name="situacao" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="situacao" name="situacao">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="agencia">Agência</label>
+                        {{#if itensConta.agencia}}
+                        <input class="form-check-input" type="checkbox" id="agencia" name="agencia" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="agencia" name="agencia">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="banco">Banco</label>
+                        {{#if itensConta.banco}}
+                        <input class="form-check-input" type="checkbox" id="banco" name="banco" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="banco" name="banco">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="conta_corrente">Conta corrente</label>
+                        {{#if itensConta.conta_corrente}}
+                        <input class="form-check-input" type="checkbox" id="conta_corrente" name="conta_corrente" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="conta_corrente" name="conta_corrente">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="protocolo_banco">Protocolo banco</label>
+                        {{#if itensConta.protocolo_banco}}
+                        <input class="form-check-input" type="checkbox" id="protocolo_banco" name="protocolo_banco" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="protocolo_banco" name="protocolo_banco">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="comprovante_pag">Comprovante de pagamento</label>
+                        {{#if itensConta.comprovante_pag}}
+                        <input class="form-check-input" type="checkbox" id="comprovante_pag" name="comprovante_pag" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="comprovante_pag" name="comprovante_pag">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="num_pedido_compra">Número pedido</label>
+                        {{#if itensConta.num_pedido_compra}}
+                        <input class="form-check-input" type="checkbox" id="num_pedido_compra" name="num_pedido_compra" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="num_pedido_compra" name="num_pedido_compra">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="data_compra">Data compra</label>
+                        <input class="form-check-input" type="checkbox" id="data_compra" name="data_compra">
+                        {{#if itensConta.data_compra}}
+                        <input class="form-check-input" type="checkbox" id="data_compra" name="data_compra" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="data_compra" name="data_compra">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="emissao_nf">Emissão NF</label>
+                        {{#if itensConta.emissao_nf}}
+                        <input class="form-check-input" type="checkbox" id="emissao_nf" name="emissao_nf" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="emissao_nf" name="emissao_nf">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="num_comprovante">Número comprovante</label>
+                        {{#if itensConta.num_comprovante}}
+                        <input class="form-check-input" type="checkbox" id="num_comprovante" name="num_comprovante" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="num_comprovante" name="num_comprovante">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="data_entrega_mercad">Data entrega mercadoria</label>
+                        {{#if itensConta.data_entrega_mercad}}
+                        <input class="form-check-input" type="checkbox" id="data_entrega_mercad" name="data_entrega_mercad" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="data_entrega_mercad" name="data_entrega_mercad">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="mercadoria_entregue">Mercadoria entregue</label>
+                        {{#if itensConta.mercadoria_entregue}}
+                        <input class="form-check-input" type="checkbox" id="mercadoria_entregue" name="mercadoria_entregue" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="mercadoria_entregue" name="mercadoria_entregue">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="comprovante_mercad">Comprovante mercadoria</label>
+                        {{#if itensConta.comprovante_mercad}}
+                        <input class="form-check-input" type="checkbox" id="comprovante_mercad" name="comprovante_mercad" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="comprovante_mercad" name="comprovante_mercad">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="rateio">Rateio</label>
+                        {{#if itensConta.rateio}}
+                        <input class="form-check-input" type="checkbox" id="rateio" name="rateio" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="rateio" name="rateio">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="reembolso">Reembolso</label>
+                        {{#if itensConta.reembolso}}
+                        <input class="form-check-input" type="checkbox" id="reembolso" name="reembolso" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="reembolso" name="reembolso">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="num_sistema_1">Número sistema 1</label>
+                        {{#if itensConta.num_sistema_1}}
+                        <input class="form-check-input" type="checkbox" id="num_sistema_1" name="num_sistema_1" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="num_sistema_1" name="num_sistema_1">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="sistema_1">Sistema 1</label>
+                        {{#if itensConta.sistema_1}}
+                        <input class="form-check-input" type="checkbox" id="sistema_1" name="sistema_1" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="sistema_1" name="sistema_1">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="num_sistema_2">Número sistema 2</label>
+                        {{#if itensConta.num_sistema_2}}
+                        <input class="form-check-input" type="checkbox" id="num_sistema_2" name="num_sistema_2" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="num_sistema_2" name="num_sistema_2">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="sistema_2">Sistema 2</label>
+                        {{#if itensConta.sistema_2}}
+                        <input class="form-check-input" type="checkbox" id="sistema_2" name="sistema_2" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="sistema_2" name="sistema_2">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="num_sistema_3">Número sistema 3</label>
+                        {{#if itensConta.num_sistema_3}}
+                        <input class="form-check-input" type="checkbox" id="num_sistema_3" name="num_sistema_3" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="num_sistema_3" name="num_sistema_3">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="sistema_3">Sistema 3</label>
+                        {{#if itensConta.sistema_3}}
+                        <input class="form-check-input" type="checkbox" id="sistema_3" name="sistema_3" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="sistema_3" name="sistema_3">
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary fw-bold">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+<a href="" class="d-none" id="select-tipo-situacao"></a>
+
+<script>
+    function selectTipoSituacao(e) {
+        let linkSelectTipoSituacao = document.querySelector('#select-tipo-situacao')
+        linkSelectTipoSituacao.href = `/configuracao/itens-conta?situacao=${ e.value }`
+        linkSelectTipoSituacao.click()
+    }
+
+    function checkAll() {
+        let inputs = document.getElementsByTagName('input')
+        let ischecked = inputs[0].checked
+        for ( let input of inputs ) {
+            if ( input.id != "marca_desmarca_todos" ) {
+                if ( ischecked ) input.checked = true
+                else input.checked = false
+            }            
+        }
+    }
+</script>

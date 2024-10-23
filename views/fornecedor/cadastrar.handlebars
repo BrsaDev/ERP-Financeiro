@@ -1,0 +1,200 @@
+{{#each erros}}
+<div id="alert-{{@key}}" class="alert alert-danger shadow"><strong onclick="closeAlert({{@key}})"
+        class="cursor-pointer fs-5 text-dark">X </strong><span>{{text}}</span></div>
+{{else}}
+
+{{/each}}
+
+<div class="d-flex direction-column">
+    <div>
+        <a href="/" class="nav-link align-start p-0 me-4">
+            <i class="fs-5 bi-house text-black"></i>
+        </a>
+    </div>
+    <div><h5>Cadastrar Fornecedor</h5> </div>
+    <div class="ms-2"><i id="scroll-bottom" class="bi bi-arrow-down-circle-fill rem1200 cursor-pointer"></i></div>
+    <div class="ms-2"><i id="scroll-top" class="bi bi-arrow-up-circle-fill rem1200 cursor-pointer"></i></div>
+</div>
+<div class="card card-body shadow-lg h-pkflex-80">
+    <div id="card-fornecedor" class="card-body overflow-auto scroll">
+        <form action="/fornecedor/cadastrar" , method="post">
+            <div class="row mb-1 mt-2 pb-2 pt-2 bg-blue-1 rem0888">
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label for="codigo" class="col-form-label">Código: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="codigo" value="{{itens.proximo_numero_fornecedor}}{{dados.codigo}}" disabled>
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label for="chave" class="col-form-label">Chave: </label>
+                    <div class="input-group input-group-sm">
+                        <select class="form-select form-select-sm" name="chave" required>
+                            {{{optionsChavePix}}}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label class="col-form-label">Via pagamento: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="via_pagamento" value="{{dados.via_pagamento}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label for="data_cadastro" class="col-form-label">Data Cadastramento: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="date" class="form-control" name="data_cadastro" value="{{dados.data_cadastro}}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-1 mt-2 pb-2 pt-2 bg-blue-1 rem0888">
+                <div class="mb-1 col-sm-12 col-md-4">
+                    <label for="nome" class="col-form-label">Nome fornecedor: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="nome" value="{{dados.nome}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-4">
+                    <label for="nome_fantasia" class="col-form-label">Nome fantasia: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="nome_fantasia" value="{{dados.nome_fantasia}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-4">
+                    <label for="informacao" class="col-form-label">Informação: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="informacao" value="{{dados.informacao}}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-1 mt-2 pb-2 pt-2 bg-blue-1 rem0888">
+                <div class="mb-1 col-sm-12 col-md-8">
+                    <label for="endereco" class="col-form-label">Endereço: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="endereco" value="{{dados.endereco}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-4">
+                    <label for="bairro" class="col-form-label">Bairro: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="bairro" value="{{dados.bairro}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label for="cidade" class="col-form-label">Cidade: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="cidade" value="{{dados.cidade}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label for="estado" class="col-form-label">Estado: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="estado" value="{{dados.estado}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label for="cep" class="col-form-label">CEP: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="cep" value="{{dados.cep}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label for="cnpj" class="col-form-label">CNPJ: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="cnpj" value="{{dados.cnpj}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label for="insc_estadual" class="col-form-label">Insc estadual: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="insc_estadual" value="{{dados.insc_estadual}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label for="telefone" class="col-form-label">Telefone: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="telefone" value="{{dados.telefone}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label for="site" class="col-form-label">Site: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="site" value="{{dados.site}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-3">
+                    <label for="ramo" class="col-form-label">Ramo: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="ramo" value="{{dados.ramo}}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-1 mt-2 pb-2 pt-2 bg-blue-1 shadow-sm rem0888">
+                <span class="fw-bold fs-6 mb-1 border border-top-0 border-end-0 border-start-0 text-blue-pk">Contato</span>
+                <div class="mb-1 col-sm-12 col-md-4">
+                    <label for="nome_contato" class="col-form-label">Nome: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="nome_contato" value="{{dados.nome_contato}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-4">
+                    <label for="endereco_contato" class="col-form-label">Endereço: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="endereco_contato" value="{{dados.endereco_contato}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-4">
+                    <label for="cidade_contato" class="col-form-label">Cidade: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="cidade_contato" value="{{dados.cidade_contato}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-4">
+                    <label for="estado_contato" class="col-form-label">Estado: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="estado_contato" value="{{dados.estado_contato}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-4">
+                    <label for="telefone_cel_contato" class="col-form-label">Telefone móvel: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="telefone_cel_contato" value="{{dados.telefone_cel_contato}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-4">
+                    <label for="telefone_fixo_contato" class="col-form-label">Telefone fixo: </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="telefone_fixo_contato" value="{{dados.telefone_fixo_contato}}">
+                    </div>
+                </div>
+                <div class="mb-1 col-sm-12 col-md-12">
+                    <label for="observacao" class="col-form-label">Observação: </label>
+                    <div class="input-group input-group-sm">
+                        <textarea rows="3" type="text" class="form-control" name="observacao" value="{{dados.observacao}}"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 col-4">
+                <button type="submit" class="btn btn-sm btn-primary fw-bold w-100">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    if ( document.getElementsByName('data_cadastro')[0].value == "" ) {
+        document.getElementsByName('data_cadastro')[0].value = new Date().toLocaleString('pt-BR').split(',')[0].split('/').reverse().join('-')
+    }
+    document.querySelector('#scroll-top').addEventListener('click', function() {
+        let cardConta = document.querySelector('#card-fornecedor')
+        cardConta.scrollTo({ top: 0, behavior: 'smooth' })
+    })
+    document.querySelector('#scroll-bottom').addEventListener('click', function() {
+        let cardConta = document.querySelector('#card-fornecedor')
+        cardConta.scrollTo({ top: 100000, behavior: 'smooth' })
+    })
+</script>

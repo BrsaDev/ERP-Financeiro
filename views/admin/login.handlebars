@@ -1,0 +1,44 @@
+{{#each erros}}
+    <div id="alert-{{@key}}" class="alert alert-danger shadow"><strong onclick="closeAlert({{@key}})" class="cursor-pointer fs-5 text-dark">X </strong><span>{{text}}</span></div>
+{{else}}
+
+{{/each}}
+
+{{#if error}}
+    <div id="alert-1" class="alert alert-danger shadow"><strong onclick="closeAlert('1')" class="cursor-pointer fs-5 text-dark">X </strong><span>{{error}}</span></div>
+{{/if}}
+
+{{#if success_msg}}
+    <div id="alert-temp" class="alert alert-success">{{success_msg}}</div>
+{{/if}}
+
+{{!-- <div class="d-flex h-100 justify-content-center flex-column align-items-center"> --}}
+    <h4>Login</h4>
+    <div class="card shadow-lg h-auto">
+        <div class="card-body p-4">
+            <form action="/admin/login" method="post">
+                <div class="row rem0948">
+                    <div class="mb-3 row">
+                        <label for="email" class="col-sm-4 col-form-label">Usuário:</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="email" autofocus
+                                placeholder="login ou email" value="{{dados.email}}" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="senha" class="col-sm-4 col-form-label">Senha:</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                                <input type="password" class="form-control" autocomplete="off" name="senha" value="{{dados.senha}}" placeholder="********">
+                                <i id="eye-show-pass" onclick="showHidePass()" class="cursor-pointer eye-pass bi bi-eye-fill"></i>
+                                <i id="eye-hide-pass" onclick="showHidePass()" class="cursor-pointer eye-pass d-none bi bi-eye-slash-fill"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-center">
+                        <button class="btn btn-primary mb-1 fw-bold">Entrar</button>
+                        <a class="links mr-26" href="/admin/recuperar-senha"><span class="text-danger">esqueci minha senha</span></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{{!-- </div> --}}

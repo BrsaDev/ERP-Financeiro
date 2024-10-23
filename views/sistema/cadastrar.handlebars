@@ -1,0 +1,29 @@
+{{#each erros}}
+    <div id="alert-{{@key}}" class="alert alert-danger shadow"><strong onclick="closeAlert({{@key}})" class="cursor-pointer fs-5 text-dark">X </strong><span>{{text}}</span></div>
+{{else}}
+
+{{/each}}
+
+<div class="d-flex direction-column">
+    <div>
+        <a href="/" class="nav-link align-start p-0 me-4">
+            <i class="fs-5 bi-house text-black"></i>
+        </a>
+    </div>
+    <div><h4>Cadastrar sistema</h4></div>
+</div>
+<div class="card shadow-lg">
+    <div class="card-body">
+        <form action="/sistema/cadastrar" , method="post">
+            <div class="mb-3 row rem0948">
+                <label for="nome" class="col-sm-4 col-form-label">Sistema: </label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="text" class="form-control" name="nome" value="{{dados.nome}}" autofocus>
+                </div>
+            </div>            
+            <div>
+                <button type="submit" class="btn btn-primary fw-bold">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>

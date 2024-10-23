@@ -1,0 +1,1379 @@
+<div class="row">
+    <div class="col-12 mb-2">
+        <a data-bs-toggle="modal" data-bs-target="#exampleModal"
+            class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Abrir pagamento</a>
+        <a target="_blank" href="/conta/cadastrar"
+            class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Cadastrar pagamento</a>
+        <a target="_blank" href="#"
+            class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Consulta</a>
+        <a target="_blank" href="#"
+            class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Relatório</a>
+        <a target="_blank" href="#" class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Arquivar
+            pagamento</a>
+        <a target="_blank" href="#" class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Compras a
+            chegar</a>
+    </div>
+    <div class="row mb-2 p-4">
+        <span id="deposito-situacao" class="d-none">{{dados.situacao_select}}</span>
+        <div id="situacao_select_aberto" onclick="selectTipoSituacaoConta('Aberto')"
+            class="mb-2 col-6 col-sm-3 col-md-2 border-b-dark d-flex align-items-center justify-content-center">
+            <label class="form-check-label my-bold rem0888">
+                Aberto
+            </label>
+        </div>
+        <div id="situacao_select_pago" onclick="selectTipoSituacaoConta('Pago')"
+            class="mb-2 col-6 col-sm-3 col-md-2 border-b-dark d-flex align-items-center justify-content-center">
+            <label class="form-check-label my-bold rem0888">
+                Pago
+            </label>
+        </div>
+        <div id="situacao_select_em_andamento" onclick="selectTipoSituacaoConta('Em andamento')"
+            class="mb-2 col-6 col-sm-3 col-md-2 border-b-dark d-flex align-items-center justify-content-center">
+            <label class="form-check-label my-bold rem0888">
+                Em andamento
+            </label>
+        </div>
+        <div id="situacao_select_cancelado" onclick="selectTipoSituacaoConta('Cancelado')"
+            class="mb-2 col-6 col-sm-3 col-md-2 border-b-dark d-flex align-items-center justify-content-center">
+            <label class="form-check-label my-bold rem0888">
+                Cancelado
+            </label>
+        </div>
+        <div class="col">
+            <i class="fs-4 bi-justify text-blue-pk mt-3 cursor-pointer" id="openCloseConfigTabConta"></i>
+        </div>
+    </div>
+</div>
+<div class="d-none card card-body p-4 shadow-sm mb-2 animation-downtop" id="configTabConta">
+    <div class="row rem0888">
+        <div class="form-check form-switch col-12 col-md-6 col-lg-3">
+            <label class="form-check-label">Posição coluna <i id="btn-popup-salvar-posicao-coluna"
+                    class="d-none bi bi-save text-blue-pk cursor-pointer ms-1"></i></label>
+            <input class="form-check-input" onclick="changeColuna('posicao')" type="checkbox" id="posicao-coluna-conta"
+                name="posicaoColuna">
+        </div>
+        <div class="form-check form-switch col-12 col-md-6 col-lg-3">
+            <label class="form-check-label">Filtros coluna</label>
+            <input class="form-check-input" onclick="changeColuna('filtro')" type="checkbox" id="filtro-coluna-conta"
+                name="filtroColuna">
+        </div>
+        <div class="form-check form-switch col-12 col-md-6 col-lg-3">
+            <label class="form-check-label">Fixar cabeçalho tabela</label>
+            <input class="form-check-input" onclick="setCabecalhoFixo('fixar-head-list-conta')" type="checkbox"
+                id="fixar-head-list-conta" name="filtroColuna">
+        </div>
+    </div>
+    <div class="row rem0888 mt-3">
+        <div class="col">
+            <a class="btn btn-sm btn-outline-primary" onclick="popupOcultarColuna()">Ocultar coluna</a>
+        </div>
+        <div class="col">
+            <a class="btn btn-sm btn-outline-primary" onclick="popupTamanhoColuna()">Tamanho coluna</a>
+        </div>
+    </div>
+</div>
+<div class="d-flex direction-column">
+    <div>
+        <a href="/" class="nav-link align-start p-0 me-4">
+            <i class="fs-5 bi-house text-black"></i>
+        </a>
+    </div>
+    <div><h5>{{dados.titulo}}</h5></div>
+</div>
+<div>
+    <div>
+        <div class="shadow-sm">
+            <div id="card-listar-conta" class="pk-table pt-0 overflow-auto scroll">
+                <table class="table table-sm table-responsive table-hover table-bordered rem0788" id="table-conta">
+                    {{#if drePage}}
+                        <thead id="head-table-list-conta">
+                            {{{headPageDre}}}
+                        </thead>
+                        {{#if contasDre}}
+                        <tbody>
+                            {{{bodyPageDre}}}
+                        </tbody>
+                        {{else}}
+                        <h4>Não há DRE´s para listar</h4>
+                        {{/if}}
+                    {{else}}
+                        <thead id="head-table-list-conta">
+                            {{{tabHead}}}
+                        </thead>
+                        {{#if contas}}
+                        <tbody>
+                            {{{tabBody}}}
+                        </tbody>
+                        {{else}}
+                        <h4>Não há contas para listar</h4>
+                        {{/if}}
+                    {{/if}}
+                </table>
+            </div>
+            <div class="d-flex direction-column justify-content-between p-2">
+                <i id="scroll-left" class="bi bi-arrow-left-circle-fill"></i>
+                <i id="scroll-right" class="bi bi-arrow-right-circle-fill"></i>
+            </div>
+        </div>
+    </div>    
+</div>
+
+<a href="" id="filtro-situacao-listar-conta"></a>
+<a href="/conta/listar" id="link-reset-posicao-colunas" class="d-none"></a>
+
+{{!-- seção de configuração de visialização das colunas --}}
+<div id="popup-ocultar-coluna" class="d-none card card-body shadow-sm position-absolute animation-fadein">
+    <div class="row text-center mt-1 mb-3 bg-gray p-2">
+        <label class="fw-bolder">Visibilidade de colunas <i onclick="popupOcultarColuna()"
+                class="ms-3 bi bi-x-circle-fill"></i></label>
+    </div>
+    <div class="form-check form-switch pb-4 mt-2 mb-1 border border-end-0 border-start-0 border-top-0">
+        <label class="form-check-label rem0888 fw-bold">Marcar/Desmarcar todos</label>
+        <input class="form-check-input" type="checkbox" id="marca_desmarca_todos" onclick="checkAllOcultarColunas()">
+    </div>
+
+    <form class="scroll">
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">N° Conta</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('numero_conta')" type="checkbox"
+                name="numero_conta">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Valor da Conta</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('valor_conta')" type="checkbox"
+                name="valor_conta">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Histórico</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('historico')" type="checkbox" name="historico">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Fornecedor</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('fornecedor')" type="checkbox"
+                name="fornecedor">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Chave</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('chave')" type="checkbox"
+                name="chave">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Via de pagamento</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('via_pagamento')" type="checkbox"
+                name="via_pagamento">
+        </div>
+        {{!-- <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Descrição</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('descricao')" type="checkbox" name="descricao">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Departamento</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('departamento')" type="checkbox"
+                name="departamento">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Valor Dre</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('valor_dre')" type="checkbox" name="valor_dre">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Rateio Dre</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('rateio_dre')" type="checkbox"
+                name="rateio_dre">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Vinculado Dre</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('vinculado_dre')" type="checkbox"
+                name="vinculado_dre">
+        </div> --}}
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Valor da parcela</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('valor_parcela')" type="checkbox"
+                name="valor_parcela">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">N° da parcela</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('numero_parcela')" type="checkbox"
+                name="numero_parcela">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Vencimento da parcela</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('vencimento_parcela')" type="checkbox"
+                name="vencimento_parcela">
+        </div>
+        {{!-- <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Categoria</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('categoria')" type="checkbox" name="categoria">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Grupo</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('grupo')" type="checkbox" name="grupo">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Sub Grupo</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('subgrupo')" type="checkbox" name="subgrupo">
+        </div> --}}
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Forma de pagamento</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('forma_pagamento')" type="checkbox"
+                name="forma_pagamento">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Agendamento</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('agendamento')" type="checkbox"
+                name="agendamento">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Pagamento</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('pagamento')" type="checkbox" name="pagamento">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Agencia</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('agencia')" type="checkbox" name="agencia">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Conta corrente</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('conta_corrente')" type="checkbox"
+                name="conta_corrente">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">N° cartão de crédito</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('num_cartao_cred')" type="checkbox"
+                name="num_cartao_cred">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Cheque compensado</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('cheque_compens')" type="checkbox"
+                name="cheque_compens">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Situação</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('situacao')" type="checkbox" name="situacao">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Banco</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('banco')" type="checkbox" name="banco">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Protocolo banco</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('protocolo_banco')" type="checkbox"
+                name="protocolo_banco">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Comprovante de pagamento</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('comprovante_pag')" type="checkbox"
+                name="comprovante_pag">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Cadastramento</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('cadastramento')" type="checkbox"
+                name="cadastramento">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Documento pagamento</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('doc_pagamento')" type="checkbox"
+                name="doc_pagamento">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Vencimento</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('vencimento')" type="checkbox"
+                name="vencimento">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Referência</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('referencia')" type="checkbox"
+                name="referencia">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Relação</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('relacao')" type="checkbox" name="relacao">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">N° dias</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('numero_dias')" type="checkbox"
+                name="numero_dias">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Fixar parcelas</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('fixar_parcelas')" type="checkbox"
+                name="fixar_parcelas">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">N° parcelas</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('numero_parcelas')" type="checkbox"
+                name="numero_parcelas">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Observação</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('observacao')" type="checkbox"
+                name="observacao">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Rateio</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('rateio')" type="checkbox" name="rateio">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Reembolso</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('reembolso')" type="checkbox" name="reembolso">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">N° pedido de compra</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('num_pedido_compra')" type="checkbox"
+                name="num_pedido_compra">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Data compra</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('data_compra')" type="checkbox"
+                name="data_compra">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Emissão NF</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('emissao_nf')" type="checkbox"
+                name="emissao_nf">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">N° comprovante</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('num_comprovante')" type="checkbox"
+                name="num_comprovante">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Data entrega mercadoria</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('data_entrega_mercad')" type="checkbox"
+                name="data_entrega_mercad">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Mercadoria entregue</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('mercadoria_entregue')" type="checkbox"
+                name="mercadoria_entregue">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Comprovante mercadoria</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('comprovante_mercad')" type="checkbox"
+                name="comprovante_mercad">
+        </div>
+        {{!-- <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Sistema 1</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('sistema_1')" type="checkbox" name="sistema_1">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">N° sistema 1</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('num_sistema_1')" type="checkbox"
+                name="num_sistema_1">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Sistema 2</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('sistema_2')" type="checkbox" name="sistema_2">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">N° sistema 2</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('num_sistema_2')" type="checkbox"
+                name="num_sistema_2">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Sistema 3</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('sistema_3')" type="checkbox" name="sistema_3">
+        </div>
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">N° sistema 3</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('num_sistema_3')" type="checkbox"
+                name="num_sistema_3">
+        </div> --}}
+        <div class="form-check form-switch col-12">
+            <label class="form-check-label rem0888">Vinculado</label>
+            <input class="form-check-input" onclick="changeOcultarColuna('vinculado')" type="checkbox" name="vinculado">
+        </div>
+    </form>
+
+    <div class="pt-3 mt-1 border border-end-0 border-start-0 border-bottom-0">
+        <a class="btn btn-sm btn-primary rem0888 w-100" id="btn-salvar-visibilidade-colunas">Salvar</a>
+    </div>
+</div>
+
+{{!-- seção de configuração de tamanho das colunas --}}
+<div id="popup-tamanho-coluna" class="d-none card card-body shadow-sm position-absolute animation-fadein">
+    <div class="row text-center mt-1 mb-3 bg-gray p-2">
+        <label class="fw-bolder">Tamanho de colunas <i onclick="popupTamanhoColuna()"
+                class="ms-3 bi bi-x-circle-fill"></i></label>
+    </div>
+    <div class="mb-1 border border-end-0 border-start-0 border-top-0"></div>
+
+    <form class="scroll p-2">
+        <div class="col-12">
+            <label class="form-check-label rem0888">N° Conta</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_numero_conta', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_numero_conta', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_numero_conta">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Historico</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_historico', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_historico', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_historico">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Valor da Conta</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_valor_conta', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_valor_conta', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_valor_conta">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Fornecedor</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_fornecedor', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_fornecedor', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_fornecedor">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Chave</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_chave', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_chave', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_chave">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Via de pagamento</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_via_pagamento', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_via_pagamento', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_via_pagamento">
+        </div>
+        {{!-- <div class="col-12">
+            <label class="form-check-label rem0888">Descrição</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_descricao', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_descricao', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_descricao">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Departamento</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_departamento', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_departamento', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_departamento">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Valor Dre</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_valor_dre', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_valor_dre', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_valor_dre">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Categoria</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_categoria', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_categoria', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_categoria">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Grupo</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_grupo', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_grupo', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_grupo">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Sub Grupo</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_subgrupo', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_subgrupo', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_subgrupo">
+        </div> --}}
+        <div class="col-12">
+            <label class="form-check-label rem0888">Forma de pagamento</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_forma_pagamento', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_forma_pagamento', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_forma_pagamento">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Agendamento</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_agendamento', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_agendamento', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_agendamento">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Pagamento</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_pagamento', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_pagamento', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_pagamento">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Agencia</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_agencia', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_agencia', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_agencia">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Conta corrente</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_conta_corrente', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_conta_corrente', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_conta_corrente">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">N° cartão de crédito</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_cartao_cred', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_cartao_cred', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_num_cartao_cred">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Cheque compensado</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_cheque_compens', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_cheque_compens', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_cheque_compens">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Situação</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_situacao', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_situacao', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_situacao">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Banco</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_banco', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_banco', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_banco">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Protocolo banco</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_protocolo_banco', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_protocolo_banco', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_protocolo_banco">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Comprovante de pagamento</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_comprovante_pag', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_comprovante_pag', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_comprovante_pag">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Cadastramento</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_cadastramento', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_cadastramento', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_cadastramento">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Documento pagamento</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_doc_pagamento', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_doc_pagamento', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_doc_pagamento">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Vencimento</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_vencimento', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_vencimento', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_vencimento">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Referência</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_referencia', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_referencia', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_referencia">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Relação</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_relacao', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_relacao', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_relacao">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">N° dias</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_numero_dias', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_numero_dias', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_numero_dias">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Fixar parcelas</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_fixar_parcelas', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_fixar_parcelas', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_fixar_parcelas">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">N° parcelas</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_numero_parcelas', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_numero_parcelas', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_numero_parcelas">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Observação</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_observacao', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_observacao', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_observacao">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Rateio</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_rateio', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_rateio', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_rateio">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Reembolso</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_reembolso', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_reembolso', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_reembolso">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">N° pedido de compra</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_pedido_compra', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_pedido_compra', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_num_pedido_compra">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Data compra</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_data_compra', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_data_compra', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_data_compra">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Emissão NF</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_emissao_nf', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_emissao_nf', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_emissao_nf">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">N° comprovante</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_comprovante', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_comprovante', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_num_comprovante">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Data entrega mercadoria</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_data_entrega_mercad', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_data_entrega_mercad', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_data_entrega_mercad">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Mercadoria entregue</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_mercadoria_entregue', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_mercadoria_entregue', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_mercadoria_entregue">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Comprovante mercadoria</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_comprovante_mercad', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_comprovante_mercad', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_comprovante_mercad">
+        </div>
+        {{!-- <div class="col-12">
+            <label class="form-check-label rem0888">Sistema 1</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_sistema_1', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_sistema_1', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_sistema_1">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">N° sistema 1</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_sistema_1', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_sistema_1', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_num_sistema_1">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Sistema 2</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_sistema_2', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_sistema_2', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_sistema_2">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">N° sistema 2</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_sistema_2', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_sistema_2', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_num_sistema_2">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">Sistema 3</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_sistema_3', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_sistema_3', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_sistema_3">
+        </div>
+        <div class="col-12">
+            <label class="form-check-label rem0888">N° sistema 3</label>
+            <i class="bi bi-dash-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_sistema_3', '-')"></i>
+            <i class="bi bi-plus-circle text-blue-pk ms-1 cursor-pointer"
+                onclick="changeTamanhoColuna('T_num_sistema_3', '+')"></i>
+            <input class=" input-group input-group-sm" type="number" name="T_num_sistema_3">
+        </div> --}}
+    </form>
+
+    <div class="pt-3 mt-1 border border-end-0 border-start-0 border-bottom-0">
+        <a class="btn btn-sm btn-primary rem0888 w-100" id="btn-salvar-tamanho-colunas">Salvar</a>
+    </div>
+</div>
+
+<div id="popup-salvar-posicao-coluna" class="d-none card card-body shadow-sm position-absolute animation-fadein">
+    <div class="row text-center mt-1 mb-3 bg-gray p-2">
+        <label class="fw-bolder">Posicao de colunas <i onclick="popupPosicaoColuna()"
+                class="ms-3 bi bi-x-circle-fill"></i></label>
+    </div>
+    <div class="mb-1 border border-end-0 border-start-0 border-top-0"></div>
+    <div class="row rem0888 mt-3">
+        <div class="col">
+            <a id="btn-salvar-posicao-coluna" class="btn btn-sm btn-primary w-100">Salvar posição colunas</a>
+        </div>
+    </div>
+    <div class="row rem0888 mt-3">
+        <div class="col">
+            <a id="btn-resetar-posicao-coluna" class="btn btn-sm btn-warning w-100">Resetar posição colunas</a>
+        </div>
+    </div>
+</div>
+
+<div id="popup-filtro-coluna" class="d-none centraliza-div card card-body shadow-lg position-absolute animation-fadein mh-pkflex-70 mw-pkflex-30">
+    <div class="row text-center mt-1 mb-3 bg-gray p-2">
+        <label class="fw-bolder">Filtro de colunas <i onclick="popupFiltroColuna()" class="ms-3 bi bi-x-circle-fill"></i></label>
+    </div>
+    <div class="content-filtro border border-1 p-2 rounded rounded-1">
+        <span>Selecione</span>
+    </div>
+</div>
+
+<div id="div1" class="d-none"></div>
+
+<script>
+    let objDres = {{{dres}}}
+    const baseUrl = "http://localhost:8089"
+    var mudancaPosicaoColunas = false
+    var objFiltroColuna = {}
+    var objTamanhoColunasTemp = {}
+    var mudarPosicaoColuna = false
+    var dragColl = null
+    var qtdeDreAbertos = 0
+    var contasTabela = document.querySelectorAll('#table-conta > tbody > tr')
+    let depositoSituacao = document.querySelector('#deposito-situacao')
+    let situacaoSelected = document.querySelector('#situacao_select_' + depositoSituacao.innerText.toLowerCase().replace(' ', '_'))
+    situacaoSelected.classList.add("border-b-blue")
+
+
+    function handleDragStart(e) {
+        if (!mudarPosicaoColuna) return true
+        dragColl = this
+        e.dataTransfer.afferAllowed = 'move'
+        e.dataTranfer.setData('text/html', this.outerHTML)
+    }
+    function handleDragOver(e) {
+        if (!mudarPosicaoColuna) return true
+        if (e.preventDefault) e.preventDefault()
+        e.dataTranfer.dropEffect = 'move'
+        return false
+    }
+
+    function handleDrop(e) {
+        if (!mudarPosicaoColuna) return true
+        if (e.stopPropagation) e.stopPropagation()
+        if (dragColl !== this) {
+            var sourceIndex = Array.from(dragColl.parentNode.children).indexOf(dragColl)
+            var targetIndex = Array.from(this.parentNode.children).indexOf(this)
+
+            const dragCollName = dragColl.getAttribute('name')
+            const thisName = this.getAttribute('name')
+
+            const widthDrag = dragColl.clientWidth
+            dragColl.setAttribute('name', thisName)
+            dragColl.style.minWidth = this.clientWidth + 'px'
+            this.setAttribute('name', dragCollName)
+            this.style.minWidth = widthDrag + 'px'
+            //console.log(this.innerText, this.style.minWidth)
+
+
+
+            let mytable = document.querySelector('#table-conta')
+            let rows = mytable.rows
+            for (let row of rows) {
+                let sourceCell = row.cells[sourceIndex]
+                let targetCell = row.cells[targetIndex]
+
+                let tempHtml = sourceCell.innerHTML
+                sourceCell.innerHTML = targetCell.innerHTML
+                targetCell.innerHTML = tempHtml
+            }
+            mudancaPosicaoColunas = true
+            document.querySelector('#btn-popup-salvar-posicao-coluna').classList.add('animation-bounce')
+        }
+        return false
+    }
+    function handleDragEnd(e) {
+        if (!mudarPosicaoColuna) return true
+        return false
+    }
+    var cols = document.querySelectorAll('th');
+    [].forEach.call(cols, function (col) {
+        col.addEventListener('dragstart', handleDragStart, false)
+        col.addEventListener('dragover', handleDragOver, false)
+        col.addEventListener('drop', handleDrop, false)
+        col.addEventListener('dragend', handleDragEnd, false)
+    })
+
+    function copyAttrs(target, source) {
+        const oldTarget = target;
+        [...source.attributes].forEach(attr => {
+            //console.log(attr.nodeName, attr.nodeValue)
+            target.setAttribute(attr.nodeName, attr.nodeValue)
+        });
+        [...oldTarget.attributes].forEach(attr => {
+            //console.log(attr.nodeName, attr.nodeValue)
+            source.setAttribute(attr.nodeName, attr.nodeValue)
+        })
+    }
+
+
+    function selectTipoSituacaoConta(situacao) {
+        let linkSelectTipoSituacao = document.querySelector('#filtro-situacao-listar-conta')
+        if ( document.URL.includes('page=page-dre') ) {
+            linkSelectTipoSituacao.href = `/conta/listar?page=page-dre&situacao_select=${situacao}`
+        } else {
+           linkSelectTipoSituacao.href = `/conta/listar?situacao_select=${situacao}` 
+        }
+        linkSelectTipoSituacao.click()
+    }
+    document.querySelector('#openCloseConfigTabConta').addEventListener('click', function (e) {
+        let configTabConta = document.querySelector('#configTabConta')
+        if (configTabConta.classList.toString().includes('d-none')) {
+            configTabConta.classList.remove('d-none')
+            configTabConta.classList.remove("animation-fadeout")
+            configTabConta.classList.add("animation-downtop")
+        }
+        else {
+            configTabConta.classList.remove("animation-downtop")
+            configTabConta.classList.add("animation-fadeout")
+            setTimeout(function () { configTabConta.classList.add('d-none') }, 500)
+
+        }
+    })
+    function loadSetCabecalhoFixo() {
+        let cabecalhoFixoStorage = localStorage.getItem("cabecalhoFixoStorage")
+        setCabecalhoFixo("fixar-head-list-conta", cabecalhoFixoStorage)
+    }
+    loadSetCabecalhoFixo()
+    function setCabecalhoFixo(element, cabecalhoFixoStorage) {
+        let cabecalhoTableListConta = document.querySelector(`#head-table-list-conta`)
+        if (document.querySelector("#" + element).checked || cabecalhoFixoStorage && cabecalhoFixoStorage == "true") {
+            cabecalhoTableListConta.classList.add("sticky-top")
+            localStorage.setItem("cabecalhoFixoStorage", true)
+            document.querySelector("#" + element).checked = true
+        } else {
+            cabecalhoTableListConta.classList.remove("sticky-top")
+            localStorage.setItem("cabecalhoFixoStorage", false)
+            document.querySelector("#" + element).checked = false
+        }
+    }
+    function changeColuna(prefixo) {
+        let elemento = document.querySelector(`#${prefixo}-coluna-conta`)
+        if (prefixo == "filtro") { setConfigFiltro(elemento) }
+        if (prefixo == "posicao") {
+            let btnPopupSalvarPosicaoColuna = document.querySelector('#btn-popup-salvar-posicao-coluna')
+            if (btnPopupSalvarPosicaoColuna.classList.toString().includes('d-none')) {
+                btnPopupSalvarPosicaoColuna.classList.remove('d-none')
+            } else {
+                btnPopupSalvarPosicaoColuna.classList.add('d-none')
+            }
+            setConfigPosicao(elemento)
+        }
+    }
+    document.querySelector('#btn-popup-salvar-posicao-coluna').addEventListener('click', function () {
+        let popupSalvarPosicaoColuna = document.querySelector('#popup-salvar-posicao-coluna')
+        if (popupSalvarPosicaoColuna.classList.toString().includes('d-none')) {
+            popupSalvarPosicaoColuna.classList.remove('d-none')
+        } else {
+            popupSalvarPosicaoColuna.classList.add('d-none')
+        }
+    })
+    document.querySelector('#btn-salvar-posicao-coluna').addEventListener('click', async function () {
+        let colunas = document.querySelectorAll('#head-table-list-conta > tr > th > span')
+        let nomeColunas = []
+        for (let coluna of colunas) {
+            nomeColunas.push(coluna.innerText)
+        }
+        const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ colunas: nomeColunas }),
+        }
+        let resultado = await fetch(`${baseUrl}/conta/posicao-colunas/cadastrar`, options)
+        resultado = await resultado.json()
+        if (resultado.resultado == "SUCESSO") { alert("Posição das colunas foi salva com sucesso!") }
+        else { alert("Houve um erro ao salvar a posição das colunas") }
+        document.querySelector('#btn-popup-salvar-posicao-coluna').classList.remove('animation-bounce')
+        document.querySelector('#btn-popup-salvar-posicao-coluna').click()
+    })
+    document.querySelector('#btn-resetar-posicao-coluna').addEventListener('click', async function () {
+        const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}),
+        }
+        let resultado = await fetch(`${baseUrl}/conta/posicao-colunas/cadastrar?reset=sim`, options)
+        resultado = await resultado.json()
+        if (resultado.resultado == "SUCESSO") {
+            alert("Posição das colunas foi resetada com sucesso!")
+            document.querySelector('#link-reset-posicao-colunas').click()
+        }
+        else { alert("Houve um erro ao resetar a posição das colunas") }
+    })
+    function setConfigFiltro(elemento) {
+        if (elemento.checked) {
+            for (let item of document.getElementsByClassName('fa-filter')) { item.classList.remove('d-none') }
+            for (let elem of document.getElementsByClassName('fa-chevron-down')) { elem.classList.remove('d-none') }
+        } else {
+            for (let item of document.getElementsByClassName('fa-filter')) { item.classList.add('d-none') }
+            for (let elem of document.getElementsByClassName('fa-chevron-down')) { elem.classList.add('d-none') }
+        }
+    }
+    function setConfigPosicao(elemento) {
+        let ths = document.querySelectorAll('#head-table-list-conta > tr > th')
+        if (elemento.checked) {
+            mudarPosicaoColuna = true
+            for (var th of ths) {
+                th.getElementsByTagName('span')[0].classList.add('cursor-move')
+            }
+        } else {
+            mudarPosicaoColuna = false
+            for (var th of ths) {
+                th.getElementsByTagName('span')[0].classList.remove('cursor-move')
+            }
+        }
+    }
+    document.querySelector('#scroll-left').addEventListener('click', function () {
+        let cardConta = document.querySelector('#card-listar-conta')
+        let scrollLeft = cardConta.scrollLeft
+        cardConta.scrollTo({ left: (scrollLeft - 250), behavior: 'smooth' })
+    })
+    document.querySelector('#scroll-right').addEventListener('mousedown', function () {
+        let cardConta = document.querySelector('#card-listar-conta')
+        cardConta.style.transitionDuration = '3s'
+        let scrollLeft = cardConta.scrollLeft
+        cardConta.scrollTo({ left: (scrollLeft + 250), behavior: 'smooth' })
+    })
+    async function popupTamanhoColuna() {
+        let divPopupTamanhoColuna = document.querySelector('#popup-tamanho-coluna')
+        let inputs = divPopupTamanhoColuna.getElementsByTagName('input')
+        if (divPopupTamanhoColuna.classList.toString().includes('d-none')) {
+            divPopupTamanhoColuna.classList.remove('animation-fadeout')
+            divPopupTamanhoColuna.classList.remove('d-none')
+            divPopupTamanhoColuna.classList.add('animation-fadein')
+            let colunas = document.querySelectorAll("#head-table-list-conta > tr > th")
+            for (let coluna of colunas) {
+                try {
+                    document.getElementsByTagName('form')[1].scrollTo({ top: 0, behavior: 'smooth' })
+                    objTamanhoColunasTemp[coluna.getAttribute('name').toString().replace('tab-', 'T_')] = coluna.clientWidth
+                    document.getElementsByName(coluna.getAttribute('name').toString().replace('tab-', 'T_'))[0].value = coluna.clientWidth  
+                }catch(e){}
+                
+            }
+        } else {
+            divPopupTamanhoColuna.classList.remove('animation-fadein')
+            divPopupTamanhoColuna.classList.add('animation-fadeout')
+            setTimeout(function () { divPopupTamanhoColuna.classList.add('d-none') }, 500)
+            for (let item of Object.entries(objTamanhoColunasTemp)) {
+                try{
+                    document.getElementsByName(item[0])[0].value = item[1]
+                    document.getElementsByName(item[0].toString().replace('T_', 'tab-'))[0].style.minWidth = item[1] + 'px' 
+                }catch(e){}
+               
+            }
+        }
+    }
+    async function popupPosicaoColuna() {
+        let divPopupPosicaoColuna = document.querySelector('#popup-salvar-posicao-coluna')
+        let inputs = divPopupPosicaoColuna.getElementsByTagName('input')
+        if (divPopupPosicaoColuna.classList.toString().includes('d-none')) {
+            divPopupPosicaoColuna.classList.remove('d-none')
+        } else {
+            divPopupPosicaoColuna.classList.add('d-none')
+        }
+    }
+    async function execultaFiltroColuna() {
+        let filtroColunaTabela = document.getElementsByName('filtro-coluna-tabela')
+        //var contasTabelaTemporaria = document.querySelectorAll('#table-conta > tbody > tr')
+        let tabelaSemCheck = document.querySelectorAll('#table-conta > tbody > tr')
+        document.querySelector('#table-conta > tbody').innerHTML = ""
+        let controle = 0
+        let checkTudo = document.querySelector('#filtro-coluna-tabela-tudo')
+        if ( checkTudo.checked ) { 
+            for ( let linha of contasTabela ) {
+                //console.log(linha)
+                document.querySelector('#table-conta > tbody').appendChild(linha)
+                controle++
+            }
+        }
+        for ( let check of filtroColunaTabela ) {
+            if ( check.checked ) {
+                for ( let linhaShow of objFiltroColuna[check.value] ) {
+                    document.querySelector('#table-conta > tbody').appendChild(contasTabela[(linhaShow-1)])
+                }
+                controle++
+            }
+        }
+        if ( controle == 0 ) { 
+            for ( let linhaAtiva of tabelaSemCheck ) {
+                document.querySelector('#table-conta > tbody').appendChild(linhaAtiva) 
+            }            
+        }
+    }
+    function checkTudo() {
+        let inputs = document.querySelectorAll('#popup-filtro-coluna > .content-filtro > div > input')
+        //console.log(inputs)
+        let ischecked = inputs[0].checked
+        for ( let input of inputs ) {
+            if ( input.id != "filtro-coluna-tabela-tudo" ) {
+                if ( ischecked ) input.checked = true
+                else input.checked = false
+            }            
+        }
+    }
+    async function popupFiltroColuna(nomeColuna=false) {
+        let divPopupFiltroColuna = document.querySelector('#popup-filtro-coluna')
+        if (divPopupFiltroColuna.classList.toString().includes('d-none')) {
+            let dadosColuna = ["controle"]//document.getElementsByName(nomeColuna)
+            for( var i = 0; i < contasTabela.length; i++) {
+                dadosColuna.push(contasTabela[i].querySelector(`[name="${nomeColuna}"]`))
+            }
+            //console.log(dadosColuna)
+            //console.log(document.getElementsByName(nomeColuna))
+            let index = 0
+            let content = `
+                <div class="form-check rem0788">
+                    <input id="filtro-coluna-tabela-tudo" value="TUDO" class="form-check-input" type="checkbox" onclick="checkTudo()">
+                    <label class="form-check-label">Tudo</label>
+                </div>`
+            objFiltroColuna = {}
+            for ( let dados of dadosColuna ) {
+                //console.log(dados)
+                if ( index > 0 && typeof objFiltroColuna[dados.textContent.trim()] == 'undefined' ) { //&& dados.textContent.trim() != ""
+                  objFiltroColuna[dados.textContent.trim()] = [index]
+                  content += `
+                  <div class="form-check rem0788">
+                    <input name="filtro-coluna-tabela" value="${dados.textContent.trim()}" class="form-check-input" type="checkbox">
+                    <div class="form-check-label text-truncate">${dados.textContent}</div>
+                  </div>`
+                }
+                else if ( index > 0 && typeof objFiltroColuna[dados.textContent.trim()] != 'undefined' ) {
+                    objFiltroColuna[dados.textContent.trim()].push(index)
+                }
+                index++
+            }
+            let divContent = document.querySelector("#popup-filtro-coluna > .content-filtro")
+            content += "<button onclick='execultaFiltroColuna()' class='btn btn-sm btn-outline-primary w-100 mt-2'>Filtrar</button>"
+            divContent.innerHTML = content
+            divPopupFiltroColuna.appendChild(divContent)
+            divPopupFiltroColuna.classList.remove('d-none')
+        } else {
+            divPopupFiltroColuna.classList.add('d-none')
+        }
+    }
+
+    async function popupOcultarColuna() {
+        let divPopupOcultarColuna = document.querySelector('#popup-ocultar-coluna')
+        let marcaDesmarcaTodos = divPopupOcultarColuna.getElementsByTagName('input')[0]
+        marcaDesmarcaTodos.checked = false
+        if (divPopupOcultarColuna.classList.toString().includes('d-none')) {
+            divPopupOcultarColuna.classList.remove('animation-fadeout')
+            divPopupOcultarColuna.classList.remove('d-none')
+            divPopupOcultarColuna.classList.add('animation-fadein')
+            let visibilidadeColunas = await getVisibilidadeColunas()
+            if (visibilidadeColunas.resultado) {
+                for (var element of Object.entries(visibilidadeColunas.resultado)) {
+                    try{
+                       document.getElementsByName(element[0])[0].checked = element[1] 
+                    }catch(e){}
+                }
+            }
+        } else {
+            let visibilidadeColunas = await getVisibilidadeColunas()
+            if (visibilidadeColunas.resultado) {
+                for (var element of Object.entries(visibilidadeColunas.resultado)) {
+                    resetOcultarColunaSemSalvar(element[0], element[1])
+                }
+            }
+            divPopupOcultarColuna.classList.remove('animation-fadein')
+            divPopupOcultarColuna.classList.add('animation-fadeout')
+            setTimeout(function () { divPopupOcultarColuna.classList.add('d-none') }, 500)
+
+        }
+        document.getElementsByTagName('form')[0].scrollTo({ top: 0, behavior: 'smooth' })
+    }
+    async function getVisibilidadeColunas() {
+        let resultado = await fetch(`${baseUrl}/conta/visibilidade-colunas/obter`)
+        resultado = await resultado.json()
+        return resultado
+    }
+    function checkAllOcultarColunas() {
+        let divPopupOcultarColuna = document.querySelector('#popup-ocultar-coluna')
+        let inputs = divPopupOcultarColuna.getElementsByTagName('input')
+        let ischecked = inputs[0].checked
+        for (let input of inputs) {
+            if (input.id != "marca_desmarca_todos") {
+                if (ischecked) {
+                    input.checked = true
+                    resetOcultarColunaSemSalvar(input.name, true)
+                }
+                else {
+                    input.checked = false
+                    resetOcultarColunaSemSalvar(input.name, false)
+                }
+            }
+        }
+    }
+    document.querySelector('#btn-salvar-visibilidade-colunas').addEventListener('click', async function () {
+        var formulario = document.getElementsByTagName('form')[1]
+        var formData = new FormData(formulario)
+        objForm = Object.fromEntries(formData)
+        const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...objForm }),
+        }
+        let resultado = await fetch(`${baseUrl}/conta/visibilidade-colunas/cadastrar`, options)
+        resultado = await resultado.json()
+        if (resultado.resultado == "SUCESSO") {
+            alert("Configuração de visibilidade de colunas salva com sucesso!")
+            return popupOcultarColuna()
+        }
+        alert("Ocorreu um erro ao salvar a configuração de visibildade de colunas!")
+    })
+    function changeOcultarColuna(nameInput) {
+        let elements = document.getElementsByName("tab-" + nameInput)
+        let elementCheck = document.getElementsByName(nameInput)[0]
+
+        if (elementCheck.checked) {
+            for (var element of elements) {
+                element.classList.remove('d-none')
+            }
+        } else {
+            for (var element of elements) {
+                element.classList.add('d-none')
+            }
+        }
+    }
+    function changeTamanhoColuna(nameInput, tipo) {
+        let element = document.getElementsByName("tab-" + nameInput.replace('T_', ''))[0]
+        let elementChange = document.getElementsByName(nameInput)[0]
+        element.style.maxWidth = "1000px"
+        if (tipo == "+") {
+            elementChange.value = Number(elementChange.value) + 1
+            element.style.minWidth = Number(elementChange.value) + 'px'
+        } else {
+            elementChange.value = Number(elementChange.value) - 1
+            element.style.minWidth = Number(elementChange.value) + 'px'
+        }
+        //console.log(element.clientWidth)
+    }
+    document.querySelector('#btn-salvar-tamanho-colunas').addEventListener('click', async function () {
+        var formulario = document.getElementsByTagName('form')[1]
+        var formData = new FormData(formulario)
+        objForm = Object.fromEntries(formData)
+        let newObj = {}
+        for (let obj of Object.entries(objForm)) {
+            newObj[obj[0].replace('T_', '')] = obj[1] + 'px'
+        }
+        const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...newObj }),
+        }
+        let resultado = await fetch(`${baseUrl}/conta/tamanho-colunas/cadastrar`, options)
+        resultado = await resultado.json()
+        if (resultado.resultado == "SUCESSO") {
+            for (let col of Object.entries(newObj)) {
+                //console.log(document.getElementsByName('tab-' + col[0])[0].style.minWidth)
+                document.getElementsByName('tab-' + col[0])[0].style.minWidth = col[1]
+                objTamanhoColunasTemp['T_' + col[0]] = col[1].replace('px', '')
+            }
+            alert("Configuração de visibilidade de colunas salva com sucesso!")
+            return popupTamanhoColuna()
+        }
+        alert("Ocorreu um erro ao salvar a configuração de visibildade de colunas!")
+    })
+    function resetOcultarColunaSemSalvar(nameInput, check) {
+        let elements = document.getElementsByName("tab-" + nameInput)
+        if (check) {
+            for (var element of elements) {
+                element.classList.remove('d-none')
+            }
+        } else {
+            for (var element of elements) {
+                element.classList.add('d-none')
+            }
+        }
+    }
+    async function showHideDre(numero_conta, acao, indexBtnShowHide) {
+        let linhasConta = document.getElementsByName(numero_conta)
+        let visibles = await getVisibilidadeColunas()
+        if (acao == "show") {
+            //for (let linhaConta of linhasConta) {
+            //    linhaConta.classList.remove('d-none')
+            //}
+            document.querySelector('#btn-show-dre' + numero_conta).classList.add('d-none')
+            document.querySelector('#btn-hide-dre' + numero_conta).classList.remove('d-none')
+            //for (let visible of Object.keys(visibles.resultado)) {
+            //    let col = document.getElementsByName('tab-' + visible)
+            //    for (let linhaCol of col) {
+            //        linhaCol.classList.remove('d-none')
+            //    }
+            //}
+            let addDre = `
+                <tr class="text-center text-nowrap text-light bg-blue-dark" name="show-dre-${numero_conta}">
+                    <th>Valor</th>
+                    <th>Descrição</th>
+                    <th colspan="2">Departamento</th>
+                    <th colspan="2">Marcador 1</th>
+                    <th colspan="2">Marcador 2</th>
+                    <th colspan="1">Categoria</th>
+                    <th colspan="1">Grupo</th>
+                    <th colspan="1">Sub Grupo</th>
+                    <th colspan="1">Sistema 1</th>
+                    <th colspan="1">N° sistema 1</th>
+                    <th colspan="1">Sistema 2</th>
+                    <th colspan="1">N° sistema 2</th>
+                    <th colspan="1">Sistema 3</th>
+                    <th colspan="1">N° sistema 3</th>
+                </tr>
+            `
+            let arrayTrs = [].slice.call(document.querySelectorAll(`#table-conta > tbody > tr`))
+            arrayTrs.splice((indexBtnShowHide+1), 0, addDre)
+            for ( let dre of objDres[numero_conta] ) {
+            addDre += `
+                    <tr class="text-nowrap table-primary" name="show-dre-${numero_conta}">
+                        <td class="text-center">${dre.valor_dre}</td>
+                        <td class="text-center">${dre.descricao}</td>
+                        <td class="text-center" colspan="2">${dre.departamento}</td>
+                        <td class="text-center" colspan="2">${dre.rateio_dre}</td>
+                        <td class="text-center" colspan="2">${dre.vinculado_dre}</td>
+                        <td class="text-center" colspan="1">${dre.categoria}</td>
+                        <td class="text-center" colspan="1">${dre.grupo}</td>
+                        <td class="text-center" colspan="1">${dre.subgrupo}</td>
+                        <td class="text-center" colspan="1">${dre.sistema_1}</td>
+                        <td class="text-center" colspan="1">${dre.num_sistema_1}</td>
+                        <td class="text-center" colspan="1">${dre.sistema_2}</td>
+                        <td class="text-center" colspan="1">${dre.num_sistema_2}</td>
+                        <td class="text-center" colspan="1">${dre.sistema_3}</td>
+                        <td class="text-center" colspan="1">${dre.num_sistema_3}</td>
+                    </tr>`
+            }
+            let trConta = document.querySelector(`#table-conta > tbody > tr[name="${indexBtnShowHide}"]`) //(`#table-conta > tbody > tr:nth-child(${(indexBtnShowHide)})`)
+            console.log(trConta, indexBtnShowHide)
+            trConta.classList.add("table-primary")
+            trConta.classList.add("fw-bold")
+            trConta.insertAdjacentHTML('afterend', addDre)
+            qtdeDreAbertos++
+        } else {
+            let linha = 1
+            for (let linhaConta of linhasConta) {
+                if (linha > 1) linhaConta.classList.add('d-none')
+                linha++
+            }
+            document.querySelector('#btn-show-dre' + numero_conta).classList.remove('d-none')
+            document.querySelector('#btn-hide-dre' + numero_conta).classList.add('d-none')
+            let trConta = document.querySelector(`#table-conta > tbody > tr[name="${indexBtnShowHide}"]`) //(`#table-conta > tbody > tr:nth-child(${(indexBtnShowHide)})`)
+            trConta.classList.remove("table-primary")
+            trConta.classList.remove("fw-bold")
+            document.getElementsByName(`show-dre-${numero_conta}`).forEach(item=>{
+                return item.remove()
+            })
+            for ( let it of document.getElementsByName(`show-dre-${numero_conta}`) ) {
+                it.remove()
+            }
+
+            //if (qtdeDreAbertos == 1) {
+            //    for (let visible of Object.entries(visibles.resultado)) {
+            //        let col = document.getElementsByName('tab-' + visible[0])
+            //        for (let linhaCol of col) {
+            //            if (visible[1]) {
+            //                linhaCol.classList.remove('d-none')
+            //            } else {
+            //                linhaCol.classList.add('d-none')
+            //            }
+            //        }
+            //    }
+            //}
+            qtdeDreAbertos--
+        }
+    }
+    var toNodeList = function(elem){
+        var tbodyDre = document.createElement('tbody')
+        tbodyDre.style = "border: 2px solid black; display: none;"
+        tbodyDre.id = 'tdbody-dre'
+        tbodyDre.innerHTML = elem
+        document.body.appendChild(tbodyDre)
+        return document.querySelectorAll('#tdbody-dre > tr')
+    };
+</script>

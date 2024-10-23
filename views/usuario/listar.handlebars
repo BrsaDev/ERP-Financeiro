@@ -1,0 +1,56 @@
+<div class="d-flex direction-column">
+    <div>
+        <a href="/" class="nav-link align-start p-0 me-4">
+            <i class="fs-5 bi-house text-black"></i>
+        </a>
+    </div>
+    <div><h5>Usuários</h5></div>
+</div>
+<div class="row">
+    <div class="col-auto">
+        <div class="card">
+            <div class="card-body overflow-auto scroll">
+                <table class="table table-sm table-hover table-bordered rem0788">
+                    <thead>
+                        <tr class="text-center text-nowrap text-light bg-blue-pk">
+                            <th>Id</th>
+                            <th>Nome</th>
+                            <th>Sexo</th>
+                            <th>Nascimento</th>
+                            <th>Cargo</th>
+                            <th>Admin</th>
+                            <th>Telefone</th>
+                            <th>Whatsapp</th>
+                            <th>Login</th>
+                            <th>Email</th>
+                            <th>Id empresa padrão</th>
+                            <th>Empresa padrão</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    {{#each usuarios}}
+                    <tbody>
+                        <tr class="text-nowrap">
+                            <td class="text-center" scope="col">{{id}}</td>
+                            <td scope="col">{{nome}}</td>
+                            <td class="text-center" scope="col">{{sexo}}</td>
+                            <td class="text-center" scope="col">{{nascimento}}</td>
+                            <td class="text-center" scope="col">{{cargo}}</td>
+                            <td class="text-center" scope="col">{{eAdmin}}</td>
+                            <td class="text-center" scope="col">{{telefone}}</td>
+                            <td class="text-center" scope="col">{{whatsapp}}</td>
+                            <td class="text-center" scope="col">{{nickname}}</td>
+                            <td scope="col">{{email}}</td>
+                            <td class="text-center" scope="col">{{id_empresa_padrao}}</td>
+                            <td scope="col">{{nome_empresa_padrao}}</td>
+                            <td scope="col">{{status}}</td>
+                        </tr>
+                    </tbody>
+                    {{else}}
+                    <h3>Não usários para listar</h3>
+                    {{/each}}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

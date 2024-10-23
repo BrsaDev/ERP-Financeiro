@@ -1,0 +1,66 @@
+const db = require('./db')
+
+const VisibilidadeColunaTabConta = db.sequelize.define('visibilidade_coluna_tab_conta', {
+
+    id:              { type: db.Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
+    usuario:         { type: db.Sequelize.STRING },
+    numero_conta:    { type: db.Sequelize.BOOLEAN },
+    historico:       { type: db.Sequelize.BOOLEAN },
+    valor_conta:     { type: db.Sequelize.BOOLEAN },
+    fornecedor:      { type: db.Sequelize.BOOLEAN },
+    chave:           { type: db.Sequelize.BOOLEAN },
+    via_pagamento:   { type: db.Sequelize.BOOLEAN },
+    descricao:       { type: db.Sequelize.BOOLEAN },
+    departamento:    { type: db.Sequelize.BOOLEAN },
+    valor_dre:       { type: db.Sequelize.BOOLEAN },
+    rateio_dre:      { type: db.Sequelize.BOOLEAN },
+    vinculado_dre:   { type: db.Sequelize.BOOLEAN },
+    vinculado:       { type: db.Sequelize.STRING },
+    categoria:       { type: db.Sequelize.BOOLEAN },
+    grupo:           { type: db.Sequelize.BOOLEAN },
+    subgrupo:        { type: db.Sequelize.BOOLEAN },
+    forma_pagamento: { type: db.Sequelize.BOOLEAN },
+    agendamento:     { type: db.Sequelize.BOOLEAN },
+    pagamento:       { type: db.Sequelize.BOOLEAN },
+    agencia:         { type: db.Sequelize.BOOLEAN },
+    conta_corrente:  { type: db.Sequelize.BOOLEAN },
+    num_cartao_cred: { type: db.Sequelize.BOOLEAN },
+    cheque_compens:  { type: db.Sequelize.BOOLEAN },
+    situacao:        { type: db.Sequelize.BOOLEAN },
+    banco:           { type: db.Sequelize.BOOLEAN },
+    protocolo_banco: { type: db.Sequelize.BOOLEAN },
+    comprovante_pag: { type: db.Sequelize.BOOLEAN },
+    cadastramento:   { type: db.Sequelize.BOOLEAN },
+    numero_parcelas: { type: db.Sequelize.BOOLEAN },
+    fixar_parcelas:  { type: db.Sequelize.BOOLEAN },
+    numero_parcela:  { type: db.Sequelize.BOOLEAN },
+    valor_parcela:   { type: db.Sequelize.BOOLEAN },
+    vencimento_parcela:  { type: db.Sequelize.BOOLEAN },
+    doc_pagamento:       { type: db.Sequelize.BOOLEAN },
+    vencimento:          { type: db.Sequelize.BOOLEAN },
+    referencia:          { type: db.Sequelize.BOOLEAN },
+    relacao:             { type: db.Sequelize.BOOLEAN },
+    numero_dias:         { type: db.Sequelize.BOOLEAN },
+    observacao:          { type: db.Sequelize.BOOLEAN },
+    rateio:              { type: db.Sequelize.BOOLEAN },
+    reembolso:           { type: db.Sequelize.BOOLEAN },
+    num_pedido_compra:   { type: db.Sequelize.BOOLEAN },
+    data_compra:         { type: db.Sequelize.BOOLEAN },
+    emissao_nf:          { type: db.Sequelize.BOOLEAN },
+    num_comprovante:     { type: db.Sequelize.BOOLEAN },
+    data_entrega_mercad: { type: db.Sequelize.BOOLEAN },
+    mercadoria_entregue: { type: db.Sequelize.BOOLEAN },
+    comprovante_mercad:  { type: db.Sequelize.BOOLEAN },
+    sistema_1:           { type: db.Sequelize.BOOLEAN },
+    num_sistema_1:       { type: db.Sequelize.BOOLEAN },
+    sistema_2:           { type: db.Sequelize.BOOLEAN },
+    num_sistema_2:       { type: db.Sequelize.BOOLEAN },
+    sistema_3:           { type: db.Sequelize.BOOLEAN },
+    num_sistema_3:       { type: db.Sequelize.BOOLEAN }
+
+}, { timestamps: false } )
+
+// VisibilidadeColunaTabConta.sync({force: true})
+
+module.exports = VisibilidadeColunaTabConta
+

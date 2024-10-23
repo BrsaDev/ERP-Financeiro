@@ -1,0 +1,63 @@
+const db = require('./db')
+
+const ItensConta = db.sequelize.define('itens_contas', {
+
+    id:              { type: db.Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
+    tipo_situacao:   { type: db.Sequelize.STRING,  allowNull: false },
+    historico:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    fornecedor:      { type: db.Sequelize.BOOLEAN, allowNull: false },
+    chave:           { type: db.Sequelize.BOOLEAN, allowNull: false },
+    via_pagamento:   { type: db.Sequelize.BOOLEAN, allowNull: false },
+    descricao:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    departamento:    { type: db.Sequelize.BOOLEAN, allowNull: false },
+    valor_dre:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    rateio_dre:      { type: db.Sequelize.BOOLEAN, allowNull: false },
+    vinculado_dre:   { type: db.Sequelize.BOOLEAN, allowNull: false },
+    vinculado:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    categoria:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    grupo:           { type: db.Sequelize.BOOLEAN, allowNull: false },
+    subgrupo:        { type: db.Sequelize.BOOLEAN, allowNull: false },
+    forma_pagamento: { type: db.Sequelize.BOOLEAN, allowNull: false },
+    agendamento:     { type: db.Sequelize.BOOLEAN, allowNull: false },
+    pagamento:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    agencia:         { type: db.Sequelize.BOOLEAN, allowNull: false },
+    conta_corrente:  { type: db.Sequelize.BOOLEAN, allowNull: false },
+    num_cartao_cred: { type: db.Sequelize.BOOLEAN, allowNull: false },
+    cheque_compens:  { type: db.Sequelize.BOOLEAN, allowNull: false },
+    situacao:        { type: db.Sequelize.BOOLEAN, allowNull: false },
+    banco:           { type: db.Sequelize.BOOLEAN, allowNull: false },
+    protocolo_banco: { type: db.Sequelize.BOOLEAN, allowNull: false },
+    comprovante_pag: { type: db.Sequelize.BOOLEAN, allowNull: false },
+    cadastramento:   { type: db.Sequelize.BOOLEAN, allowNull: false },
+    numero_parcelas: { type: db.Sequelize.BOOLEAN, allowNull: false },
+    doc_pagamento:   { type: db.Sequelize.BOOLEAN, allowNull: false },
+    vencimento:      { type: db.Sequelize.BOOLEAN, allowNull: false },
+    referencia:      { type: db.Sequelize.BOOLEAN, allowNull: false },
+    relacao:         { type: db.Sequelize.BOOLEAN, allowNull: false },
+    fixar_parcelas:  { type: db.Sequelize.BOOLEAN, allowNull: false },
+    numero_dias:     { type: db.Sequelize.BOOLEAN, allowNull: false },
+    numero_parcela:  { type: db.Sequelize.BOOLEAN, allowNull: false },
+    valor_parcela:   { type: db.Sequelize.BOOLEAN, allowNull: false },
+    vencimento_parcela:  { type: db.Sequelize.BOOLEAN, allowNull: false },
+    observacao:          { type: db.Sequelize.BOOLEAN, allowNull: false },
+    rateio:              { type: db.Sequelize.BOOLEAN, allowNull: false },
+    reembolso:           { type: db.Sequelize.BOOLEAN, allowNull: false },
+    num_pedido_compra:   { type: db.Sequelize.BOOLEAN, allowNull: false },
+    data_compra:         { type: db.Sequelize.BOOLEAN, allowNull: false },
+    emissao_nf:          { type: db.Sequelize.BOOLEAN, allowNull: false },
+    num_comprovante:     { type: db.Sequelize.BOOLEAN, allowNull: false },
+    data_entrega_mercad: { type: db.Sequelize.BOOLEAN, allowNull: false },
+    mercadoria_entregue: { type: db.Sequelize.BOOLEAN, allowNull: false },
+    comprovante_mercad:  { type: db.Sequelize.BOOLEAN, allowNull: false },
+    sistema_1:           { type: db.Sequelize.BOOLEAN, allowNull: false },
+    num_sistema_1:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    sistema_2:           { type: db.Sequelize.BOOLEAN, allowNull: false },
+    num_sistema_2:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    sistema_3:           { type: db.Sequelize.BOOLEAN, allowNull: false },
+    num_sistema_3:       { type: db.Sequelize.BOOLEAN, allowNull: false }
+
+}, { timestamps: false } )
+
+// ItensConta.sync({force:true})
+
+module.exports = ItensConta

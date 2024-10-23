@@ -1,0 +1,111 @@
+{{#each erros}}
+<div id="alert-{{@key}}" class="alert alert-danger shadow"><strong onclick="closeAlert({{@key}})"
+        class="cursor-pointer fs-5 text-dark">X </strong><span>{{text}}</span></div>
+{{else}}
+
+{{/each}}
+
+<div class="d-flex direction-column">
+    <div>
+        <a href="/" class="nav-link align-start p-0 me-4">
+            <i class="fs-5 bi-house text-black"></i>
+        </a>
+    </div>
+    <div><h5>Configurar página home</h5></div>
+</div>
+<div class="card card-body shadow-lg h-pkflex-80">
+    <div class="card-body overflow-auto scroll">
+        <form action="/configuracao/pagina-home" method="post">   
+            <div class="col-12 p-3 bg-gray-1 shadow-sm">
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="col rem0888 mt-2">
+                        <div>
+                            <h6>Escolha qual será a página inicial.</h6>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="col-12 p-3 mt-2">
+                <div class="row rem0888">
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="fornecedor">Listar Fornecedor</label>
+                        <input class="form-check-input" type="checkbox" onchange="changeInput(this)" name="fornecedor">
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="cargos">Listar Cargo</label>
+                        <input class="form-check-input" type="checkbox" onchange="changeInput(this)" name="cargos">
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="empresa">Listar Empresa</label>
+                        <input class="form-check-input" type="checkbox" onchange="changeInput(this)" name="empresa">
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="usuario">Listar Usuário</label>
+                        <input class="form-check-input" type="checkbox" onchange="changeInput(this)" name="usuario">
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="conta">Listar Conta</label>
+                        <input class="form-check-input" type="checkbox" onchange="changeInput(this)" name="conta">
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="categoria">Listar Categoria</label>
+                        <input class="form-check-input" type="checkbox" onchange="changeInput(this)" name="categoria">
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="forma_pagamento">Listar Forma de Pagamento</label>
+                        <input class="form-check-input" type="checkbox" onchange="changeInput(this)" name="forma_pagamento">
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="descricao">Listar Descrição</label>
+                        <input class="form-check-input" type="checkbox" onchange="changeInput(this)" name="descricao">
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="sistema">Listar Sistema</label>
+                        <input class="form-check-input" type="checkbox" onchange="changeInput(this)" name="sistema">
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="departamento">Listar Departamento</label>
+                        <input class="form-check-input" onchange="changeInput(this)" type="checkbox" name="departamento">
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="banco">Listar Banco</label>
+                        <input class="form-check-input" onchange="changeInput(this)" type="checkbox" name="banco">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary fw-bold">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let itemSelect = {{{dados}}}
+    function initialChange() {
+        let inputs = document.getElementsByTagName('input')
+        let select = false
+        let inputConta
+        for ( let input of inputs ) {
+            if ( itemSelect && input.name == itemSelect.campo ) {
+                input.checked = true
+                select = true
+            }
+            if ( input.name == 'conta' ) inputConta = input
+        }
+        if ( !select ) inputConta.checked = true
+    }
+    initialChange()
+    function changeInput(e) {
+        let inputs = document.getElementsByTagName('input')
+        for ( let input of inputs ) {
+            if ( input.name != e.name ) {
+                input.checked = false
+            } else {
+                input.checked = e.checked
+            }           
+        }
+    }
+</script>

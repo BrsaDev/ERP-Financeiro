@@ -1,0 +1,50 @@
+<div class="d-flex direction-column">
+    <div>
+        <a href="/" class="nav-link align-start p-0 me-4">
+            <i class="fs-5 bi-house text-black"></i>
+        </a>
+    </div>
+    <div><h5>Departamento</h5></div>
+</div>
+<div class="row">
+    <div class="col-auto">
+        <div class="card shadow-sm">
+            <div class="card-body overflow-auto scroll">
+                <table class="table table-sm table-hover table-bordered rem0788">
+                    <thead>
+                        <tr class="text-center text-nowrap text-light bg-blue-pk">
+                            <th scope="col">Id</th>
+                            <th scope="col">Departamento</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    {{#each departamentos}}
+                    <tbody>
+                        <tr class="text-nowrap">
+                            <td class="text-center" scope="col">{{id}}</td>
+                            <td scope="col">{{nome}}</td>
+                            <td scope="col" class="col-vazia"></td>
+                            <td scope="col" class="col-vazia"></td>
+                            <td scope="col" class="col-vazia"></td>
+                            <td scope="col" class="col-vazia"></td>
+                            <td scope="col" class="col-vazia"></td>
+                            <td scope="col" class="col-vazia"></td>
+                            <td scope="col" class="col-vazia"></td>
+                            <td scope="col" class="col-vazia"></td>
+                        </tr>
+                    </tbody>
+                    {{else}}
+                    <h3>Não há departamentos para listar</h3>
+                    {{/each}}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

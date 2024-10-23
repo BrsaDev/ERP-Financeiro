@@ -1,0 +1,78 @@
+<div class="d-flex direction-column">
+    <div>
+        <a href="/" class="nav-link align-start p-0 me-4">
+            <i class="fs-5 bi-house text-black"></i>
+        </a>
+    </div>
+    <div><h5>Fornecedores</h5></div>
+</div>
+<div class="row">
+    <div class="col-auto">
+        <div class="card shadow-sm">
+            <div class="card-body overflow-auto scroll">
+                <table class="table table-sm table-hover table-bordered rem0788">
+                    <thead>
+                        <tr class="text-center text-nowrap text-light bg-blue-pk">
+                            <th scope="col">Id</th>
+                            <th scope="col">Fornecedor</th>
+                            <th scope="col">Chave</th>
+                            <th scope="col">Via pagamento</th>
+                            <th scope="col">Data cadastro</th>
+                            <th scope="col">Nome fantasia</th>
+                            <th scope="col">Informacao</th>
+                            <th scope="col">Endereço</th>
+                            <th scope="col">Bairro</th>
+                            <th scope="col">Cidade</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Cep</th>
+                            <th scope="col">Cnpj</th>
+                            <th scope="col">Insc. estadual</th>
+                            <th scope="col">Telefone</th>
+                            <th scope="col">Site</th>
+                            <th scope="col">Ramo</th>
+                            <th scope="col">Nome contato</th>
+                            <th scope="col">Endereço contato</th>
+                            <th scope="col">Cidade contato</th>
+                            <th scope="col">Estado contato</th>
+                            <th scope="col">Tel. celular contato</th>
+                            <th scope="col">Tel. Fixo contato</th>
+                            <th scope="col">Observacao</th>
+                        </tr>
+                    </thead>
+                    {{#each fornecedores}}
+                    <tbody>
+                        <tr class="text-nowrap">
+                            <td class="text-center" scope="col">{{id}}</td>
+                            <td class="text-center" scope="col">{{nome}}</td>
+                            <td class="text-center" scope="col">{{chave}}</td>
+                            <td class="text-center" scope="col">{{via_pagamento}}</td>
+                            <td class="text-center" scope="col">{{data_cadastro}}</td>
+                            <td class="text-center" scope="col">{{nome_fantasia}}</td>
+                            <td class="text-center" scope="col">{{informacao}}</td>
+                            <td class="text-center" scope="col">{{endereco}}</td>
+                            <td class="text-center" scope="col">{{bairro}}</td>
+                            <td class="text-center" scope="col">{{cidade}}</td>
+                            <td class="text-center" scope="col">{{estado}}</td>
+                            <td class="text-center" scope="col">{{cep}}</td>
+                            <td class="text-center" scope="col">{{cnpj}}</td>
+                            <td class="text-center" scope="col">{{insc_estadual}}</td>
+                            <td class="text-center" scope="col">{{telefone}}</td>
+                            <td class="text-center" scope="col">{{site}}</td>
+                            <td class="text-center" scope="col">{{ramo}}</td>
+                            <td class="text-center" scope="col">{{nome_contato}}</td>
+                            <td class="text-center" scope="col">{{endereco_contato}}</td>
+                            <td class="text-center" scope="col">{{cidade_contato}}</td>
+                            <td class="text-center" scope="col">{{estado_contato}}</td>
+                            <td class="text-center" scope="col">{{telefone_cel_contato}}</td>
+                            <td class="text-center" scope="col">{{telefone_fixo_contato}}</td>
+                            <td class="text-center" scope="col">{{observacao}}</td>
+                        </tr>
+                    </tbody>
+                    {{else}}
+                    <h3>Não há fornecedores para listar</h3>
+                    {{/each}}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
