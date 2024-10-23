@@ -13,7 +13,7 @@ module.exports = {
                 connection: {
                     host: 'localhost',
                     user: 'root',
-                    password: 'deus2127',
+                    password: '',
                     database: 'erp_financeiro',
                 },
                 dumpToFile: path.resolve(__dirname, `./dump ${date.replaceAll("/", '-').replace(",", "").replaceAll(":", '-')}.sql`)
@@ -31,7 +31,7 @@ module.exports = {
         let dumpFile = path.resolve(__dirname, `dump ${nomeArquivo.replaceAll("/", '-').replaceAll(":", '-')}.sql`)
 
         var resultado = false
-        exec(`mysql -u root -p"deus2127" erp_financeiro < "${dumpFile}"`, (error, stdout, stderr) => {
+        exec(`mysql -u root -p"" erp_financeiro < "${dumpFile}"`, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Erro ao restaurar o banco de dados: ${error.message}`);
                 return false
