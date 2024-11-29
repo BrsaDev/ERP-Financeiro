@@ -331,6 +331,7 @@ router.post('/cadastrar', eAdmin, async (req, res) => {
                         var sistema_3_edit = "sistema_3_" + num_dre
                         var num_sistema_3_edit = "num_sistema_3_" + num_dre
                     }
+                    var new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (numero_dias * num_dre) 
                     var contaNova = await conta.create({
                         departamento: req.body[departamento_edit],
                         descricao: req.body[descricao_edit],
@@ -340,6 +341,7 @@ router.post('/cadastrar', eAdmin, async (req, res) => {
                         numero_parcela: parcela.numero_parcela, 
                         valor_parcela: parcela.valor_parcela, 
                         vencimento_parcela: parcela.vencimento_parcela,
+                        vencimento: parcela.vencimento_parcela,
                         categoria: req.body[categoria_edit],
                         grupo: req.body[grupo_edit],
                         subgrupo: req.body[subgrupo_edit],
@@ -349,10 +351,11 @@ router.post('/cadastrar', eAdmin, async (req, res) => {
                         num_sistema_2: req.body[num_sistema_2_edit], 
                         sistema_3: req.body[sistema_3_edit], 
                         num_sistema_3: req.body[num_sistema_3_edit],
+                        numero_dias: new_numero_dias,
                         numero_conta, historico, valor_conta, fornecedor, via_pagamento, forma_pagamento,
                         agendamento, pagamento, agencia, conta_corrente, num_cartao_cred, cheque_compens, situacao, banco,
-                        protocolo_banco, comprovante_pag, cadastramento, doc_pagamento, vencimento, referencia,
-                        relacao, numero_dias, numero_parcelas, fixar_parcelas, observacao, rateio, reembolso,
+                        protocolo_banco, comprovante_pag, cadastramento, doc_pagamento, referencia,
+                        relacao, numero_parcelas, fixar_parcelas, observacao, rateio, reembolso,
                         num_pedido_compra, data_compra, emissao_nf, vinculado, chave,
                         num_comprovante, data_entrega_mercad, mercadoria_entregue, comprovante_mercad
                     })
@@ -398,21 +401,24 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
     let primeiroItemConta = {}
     let headPageDre = `
         <tr class="text-center text-nowrap text-light bg-blue-pk">
-            <th name="tab-N_Conta"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_Conta')"></i><span>N° Conta</span></th>
-            <th name="tab-Valor"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Valor')"></i><span>Valor</span></th>
-            <th name="tab-Descricao"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Descricao')"></i><span>Descrição</span></th>
-            <th name="tab-Departamento"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Departamento')"></i><span>Departamento</span></th>
-            <th name="tab-Marcador_1"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Marcador_1')"></i><span>Marcador 1</span></th>
-            <th name="tab-Marcador_2"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Marcador_2')"></i><span>Marcador 2</span></th>
-            <th name="tab-Categoria"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Categoria')"></i><span>Categoria</span></th>
-            <th name="tab-Grupo"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Grupo')"></i><span>Grupo</span></th>
-            <th name="tab-Sub_Grupo"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sub_Grupo')"></i><span>Sub Grupo</span></th>
-            <th name="tab-Sistema_1"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sistema_1')"></i><span>Sistema 1</span></th>
-            <th name="tab-N_sistema_1"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_sistema_1')"></i><span>N° sistema 1</span></th>
-            <th name="tab-Sistema_2"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sistema_2')"></i><span>Sistema 2</span></th>
-            <th name="tab-N_sistema_2"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_sistema_2')"></i><span>N° sistema 2</span></th>
-            <th name="tab-Sistema_3"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sistema_3')"></i><span>Sistema 3</span></th>
-            <th name="tab-N_sistema_3"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_sistema_3')"></i><span>N° sistema 3</span></th>
+            <th name="tab-N_Conta"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_Conta')"></i><span><i onclick="sortTable('tab-N_Conta')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> N° Conta</span></th>
+            <th name="tab-Valor"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Valor')"></i><span><i onclick="sortTable('tab-Valor')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Valor</span></th>
+            <th name="tab-Descricao"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Descricao')"></i><span><i onclick="sortTable('tab-Descricao')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Descrição</span></th>
+            <th name="tab-Departamento"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Departamento')"></i><span><i onclick="sortTable('tab-Departamento')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Departamento</span></th>
+            <th name="tab-Vencimento"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Vencimento')"></i><span><i onclick="sortTable('tab-Vencimento')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Vencimento</span></th>
+            <th name="tab-Pagamento"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Pagamento')"></i><span><i onclick="sortTable('tab-Pagamento')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Pagamento</span></th>
+            <th name="tab-Relacao"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Relacao')"></i><span><i onclick="sortTable('tab-Relacao')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Relação</span></th>
+            <th name="tab-Marcador_1"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Marcador_1')"></i><span><i onclick="sortTable('tab-Marcador_1')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Marcador 1</span></th>
+            <th name="tab-Marcador_2"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Marcador_2')"></i><span><i onclick="sortTable('tab-Marcador_2')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Marcador 2</span></th>
+            <th name="tab-Categoria"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Categoria')"></i><span><i onclick="sortTable('tab-Categoria')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Categoria</span></th>
+            <th name="tab-Grupo"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Grupo')"></i><span><i onclick="sortTable('tab-Grupo')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Grupo</span></th>
+            <th name="tab-Sub_Grupo"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sub_Grupo')"></i><span><i onclick="sortTable('tab-Sub_Grupo')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Sub Grupo</span></th>
+            <th name="tab-Sistema_1"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sistema_1')"></i><span><i onclick="sortTable('tab-Sistema_1')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Sistema 1</span></th>
+            <th name="tab-N_sistema_1"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_sistema_1')"></i><span><i onclick="sortTable('tab-N_sistema_1')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> N° sistema 1</span></th>
+            <th name="tab-Sistema_2"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sistema_2')"></i><span><i onclick="sortTable('tab-Sistema_2')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Sistema 2</span></th>
+            <th name="tab-N_sistema_2"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_sistema_2')"></i><span><i onclick="sortTable('tab-N_sistema_2')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> N° sistema 2</span></th>
+            <th name="tab-Sistema_3"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sistema_3')"></i><span><i onclick="sortTable('tab-Sistema_3')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Sistema 3</span></th>
+            <th name="tab-N_sistema_3"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_sistema_3')"></i><span><i onclick="sortTable('tab-N_sistema_3')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> N° sistema 3</span></th>
         </tr>
     `
     let bodyPageDre = ""
@@ -438,14 +444,21 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
         .then((contas) => {
             if ( req.query.page && req.query.page == "page-dre" ) {
                 contas = contas.filter(item => {
+                    item.dataValues.pagamento = item.dataValues.pagamento == "" ? "" : item.dataValues.pagamento.slice(8) + "/" + item.dataValues.pagamento.slice(5, 7) + "/" + item.dataValues.pagamento.slice(0, 4)
                     item.dataValues.valor_dre = item.dataValues.valor_dre == "" ? "0" : (item.dataValues.valor_dre).toString().indexOf('.') != -1 ? (item.dataValues.valor_dre).toString().replace('.', ',') : (item.dataValues.valor_dre).toString() + ',00'
                     
                     bodyPageDre += `
                         <tr class="text-nowrap">
-                            <td name="tab-N_Conta" class="text-center">${item.dataValues.numero_conta}</td>
+                            <td name="tab-N_Conta" class="text-center">
+                                    <i class="fas fa-search cursor-pointer position-relative" style="left: -20px;" onclick="abrirContaPeloDre('${item.dataValues.numero_conta}', '${(req.query.situacao_select || "Aberto")}')"></i>
+                                     ${item.dataValues.numero_conta}
+                            </td>
                             <td name="tab-Valor" class="text-center">${item.dataValues.valor_dre}</td>
                             <td name="tab-Descricao" class="text-center">${item.dataValues.descricao}</td>
                             <td name="tab-Departamento" class="text-center">${item.dataValues.departamento}</td>
+                            <td name="tab-Vencimento" class="text-center">${item.dataValues.vencimento}</td>
+                            <td name="tab-Pagamento" class="text-center">${item.dataValues.pagamento}</td>
+                            <td name="tab-Relacao" class="text-center">${item.dataValues.relacao}</td>
                             <td name="tab-Marcador_1" class="text-center">${item.dataValues.rateio_dre}</td>
                             <td name="tab-Marcador_2" class="text-center">${item.dataValues.vinculado_dre}</td>
                             <td name="tab-Categoria" class="text-center">${item.dataValues.categoria}</td>
@@ -472,7 +485,7 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                 var indexBtnShowHide = 1
                 contas = contas.filter(item => {
                     item.dataValues.cadastramento = item.dataValues.cadastramento == "" ? "" : item.dataValues.cadastramento.slice(8) + "/" + item.dataValues.cadastramento.slice(5, 7) + "/" + item.dataValues.cadastramento.slice(0, 4)
-                    item.dataValues.vencimento = item.dataValues.vencimento == "" ? "" : item.dataValues.vencimento.slice(8) + "/" + item.dataValues.vencimento.slice(5, 7) + "/" + item.dataValues.vencimento.slice(0, 4)
+                    item.dataValues.pagamento = item.dataValues.pagamento == "" ? "" : item.dataValues.pagamento.slice(8) + "/" + item.dataValues.pagamento.slice(5, 7) + "/" + item.dataValues.pagamento.slice(0, 4)
                     item.dataValues.data_compra = item.dataValues.data_compra == "" ? "" : item.dataValues.data_compra.slice(8) + "/" + item.dataValues.data_compra.slice(5, 7) + "/" + item.dataValues.data_compra.slice(0, 4)
                     item.dataValues.emissao_nf = item.dataValues.emissao_nf == "" ? "" : item.dataValues.emissao_nf.slice(8) + "/" + item.dataValues.emissao_nf.slice(5, 7) + "/" + item.dataValues.emissao_nf.slice(0, 4)
                     item.dataValues.data_entrega_mercad = item.dataValues.data_entrega_mercad == "" ? "" : item.dataValues.data_entrega_mercad.slice(8) + "/" + item.dataValues.data_entrega_mercad.slice(5, 7) + "/" + item.dataValues.data_entrega_mercad.slice(0, 4)

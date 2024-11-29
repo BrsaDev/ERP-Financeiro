@@ -111,5 +111,26 @@ app.listen(PORT, () => {
     console.log("Servidor rodando na porta: " + PORT)
 })
 
-// let {backup, restore, list_files_backup} = require('./models/backup/backup')
-// list_files_backup()
+// const PDFDocument = require("pdfkit");
+// const fs = require("fs");
+
+// function gerarPDF() {
+//   // Cria um novo documento PDF com o tamanho desejado
+//   const doc = new PDFDocument({ size: "A4" });
+
+//   // Insere o conteúdo desejado no documento PDF
+//   doc.text(`
+//   Valor da Conta | Histórico | N° Conta | Fornecedor | Via de pagamento | Forma de pagamento | Agendamento | Pagamento | Agencia | Conta corrente | N° cartao crédito | Cheque compensado | Situação | Banco | Protocolo banco | Comprovante pagamento | Cadastramento | Documento pagamento | Vencimento | Referência | Relacao | N° de parcelas | N° de dias | Fixar Parcelas | Observação | undefined | Reembolso | N° pedido de compra | Data compra | Emissão nf | N° comprovante | Data entrega mercadoria | Mercadoria entregue | Comprovante mercadoria | Vinculado | Chave | Valor da parcela | Vencimento da parcela | N° da parcela
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 50,00 | sdfbsfgsfg | 1 |  |  |  |  |  |  |  |  |  | Aberto |  |  |  |  |  | 28/10/2024 |  |  | 3 | Desabilitado | dia 28 |  | undefined |  |  |  |  |  |  |  |  |  | telefone | 50,00 | 28/10/2024 | 1 | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined
+// 50,00 | sdfbsfgsfg | 2 |  |  |  |  |  |  |  |  |  | Aberto |  |  |  |  |  | 28/11/2024 |  |  | 3 | Desabilitado | dia 28 |  | undefined |  |  |  |  |  |  |  |  |  | telefone | 50,00 | 28/11/2024 | 2 | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined
+// 50,00 | sdfbsfgsfg | 3 |  |  |  |  |  |  |  |  |  | Aberto |  |  |  |  |  | 28/12/2024 |  |  | 3 | Desabilitado | dia 28 |  | undefined |  |  |  |  |  |  |  |  |  | telefone | 50,00 | 28/12/2024 | 3 | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined
+// 60,00 | dydtdu | 4 |  |  |  |  |  |  |  |  |  | Aberto |  |  |  |  |  | 31/10/2024 |  |  | 1 | 17 dias | Desabilitado |  | undefined |  |  |  |  |  |  |  |  |  | telefone | 60,00 | 31/10/2024 | 1 | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined | undefined
+//   `);
+
+//   // Salva o documento PDF em um arquivo
+//   doc.pipe(fs.createWriteStream("meu-pdf.pdf"));
+//   doc.end();
+// }
+
+// gerarPDF()

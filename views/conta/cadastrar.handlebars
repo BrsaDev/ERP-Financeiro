@@ -440,6 +440,26 @@
                             </div>
                             {{/if}}
                         </div>
+
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <label class="col-form-label">Cadastramento</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input type="date" class="form-control" name="cadastramento_dre"
+                                    value="{{dados.cadastramento}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <label for="vencimento" class="col-form-label">Vencimento</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input type="date" class="form-control" name="vencimento_dre" value="{{dados.vencimento}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <label for="relacao" class="col-form-label">Relação</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input type="text" class="form-control" name="relacao_dre" value="{{dados.relacao}}" readonly>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="mb-2 mt-01">
@@ -455,13 +475,13 @@
                                 class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input required type="date" class="form-control" name="cadastramento"
-                                value="{{dados.cadastramento }}">
+                                value="{{dados.cadastramento}}" onchange="carregaSemelhanteNoDre(this)">
                         </div>
                         {{else}}
                         <label for="cadastramento" class="col-form-label">Cadastramento</label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input type="date" class="form-control" name="cadastramento"
-                                value="{{dados.cadastramento}}">
+                                value="{{dados.cadastramento}}" onchange="carregaSemelhanteNoDre(this)">
                         </div>
                         {{/if}}
                     </div>
@@ -503,12 +523,12 @@
                                 class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input required type="date" class="form-control" name="vencimento"
-                                value="{{dados.vencimento}}">
+                                value="{{dados.vencimento}}" onchange="carregaSemelhanteNoDre(this)">
                         </div>
                         {{else}}
                         <label for="vencimento" class="col-form-label">Vencimento</label>
                         <div class="col-sm-12 input-group input-group-sm">
-                            <input type="date" class="form-control" name="vencimento" value="{{dados.vencimento}}">
+                            <input type="date" class="form-control" name="vencimento" value="{{dados.vencimento}}" onchange="carregaSemelhanteNoDre(this)">
                         </div>
                         {{/if}}
                     </div>
@@ -532,12 +552,12 @@
                         <label for="relacao" class="col-form-label">Relação <span
                                 class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
-                            <input required type="text" class="form-control" name="relacao" value="{{dados.relacao}}">
+                            <input required type="text" class="form-control" name="relacao" value="{{dados.relacao}}" onchange="carregaSemelhanteNoDre(this)">
                         </div>
                         {{else}}
                         <label for="relacao" class="col-form-label">Relação</label>
                         <div class="col-sm-12 input-group input-group-sm">
-                            <input type="text" class="form-control" name="relacao" value="{{dados.relacao}}">
+                            <input type="text" class="form-control" name="relacao" value="{{dados.relacao}}" onchange="carregaSemelhanteNoDre(this)">
                         </div>
                         {{/if}}
                     </div>
@@ -634,13 +654,13 @@
                         <label for="pagamento" class="col-form-label">Pagamento <span
                                 class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
-                            <input required type="text" class="form-control" name="pagamento"
+                            <input required type="date" class="form-control" name="pagamento"
                                 value="{{dados.pagamento}}">
                         </div>
                         {{else}}
                         <label for="pagamento" class="col-form-label">Pagamento</label>
                         <div class="col-sm-12 input-group input-group-sm">
-                            <input type="text" class="form-control" name="pagamento" value="{{dados.pagamento}}">
+                            <input type="date" class="form-control" name="pagamento" value="{{dados.pagamento}}">
                         </div>
                         {{/if}}
                     </div>
@@ -1351,6 +1371,10 @@
         hr.classList.add("mt-4")
         hr.id = `hrdre-${ qtdeDre + 1 }`
         secaoDre.appendChild(hr)
+        let cadastramento = document.getElementsByName('cadastramento')[0].value
+        let vencimento = document.getElementsByName('vencimento')[0].value
+        let relacao = document.getElementsByName('relacao')[0].value
+        console.log(cadastramento, vencimento, relacao)
         let novoDre = `
             <div class="col-12 col-sm-6 col-md-4">
                 {{#if itens.descricao}}
@@ -1606,6 +1630,27 @@
                 </div>
                 {{/if}}
             </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <label class="col-form-label">Cadastramento</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="date" class="form-control" name="cadastramento_dre"
+                        value="{{dados.cadastramento}}${cadastramento}" readonly>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <label for="vencimento" class="col-form-label">Vencimento</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="date" class="form-control" name="vencimento_dre" 
+                      value="{{dados.vencimento}}${vencimento}" readonly>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <label for="relacao" class="col-form-label">Relação</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="text" class="form-control" name="relacao_dre" 
+                      value="{{dados.relacao}}${relacao}" readonly>
+                </div>
+            </div>
         `
         let div = document.createElement('div')
         div.classList.add("row")
@@ -1645,7 +1690,35 @@
     function formatarValor(valor) {
         return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
     }
+    function calcularDiferencaEmDias(data1, data2) {
+        // Converte as datas para milissegundos
+        const milissegundosPorDia = 1000 * 60 * 60 * 24;
+        
+        // Calcula a diferença em milissegundos
+        const diferençaEmMilissegundos = Math.abs(data2 - data1);
+        
+        // Converte a diferença para dias
+        const diferençaEmDias = Math.floor(diferençaEmMilissegundos / milissegundosPorDia);
+        
+        return diferençaEmDias+1;
+    }
     document.querySelector('#btn-gerar-parcelas').addEventListener('click', function() {
+        let vencimento = document.getElementsByName("vencimento")[0]
+        if ( vencimento.value == "" ) {
+            alert('Preencha o vencimento')
+            vencimento.classList.add('border-danger')
+            vencimento.classList.add('border-3')
+            setTimeout(function(){
+                vencimento.classList.remove('border-danger')
+                vencimento.classList.remove('border-3')
+            }, 4000)
+            let cardConta = document.querySelector('#card-conta')
+            cardConta.scrollTo({
+                top: 500,
+                behavior: "smooth",
+            })
+            return true
+        }
         let secaoDre = document.querySelector('#secao-dre')
         qtdeDre = secaoDre.querySelectorAll('#secao-dre > div.row').length
         mostrarDreParcelas = 1
@@ -1672,7 +1745,7 @@
         let erros = []
         if ( valorConta == "" ) { erros.push({erro: 'O campo "Valor da Conta" precisa ser preenchido.'})}
         if ( qtdeParcelas == "" ) { erros.push({erro: 'O campo "Número de Parcelas" precisa ser preenchido.'})}
-        if ( numeroDias == "Desabilitado" && fixarParcelas == "Desabilitado" ) { 
+        if ( numeroDias == "Desabilitado" && fixarParcelas == "Desabilitado" && qtdeParcelas > 1 ) { 
             erros.push({erro: 'O campo "Número de Dias" ou o campo "Fixar Parcelas" precisa ser setado.'})
         }
         if ( valorConta > somaDres ) {
@@ -1707,33 +1780,41 @@
             `
             let valorAcumulado = 0
             let valor = parseFloat(valorDre)//parseFloat((valorDre / qtdeParcelas).toFixed(2))
-            let dia = new Date() 
+            let dia = new Date(vencimento.value) 
             let diaFixarParcelas = Number(fixarParcelas.split(" ")[1])
             for ( let i=1;i<=Number(qtdeParcelas);i++ ) {
-                var ultimoDia = new Date(dia.getFullYear(), dia.getMonth() + 1, 0);
-                if ( fixarParcelas != "Desabilitado" ) {
-                    if ( dia.getDate() < diaFixarParcelas ) {  
-                        if ( i > 1 ) {
-                        dia.setDate(dia.getDate()+31)  
-                        }                    
+                if ( i == 1 ) {
+                    var vencimentoSplit = vencimento.value.split("-")
+                    dia.setFullYear(vencimentoSplit[0])
+                    var mesEscrever = vencimentoSplit[1]
+                    var diaEscrever = vencimentoSplit[2]
+                    
+                }else {
+                    var ultimoDia = new Date(dia.getFullYear(), dia.getMonth() + 1, 0);
+                    if ( fixarParcelas != "Desabilitado" ) {
+                        if ( dia.getDate() < diaFixarParcelas ) {  
+                            if ( i > 1 ) {
+                                dia.setDate(dia.getDate()+31)  
+                            }                    
+                            var mesEscrever = ( dia.getMonth() + 1 ).toString().padStart(2, '0')
+                        }
+                        else { 
+                            dia.setDate(dia.getDate()+31)
+                            var mesEscrever = ( dia.getMonth() + 1 ).toString().padStart(2, '0') 
+                        }
+                        if ( diaFixarParcelas == 30 && ultimoDia.getDate() < diaFixarParcelas || diaFixarParcelas == 29 && ultimoDia.getDate() < diaFixarParcelas ) {
+                            var diaEscrever = ultimoDia.getDate()
+                        }else {
+                            var diaEscrever = diaFixarParcelas.toString().padStart(2, '0')
+                        }
+                        
+                        
+                    } else {
+                        dia.setDate(dia.getDate() + Number(numeroDias.split(' ')[0]))
+                        var diaEscrever = dia.getDate().toString().padStart(2, '0')
                         var mesEscrever = ( dia.getMonth() + 1 ).toString().padStart(2, '0')
-                    }
-                    else { 
-                        dia.setDate(dia.getDate()+31)
-                        var mesEscrever = ( dia.getMonth() + 1 ).toString().padStart(2, '0') 
-                    }
-                    if ( diaFixarParcelas == 30 && ultimoDia.getDate() < diaFixarParcelas || diaFixarParcelas == 29 && ultimoDia.getDate() < diaFixarParcelas ) {
-                        var diaEscrever = ultimoDia.getDate()
-                    }else {
-                        var diaEscrever = diaFixarParcelas.toString().padStart(2, '0')
-                    }
-                    
-                    
-                } else {
-                    dia.setDate(dia.getDate() + Number(numeroDias.split(' ')[0]))
-                    var diaEscrever = dia.getDate().toString().padStart(2, '0')
-                    var mesEscrever = ( dia.getMonth() + 1 ).toString().padStart(2, '0')
-                } 
+                    }  
+                }
                 let diaParcela = diaEscrever + "/" + mesEscrever + "/" + dia.getFullYear()
                 
                 if ( i == qtdeParcelas && (valorAcumulado + valor) <  valorDre ) {
@@ -1744,7 +1825,12 @@
                 }
                 valorAcumulado += valor
                 let valorString = valor.toString().includes('.') ? valor.toString().split('.')[0] + "," + valor.toString().split('.')[1].padEnd(2, '0') : valor + ',00'
-                objParcelasGeradas.push({numero_parcela: i, valor_parcela: valorString, vencimento_parcela: diaParcela})
+                if ( qtdeParcelas == 1 ) {
+                    var numero_dias = calcularDiferencaEmDias(new Date(), new Date(vencimento.value))
+                }else {
+                    var numero_dias = null
+                }
+                objParcelasGeradas.push({numero_dias, numero_parcela: i, valor_parcela: valorString, vencimento_parcela: diaParcela})
                 parcelas += `
                     <div class="p-2 bg-gray-1 mb-1">
                         <strong class="rem0888">${i}° parcela de R$ ${valorString} vencimento em ${diaParcela}</strong>
@@ -1992,6 +2078,9 @@
         }
     }
     function resetDreLocalStorage(start) {
+        localStorage.removeItem("cadastramento_dre")
+        localStorage.removeItem("vencimento_dre")
+        localStorage.removeItem("relacao_dre")
         for ( let i=start;i<50;i++ ) {
             localStorage.removeItem("valor_dre_"+i)
             localStorage.removeItem("departamento_"+i)
@@ -2005,8 +2094,8 @@
     }
     function loadDataScriptLocalstorage() {
         let itensDre = {
-            valor_dre: true,     departamento: true, grupo: true, subgrupo: true, categoria: true, rateio_dre: true,
-            vinculado_dre: true, descricao: true
+            valor_dre: true, departamento: true, grupo: true, subgrupo: true, categoria: true, rateio_dre: true,
+            vinculado_dre: true, descricao: true, cadastramento_dre: true, vencimento_dre: true, relacao_dre: true
         }
         if ( dataScript ) {
             resetDreLocalStorage(2)
@@ -2031,7 +2120,7 @@
         let qtdeDre = Object.entries(localStorage).filter(function(item){
             if ( item[0].includes("categoria") ) {return item}
         })
-        for ( x of qtdeDre.slice(1)) { btnAddDre.click() }
+        for ( x of qtdeDre.slice(1) ) { btnAddDre.click() }
         for ( item of Object.entries(localStorage) ) {
             if (item[0] != "numero_conta" &&  item[0] != "cabecalhoFixoStorage" && item[0] != "id" && item[0] != "numero_parcela" && item[0] != "valor_parcela" && item[0] != "vencimento_parcela" ) { 
                 document.getElementsByName(item[0])[0].value = item[1]
@@ -2039,6 +2128,16 @@
         }
         if ( document.getElementsByName('cadastramento')[0].value == "" ) {
             document.getElementsByName('cadastramento')[0].value = new Date().toLocaleString('pt-BR').split(',')[0].split('/').reverse().join('-')
+            
+        }
+        for ( let elemento of document.getElementsByName('cadastramento_dre') ) {
+            elemento.value = document.getElementsByName('cadastramento')[0].value
+        }
+        for ( let element of document.getElementsByName('vencimento_dre') ) {
+            element.value = document.getElementsByName('vencimento')[0].value
+        }
+        for ( let item of document.getElementsByName('relacao_dre') ) {
+            item.value = document.getElementsByName('relacao')[0].value
         }
     }
     loadDadosCadastroConta()
@@ -2054,6 +2153,9 @@
         }else {
             popupCadastrarFornecedor.classList.add('d-none')
         }
+    }
+    function carregaSemelhanteNoDre(e) {
+        for ( let element of document.getElementsByName(e.name + '_dre') ) { element.value = e.value }
     }
     async function cadastrarFornecedor() {
         let inputCadastrarFornecedor = document.querySelector('#input-cadastrar-fornecedor')
@@ -2115,4 +2217,11 @@
     }
     getTodasContas('contas')
     getTodasContas('dres')
+
+
+
+    /*
+        loadDadosCadastroConta => faz o carregamento dos dados no formulário
+    */
 </script>
+

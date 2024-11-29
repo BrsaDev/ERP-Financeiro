@@ -79,6 +79,13 @@
         </a>
     </div>
     <div><h5>{{dados.titulo}}</h5></div>
+    <div class="ms-5">
+        <div>
+            <i class="far fa-file-excel fs-5 text-blue-pk cursor-pointer" onclick="exportTableToExcel()"></i>
+            <i class="far fa-file-pdf ms-1 fs-5 text-blue-pk cursor-pointer" onclick="exportTableToPdf()"></i>
+        </div>
+    </div>
+    
 </div>
 <div>
     <div>
@@ -807,7 +814,23 @@
     </div>
 </div>
 
+<a id="btn-abrir-conta-por-dre" type="button" class="d-none" target="_blank"></a>
 <div id="div1" class="d-none"></div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js" integrity="sha512-axXaF5grZBaYl7qiM6OMHgsgVXdSLxqq0w7F4CQxuFyrcPmn0JfnqsOtYHUun80g6mRRdvJDrTCyL8LQqBOt/Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.2.0/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.5/jspdf.plugin.autotable.min.js"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.1/exceljs.min.js"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2excel/0.4.1/html2excel.bundle.js"></script>
+
 
 <script>
     let objDres = {{{dres}}}
@@ -1375,5 +1398,219 @@
         tbodyDre.innerHTML = elem
         document.body.appendChild(tbodyDre)
         return document.querySelectorAll('#tdbody-dre > tr')
-    };
+    }
+    function abrirContaPeloDre(numeroConta, situacao) {
+        let linkAbrirContaPorDre = document.querySelector("#btn-abrir-conta-por-dre")
+        linkAbrirContaPorDre.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}`
+        linkAbrirContaPorDre.click()
+    }
+    function sortTable(nameCol) {
+        let colIndex
+        let cabecalhos = document.querySelectorAll('#table-conta > thead > tr > th')
+        let index = 0
+        for ( let cabecalho of cabecalhos ) {
+            if ( nameCol == cabecalho.getAttribute('name') ) { colIndex = index; break }
+            index++
+        }
+        const table = document.querySelector("#table-conta")
+        const tbody = table.querySelector("#table-conta > tbody")
+        const rows = Array.from(tbody.getElementsByTagName("tr"))
+        const isAscending = !table.dataset.sorted || table.dataset.sorted === "desc"
+
+        rows.sort((a, b) => {
+            const cellA = a.getElementsByTagName("td")[colIndex].innerText;
+            const cellB = b.getElementsByTagName("td")[colIndex].innerText;
+
+            if ( nameCol === 'tab-Vencimento' || nameCol === 'tab-Pagamento' ) { // Se for a coluna de data
+                return isAscending
+                    ? parseDate(cellA) - parseDate(cellB)
+                    : parseDate(cellB) - parseDate(cellA);
+            } else {
+                return isAscending 
+                    ? cellA.localeCompare(cellB) 
+                    : cellB.localeCompare(cellA);
+            }
+        })
+
+        rows.forEach(row => tbody.appendChild(row))
+        table.dataset.sorted = isAscending ? "asc" : "desc"
+    }
+    function parseDate(dateString) {
+        const parts = dateString.split('/');
+        return new Date(parts[2], parts[1] - 1, parts[0]); // (ano, mês, dia)
+    }
+
+
+
+
+
+
+    function tabelaParaTexto() {
+        const tabela = document.getElementById('table-conta');
+        let textoTabela = '';
+
+        // Cabeçalho da tabela
+        const cabecalho = Array.from(tabela.getElementsByTagName('th'))
+        .map(th => th.innerText.trim())
+        .join(' | ');
+        textoTabela += cabecalho + '\n';
+        
+        // Linha separadora
+        textoTabela += '-'.repeat(cabecalho.length) + '\n';
+        
+        // Corpo da tabela
+        const linhas = tabela.getElementsByTagName('tr');
+        for (let i = 1; i < linhas.length; i++) { // Ignorar a linha de cabeçalho
+        const colunas = Array.from(linhas[i].getElementsByTagName('td'))
+            .map(td => td.innerText.trim())
+            .join(' | ');
+        textoTabela += colunas + '\n';
+        }
+        console.log(textoTabela)
+        return textoTabela;
+    }
+
+    async function exportTableToExcel() {
+        // Criar uma nova planilha com ExcelJS
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Dados');
+
+        // Obter a tabela HTML
+        var tabela = document.getElementById('table-conta');
+        const linhas = tabela.querySelectorAll('tr');
+
+        // Adicionar o cabeçalho th
+        const cabecalho = [];
+        const ths = linhas[0].querySelectorAll('th');
+        ths.forEach(th => cabecalho.push(th.innerText));
+        worksheet.addRow(cabecalho);
+
+        // Adicionar os dados das linhas (td)
+        for (let i = 1; i < linhas.length; i++) {
+            const tds = linhas[i].querySelectorAll('td');
+            const dadosLinha = [];
+            tds.forEach(td => dadosLinha.push(td.innerText))
+            worksheet.addRow(dadosLinha)
+        }
+
+        // Gerar o arquivo Excel e salvar
+        const buffer = await workbook.xlsx.writeBuffer()
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        saveAs(blob, 'Tabela Conta.xlsx')
+    
+    }
+
+    function exportTableToPdf() {
+        var janela = window.open('', '', 'width=800,height=600');
+            
+        // Obter a tabela
+        var tabela = document.getElementById('table-conta').outerHTML;
+        
+        // Escrever o conteúdo na nova janela
+        janela.document.write('<html><head><title>Tabela Conta</title><style>table{width:100%;border-collapse:collapse;}th, td{border:1px solid black;padding:8px;font-size:12px;}body{font-family:Arial,sans-serif;}</style></head><body>');
+        janela.document.write(tabela);
+        janela.document.write('</body></html>');
+        
+        // Chamar o método de impressão
+        janela.document.close();
+        janela.print();
+    }
+
+    function exportTableToPDF_maisoumenos_certo() {
+        var tabela = document.getElementById('table-conta');
+        // Criar a planilha Excel a partir da tabela HTML
+        var wb = XLSX.utils.table_to_book(tabela, { sheet: "Dados" });
+
+        // Obter a planilha da planilha Excel
+        var ws = wb.Sheets["Dados"];
+
+        // Personalizar o estilo do cabeçalho (Exemplo de formatação)
+        var range = { s: { r: 0, c: 0 }, e: { r: 0, c: 34 } }; // Cabeçalho com 35 colunas
+        ws["!cols"] = Array(35).fill({ wpx: 100 }); // Ajustar largura das 35 colunas
+        ws["!rows"] = [{ hpx: 30 }]; // Ajustar altura da primeira linha (cabeçalho)
+        
+        // Definir estilos para as células do cabeçalho
+        for (var col = 0; col < 35; col++) {
+            var cell = ws[XLSX.utils.encode_cell({ r: 0, c: col })];
+            if (!cell) continue;
+            cell.s = { font: { bold: true, sz: 12 }, fill: { fgColor: { rgb: "FFFF00" } } };
+        }
+
+        // Definir a faixa de células de cabeçalho
+        ws["!ref"] = XLSX.utils.encode_range(range);
+
+        // Gerar o arquivo Excel e fazer o download
+        XLSX.writeFile(wb, "tabela_com_35_colunas.xlsx");
+    }
+
+    
+
+    function exportTableToPDF_o() {
+        html2canvas(document.getElementById('table-conta'), {
+                onrendered: function (canvas) {
+                    var data = canvas.toDataURL();
+                    var docDefinition = {
+                        content: [{
+                            image: data,
+                            width: 2500
+                        }]
+                    };
+                    pdfMake.createPdf(docDefinition).download("Table.pdf");
+                }
+            });
+    }
+
+
+    function exportTableToPDF__ii() {
+  var tableHeaderText = [...document.querySelectorAll('#table-conta thead tr th')].map(thElement => ({ text: thElement.textContent, style: 'tableHeader' }));
+
+  var tableRowCells = [...document.querySelectorAll('#table-conta tbody tr td')].map(tdElement => ({ text: tdElement.textContent, style: 'tableData' }));
+  var tableDataAsRows = tableRowCells.reduce((rows, cellData, index) => {
+    if (index % 4 === 0) {
+      rows.push([]);
+    }
+
+    rows[rows.length - 1].push(cellData);
+    return rows;
+  }, []);
+
+  var docDefinition = {
+    header: { text: 'MLB World Series Winners', alignment: 'center' },
+    footer: function(currentPage, pageCount) { return ({ text: `Page ${currentPage} of ${pageCount}`, alignment: 'center' }); },
+    content: [
+      {
+        style: 'tableExample',
+        table: {
+          headerRows: 1,
+          body: [
+            tableHeaderText,
+            ...tableDataAsRows,
+          ]
+        },
+        layout: {
+          fillColor: function(rowIndex) {
+            if (rowIndex === 0) {
+              return '#0f4871';
+            }
+            return (rowIndex % 2 === 0) ? '#f2f2f2' : null;
+          }
+        },
+      },
+    ],
+    styles: {
+      tableExample: {
+        margin: [0, 20, 0, 80],
+      },
+      tableHeader: {
+        margin: 12,
+        color: 'white',
+      },
+      tableData: {
+        margin: 12,
+      },
+    },
+  };
+  console.log(docDefinition)
+  pdfMake.createPdf(docDefinition).download('MLB World Series Winners');
+}
 </script>
