@@ -1399,9 +1399,9 @@
         document.body.appendChild(tbodyDre)
         return document.querySelectorAll('#tdbody-dre > tr')
     }
-    function abrirContaPeloDre(numeroConta, situacao) {
+    function abrirContaPeloDre(numeroConta, situacao, dre) {
         let linkAbrirContaPorDre = document.querySelector("#btn-abrir-conta-por-dre")
-        linkAbrirContaPorDre.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}`
+        linkAbrirContaPorDre.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}&dre=${dre}`
         linkAbrirContaPorDre.click()
     }
     function sortTable(nameCol) {

@@ -21,7 +21,7 @@ module.exports = function(passport) {
         //     status: "ativo"})
 
         // usuario.findOne({ where:{ [Op.or]: {email: email, nicakname: email} } })
-        
+        // console.log(usuario)
         usuario.findOne({ 
             where:{ 
                 [Op.or]: [ { email }, where(fn('binary', col('nickname')), email)]

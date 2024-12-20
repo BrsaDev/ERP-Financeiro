@@ -98,10 +98,10 @@
                     <div class="col-12 col-md-6 col-lg-4">
                         {{#if itens.situacao}}
                         <label for="situacao" class="col-form-label">Situação <span
-                                class="text-danger fw-bolder">*</span></label>
+                            class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <select class="form-select form-select-sm" name="situacao" required
-                                onchange="selectTipoSituacaoConta(this)">
+                                onchange="selectTipoSituacaoConta(this, true)">
                                 <option selected>{{dados.situacao}}{{itens.tipo_situacao}}</option>
                                 <option value="Aberto">Aberto</option>
                                 <option value="Pago">Pago</option>
@@ -113,7 +113,7 @@
                         <label for="situacao" class="col-form-label">Situação</label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <select class="form-select form-select-sm" name="situacao"
-                                onchange="selectTipoSituacaoConta(this)">
+                                onchange="selectTipoSituacaoConta(this, true)">
                                 <option selected>{{dados.situacao}}{{itens.tipo_situacao}}</option>
                                 <option value="Aberto">Aberto</option>
                                 <option value="Pago">Pago</option>
@@ -1351,7 +1351,8 @@
     listDadosParaConta('descricao', 'descricoes')
     listDadosParaConta('forma-pagamento', 'formasPagamento')
 
-    function selectTipoSituacaoConta(e) {
+    function selectTipoSituacaoConta(e, manual=false) {
+        if ( !manual ) { return true }
         let situacaoAtual = localStorage.getItem('situacao') || "Aberto"
         let linkSelectTipoSituacao = document.querySelector('#select-tipo-situacao-conta')
         linkSelectTipoSituacao.href = `/conta/cadastrar?situacao=${e.value}`
@@ -1361,7 +1362,6 @@
             return linkSelectTipoSituacao.click()
         }
         document.getElementsByName("situacao")[0].value = situacaoAtual
-        
     }
 
     document.querySelector('#btn-add-dre').addEventListener('click', function () {
@@ -1994,7 +1994,6 @@
             }
             
         }
-        console.log(cadastro)
         if ( cadastro.erro ) { return alert("Algo deu errado ao cadastrar e duplicar a conta!") }
         let cardConta = document.querySelector('#card-conta')
         cardConta.scrollTo({ top: 0, behavior: 'smooth' })
@@ -2116,6 +2115,7 @@
     }
     loadDataScriptLocalstorage()
     function loadDadosCadastroConta() {
+        if ( document.URL.includes('abrir-conta') ) { return true } // para quando abrir nessa url não recarregue os dados como em cadastro
         let btnAddDre = document.querySelector('#btn-add-dre')
         let qtdeDre = Object.entries(localStorage).filter(function(item){
             if ( item[0].includes("categoria") ) {return item}

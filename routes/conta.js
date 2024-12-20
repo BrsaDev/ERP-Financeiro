@@ -207,25 +207,33 @@ router.post('/posicao-colunas/cadastrar', async (req, res) => {
     }
 })
 router.get('/abrir-conta', eAdmin, async (req, res) => {
-    let {numero_conta, situacao} = req.query
+    let {numero_conta, situacao, dre} = req.query
     let contas = await conta.findAll({ where: { [Op.and]: {numero_conta, situacao} } })
     contas = JSON.parse(JSON.stringify(contas, null, 2))
     if ( contas.length == 0 ) {
         let itens = {proximo_numero_conta: 1, tipo_situacao: situacao}
+        console.log(itens)
         return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { itens })
     }
     let item = await ItensConta.findOne({ where: { tipo_situacao: contas[0].situacao } })
     item = JSON.parse(JSON.stringify(item, null, 2))
     delete item.tipo_situacao
     let itens = { ...item }
-    var umRegistro = false
-    contas = contas.filter(item=>{
-        if ( new Date(item.vencimento_parcela.split('/').reverse().join('-')) > new Date() && !umRegistro ) {
-            umRegistro = true
-            return item
+    if ( !dre ) {
+        var umRegistro = false
+        var ultimaConta = [contas[contas.length-1]]
+        contas = contas.filter(item=>{
+            if ( new Date(item.vencimento_parcela.split('/').reverse().join('-')) > new Date() && !umRegistro ) {
+                umRegistro = true
+                return item
+            }
+        })
+        if ( ultimaConta.length && !contas.length ) {
+            contas = ultimaConta
         }
-    })
-    let parcela_atual = contas.length == 0 ? "" : `${contas[0].numero_parcela}/${contas[0].numero_parcelas}`
+        
+    }
+    var parcela_atual = contas.length == 0 ? "" : `${contas[0].numero_parcela}/${contas[0].numero_parcelas}`
     res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { parcela_atual, itens, dados: contas[0], data_script: JSON.stringify(contas) })
 })
 
@@ -450,7 +458,7 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                     bodyPageDre += `
                         <tr class="text-nowrap">
                             <td name="tab-N_Conta" class="text-center">
-                                    <i class="fas fa-search cursor-pointer position-relative" style="left: -20px;" onclick="abrirContaPeloDre('${item.dataValues.numero_conta}', '${(req.query.situacao_select || "Aberto")}')"></i>
+                                    <i class="fas fa-search cursor-pointer position-relative" style="left: -20px;" onclick="abrirContaPeloDre('${item.dataValues.numero_conta}', '${(req.query.situacao_select || "Aberto")}', true)"></i>
                                      ${item.dataValues.numero_conta}
                             </td>
                             <td name="tab-Valor" class="text-center">${item.dataValues.valor_dre}</td>
