@@ -1310,7 +1310,7 @@
     try {
         dataScript = {{{data_script}}}
         dataScript = JSON.parse(dataScript)
-    }catch(e){console.log(e)}
+    }catch(e){console.log('dentro de views cadastro =1 ', e)}
         
     var objParcelasGeradas = []
     var mostrarDreParcelas = 1
@@ -1849,7 +1849,9 @@
             div.classList.add('scroll')
             div.innerHTML = parcelas
             popupGerarParcelas.appendChild(div)
-            popupGerarParcelas.classList.remove('d-none')
+            if ( !document.URL.toString().includes('abrir-conta') ) {
+                popupGerarParcelas.classList.remove('d-none')
+            }
         }
         showDreParcelas()
     })
@@ -1892,7 +1894,11 @@
         // output as an object
         objForm = Object.fromEntries(formData)
         if ( objForm.numero_parcelas == "" || objForm.numero_parcelas < 1 || objParcelasGeradas.length == 0 ) {
-            return alert("As parcelas não foram geradas, clique no botão gerar parcelas antes de salvar a conta.")
+            if ( document.URL.toString().includes('abrir-conta') ) {
+                document.querySelector('#btn-gerar-parcelas').click()
+            }else {
+              return alert("As parcelas não foram geradas, clique no botão gerar parcelas antes de salvar a conta.")  
+            }
         } 
         let somaDres = 0
         for ( item of formData.entries() ) {
@@ -1922,9 +1928,9 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({...objForm}),
         }
+        console.log(objForm)
         let cadastro = await fetch(`${ baseUrl }/conta/cadastrar?qtdeDre=${ qtdeDre }`, options)
         cadastro = await cadastro.json()
-        console.log(cadastro)
         if ( cadastro.erro && cadastro.erro == "campos não preenchidos" ) {
             return document.querySelector('#btn-salvar-oculto').click()
         }
@@ -1954,7 +1960,11 @@
         var formData = new FormData(formulario)
         objForm = Object.fromEntries(formData)
         if ( objForm.numero_parcelas != "" && objForm.numero_parcelas > 1 && objParcelasGeradas.length == 0 ) {
-            return alert("As parcelas não foram geradas.")
+            if ( document.URL.toString().includes('abrir-conta') ) {
+                document.querySelector('#btn-gerar-parcelas').click()
+            }else {
+              return alert("As parcelas não foram geradas.")  
+            }
         } 
         let somaDres = 0
         for ( item of formData.entries() ) {
@@ -2115,7 +2125,7 @@
     }
     loadDataScriptLocalstorage()
     function loadDadosCadastroConta() {
-        if ( document.URL.includes('abrir-conta') ) { return true } // para quando abrir nessa url não recarregue os dados como em cadastro
+        //if ( document.URL.includes('abrir-conta') ) { return true } // para quando abrir nessa url não recarregue os dados como em cadastro
         let btnAddDre = document.querySelector('#btn-add-dre')
         let qtdeDre = Object.entries(localStorage).filter(function(item){
             if ( item[0].includes("categoria") ) {return item}
@@ -2124,6 +2134,15 @@
         for ( item of Object.entries(localStorage) ) {
             if (item[0] != "numero_conta" &&  item[0] != "cabecalhoFixoStorage" && item[0] != "id" && item[0] != "numero_parcela" && item[0] != "valor_parcela" && item[0] != "vencimento_parcela" ) { 
                 document.getElementsByName(item[0])[0].value = item[1]
+
+                // se tiver com erro de itens não identificado no localstorage
+                //try{
+                //    document.getElementsByName(item[0])[0].value = item[1]
+                //}catch(e){
+                //    console.log(item[0], item[1])
+                //    delete localStorage[item[0]]
+                //}
+                
             }            
         }
         if ( document.getElementsByName('cadastramento')[0].value == "" ) {

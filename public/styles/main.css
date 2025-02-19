@@ -127,6 +127,9 @@ th, td {
 .mh-pkflex-70 {
     max-height: 70% !important;
 }
+.mw-pkflex-40 {
+    max-width: 40% !important;
+}
 .mw-pkflex-30 {
     max-width: 20% !important;
 }
@@ -250,6 +253,9 @@ input {
     position: absolute !important;
     z-index: 1000000000001 !important;
 }
+.animation-brilhante {
+    animation: brilho 1s infinite;
+}
 .animation-bounce {
     position: absolute;
     transform: translate(-50%,-50%);
@@ -336,6 +342,23 @@ table.table-fit tfoot td {
         -webkit-filter: hue-rotate(-360deg);
     }
 }
+
+@keyframes brilho {
+    0% {
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.4), 0 0 30px rgba(255, 255, 255, 0.3);
+      transform: scale(1);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.7), 0 0 60px rgba(255, 255, 255, 0.6);
+      transform: scale(1.10);
+    }
+    100% {
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.4), 0 0 30px rgba(255, 255, 255, 0.3);
+      transform: scale(1);
+    }
+}
+  
+  
 
 @media screen and (max-width:767px){
     .rem0788 {font-size: 0.788rem !important;}

@@ -51,7 +51,7 @@
                     </form> 
                     <div class="modal-footer">
                         <button id="btn-close-popup-abrir-conta" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <a id="btn-abrir-conta" type="button" class="btn btn-primary" target="_blank">Abrir</a>
+                        <a id="btn-abrir-conta" type="button" href="#" class="btn btn-primary" >Abrir</a>
                     </div>
                 </div>
                 
@@ -429,8 +429,9 @@
     document.querySelector("#btn-abrir-conta").addEventListener('click', function(e) {
         let numeroConta = document.querySelector("#numero-conta-abrir-conta").value
         let situacao = document.querySelector("#situacao-abrir-conta").value
-        e.target.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}`
-        document.querySelector("#btn-close-popup-abrir-conta").click()
+        abrirContaPopup(false, numeroConta, situacao)
+        //e.target.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}`
+        return document.querySelector("#btn-close-popup-abrir-conta").click()
     })
     function validarCaracter(e) {
         timeDigitValor = new Date()

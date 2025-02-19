@@ -2,8 +2,7 @@
     <div class="col-12 mb-2">
         <a data-bs-toggle="modal" data-bs-target="#exampleModal"
             class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Abrir pagamento</a>
-        <a target="_blank" href="/conta/cadastrar"
-            class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Cadastrar pagamento</a>
+        <a  href="#" onclick="abrirContaPopup(true)" class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Cadastrar pagamento</a>
         <a target="_blank" href="#"
             class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Consulta</a>
         <a target="_blank" href="#"
@@ -58,6 +57,10 @@
                 name="filtroColuna">
         </div>
         <div class="form-check form-switch col-12 col-md-6 col-lg-3">
+            <label class="form-check-label">Filtros contas</label>
+            <input class="form-check-input" onclick="abrirFecharPopupFiltroContas()" type="checkbox" id="filtro-colunas-contas">
+        </div>
+        <div class="form-check form-switch col-12 col-md-6 col-lg-3">
             <label class="form-check-label">Fixar cabeçalho tabela</label>
             <input class="form-check-input" onclick="setCabecalhoFixo('fixar-head-list-conta')" type="checkbox"
                 id="fixar-head-list-conta" name="filtroColuna">
@@ -83,7 +86,10 @@
         <div>
             <i class="far fa-file-excel fs-5 text-blue-pk cursor-pointer" onclick="exportTableToExcel()"></i>
             <i class="far fa-file-pdf ms-1 fs-5 text-blue-pk cursor-pointer" onclick="exportTableToPdf()"></i>
+            <i class="d-none fas fa-mask ms-4 fs-5 text-red-pk cursor-pointer animation-brilhante" 
+                onclick="excluiFiltroDatas()" id="btn-exclui-filtro-datas"></i>
         </div>
+        
     </div>
     
 </div>
@@ -814,6 +820,46 @@
     </div>
 </div>
 
+<div id="popup-filtro-contas" class="d-none centraliza-div card card-body shadow-lg position-absolute animation-fadein mh-pkflex-70 mw-pkflex-40 w-25">
+    <div class="row text-center mt-1 mb-3 bg-gray p-2">
+        <label class="fw-bolder">Filtro de contas <i onclick="abrirFecharPopupFiltroContas()" class="ms-3 bi bi-x-circle-fill"></i></label>
+    </div>
+    <div class="row mb-2">
+        <div class="col-12 mb-2">
+            <select class="form-select form-select-sm" id="select-tipo-data-filtro" onchange="selectTipoDataFiltro(this)">
+                <option value="Data vencimento">Data vencimento</option>
+                <option value="Data pagamento">Data pagamento</option>
+                <option value="Rateio">Rateio</option>
+                <option value="Vinculado">Vinculado</option>
+            </select>
+        </div>
+        <div class="col-6" id="container-data-inicial-filtro">
+            <label class="col-form-label">Data inicial</label>
+            <div class="col-sm-12 input-group input-group-sm">
+                <input type="date" class="form-control" id="data-inicial" onchange="changefiltroDatasContas()">
+            </div>
+        </div>
+        <div class="col-6" id="container-data-final-filtro">
+            <label class="col-form-label">Data final</label>
+            <div class="col-sm-12 input-group input-group-sm">
+                <input type="date" class="form-control" id="data-final" onchange="changefiltroDatasContas()">
+            </div>
+        </div>
+        <div class="row d-none" id="container-rateio-vinculado-filtro">
+            <div class="col-9">
+                <label class="col-form-label" id="label-filtro-rateio-vinculado"></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="text" class="form-control" id="input-filtro-rateio-vinculado" autofocus>
+                </div>
+                
+            </div>
+            <div class="col-3 d-flex align-items-end">
+                <button class="btn btn-sm btn-primary w-100" onclick="filtroContas()">Ir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <a id="btn-abrir-conta-por-dre" type="button" class="d-none" target="_blank"></a>
 <div id="div1" class="d-none"></div>
 
@@ -846,6 +892,30 @@
     let situacaoSelected = document.querySelector('#situacao_select_' + depositoSituacao.innerText.toLowerCase().replace(' ', '_'))
     situacaoSelected.classList.add("border-b-blue")
 
+    function abrirContaPopup(contaNova, numeroConta, situacao) {
+        // Definindo tamanho do popup
+        var largura = 900;
+        var altura = 700;
+        
+        // Calculando a posição para centralizar o popup
+        var esquerda = (window.innerWidth / 2) - (largura / 2);
+        var topo = (window.innerHeight / 2) - (altura / 2);
+        // O link do popup pode ser ajustado conforme necessário
+        if ( contaNova ) {
+            window.open(
+                'http://localhost:8089/conta/cadastrar', 
+                'popup', 
+                `width=${largura},height=${altura},top=${topo},left=${esquerda},scrollbars=yes,resizable=yes`
+            )
+        }else {
+            window.open(
+                `http://localhost:8089/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}`, 
+                'popup', 
+                `width=${largura},height=${altura},top=${topo},left=${esquerda},scrollbars=yes,resizable=yes`
+            )  
+        }
+        
+    }
 
     function handleDragStart(e) {
         if (!mudarPosicaoColuna) return true
@@ -959,6 +1029,7 @@
             document.querySelector("#" + element).checked = false
         }
     }
+    
     function changeColuna(prefixo) {
         let elemento = document.querySelector(`#${prefixo}-coluna-conta`)
         if (prefixo == "filtro") { setConfigFiltro(elemento) }
@@ -1122,6 +1193,107 @@
                 else input.checked = false
             }            
         }
+    }
+    function selectTipoDataFiltro(e) {
+        if (e.value == "Rateio" || e.value == "Vinculado" ) {
+            document.querySelector("#label-filtro-rateio-vinculado").innerText = "Filtro " + e.value
+            document.querySelector("#container-data-inicial-filtro").classList.add('d-none')
+            document.querySelector("#container-data-final-filtro").classList.add('d-none')
+            document.querySelector("#container-rateio-vinculado-filtro").classList.remove('d-none')
+        }else {
+            document.querySelector("#container-data-inicial-filtro").classList.remove('d-none')
+            document.querySelector("#container-data-final-filtro").classList.remove('d-none')
+            document.querySelector("#container-rateio-vinculado-filtro").classList.add('d-none')
+            document.querySelector('#data-inicial').value = ""
+            document.querySelector('#data-final').value = ""
+        }
+        excluiFiltroDatas()
+    }
+    function filtroContas() {
+        let tipoFiltroContas = document.querySelector('#select-tipo-data-filtro')
+        let inputFiltroRateioVinculado = document.querySelector('#input-filtro-rateio-vinculado')
+
+        if ( tipoFiltroContas.value == "Rateio" ) {
+            tipoFiltroContas = "tab-rateio"
+        }else {
+            tipoFiltroContas = "tab-vinculado"
+        }
+        document.querySelector('#table-conta > tbody').innerHTML = ""
+        let count = 0
+        for ( let linha of contasTabela ) {
+            let conteudo = linha.querySelector(`td[name=${tipoFiltroContas}]`).innerText
+            if ( conteudo == inputFiltroRateioVinculado.value.toLowerCase() || inputFiltroRateioVinculado.value == '' && conteudo.trim() == "" ) {
+                document.querySelector('#table-conta > tbody').appendChild(linha)
+                count++
+            }
+        }
+        if ( count > 0 ) {
+            document.getElementsByName(tipoFiltroContas)[0].scrollIntoView({
+                behavior: 'smooth',  // Animação suave
+                block: 'start'       // Alinha o elemento no topo da tela
+            })
+            document.getElementsByName(tipoFiltroContas)[0].classList.add('animation-brilhante')
+            document.getElementsByName(tipoFiltroContas)[0].classList.add('bg-red-pk')
+            setTimeout(function(){
+                document.getElementsByName(tipoFiltroContas)[0].classList.remove('animation-brilhante')
+            document.getElementsByName(tipoFiltroContas)[0].classList.remove('bg-red-pk')
+            }, 4000)
+        }
+        
+        document.querySelector("#btn-exclui-filtro-datas").classList.remove('d-none')
+    }
+    function changefiltroDatasContas() {
+        let tipoFiltroDatas = document.querySelector('#select-tipo-data-filtro')
+        let dataInicial = document.querySelector('#data-inicial').value
+        let dataFinal = document.querySelector('#data-final').value
+        if ( dataFinal == "" ) {
+            dataFinal = dataInicial
+        }
+        if ( dataInicial == "" ) {
+            dataInicial = dataFinal
+        }
+        if ( tipoFiltroDatas.value == "Data vencimento" ) {
+            tipoFiltroDatas = "tab-Vencimento"
+        }else {
+            tipoFiltroDatas = "tab-Pagamento"
+        }
+        if ( !document.URL.includes('dre') ) {tipoFiltroDatas = tipoFiltroDatas.toLowerCase()}
+        document.querySelector('#table-conta > tbody').innerHTML = ""
+        console.log(tipoFiltroDatas, document.URL.includes('dre'))
+        for ( let linha of contasTabela ) {
+            let dateLinha = linha.querySelector(`td[name=${tipoFiltroDatas}]`).innerText
+            dateLinha = dateLinha.split('/').reverse().join('-')
+            if ( dateLinha >= dataInicial && dateLinha <= dataFinal ) {
+                document.querySelector('#table-conta > tbody').appendChild(linha)
+            }
+        }
+        document.querySelector("#btn-exclui-filtro-datas").classList.remove('d-none')
+    }
+    function excluiFiltroDatas() {
+        document.querySelector('#table-conta > tbody').innerHTML = ""
+        let btnExcluiFiltroDatas = document.querySelector("#btn-exclui-filtro-datas")
+        for ( let linha of contasTabela ) {
+            //console.log(linha)
+            document.querySelector('#table-conta > tbody').appendChild(linha)
+        }
+        document.querySelector('#input-filtro-rateio-vinculado').value = ""
+        btnExcluiFiltroDatas.classList.add('d-none')
+        
+        document.querySelector('#data-inicial').value = ""
+        document.querySelector('#data-final').value = ""
+        return true
+    }
+    function abrirFecharPopupFiltroContas() {
+        let divPopupFiltroDatas = document.querySelector('#popup-filtro-contas')
+        document.querySelector('#data-inicial').value = ""
+        document.querySelector('#data-final').value = ""
+        if ( !divPopupFiltroDatas.classList.toString().includes('d-none') ) {
+            divPopupFiltroDatas.classList.add('d-none')
+            document.querySelector('#filtro-colunas-contas').checked = false
+        }else {
+            divPopupFiltroDatas.classList.remove('d-none')
+        }
+        
     }
     async function popupFiltroColuna(nomeColuna=false) {
         let divPopupFiltroColuna = document.querySelector('#popup-filtro-coluna')
@@ -1401,9 +1573,19 @@
     }
     function abrirContaPeloDre(numeroConta, situacao, dre) {
         let linkAbrirContaPorDre = document.querySelector("#btn-abrir-conta-por-dre")
-        linkAbrirContaPorDre.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}&dre=${dre}`
+        if ( !dre ) {
+            linkAbrirContaPorDre.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}`
+        }
+        else {
+            linkAbrirContaPorDre.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}&dre=${dre}`  
+        }
         linkAbrirContaPorDre.click()
     }
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault() // Impede a ação padrão da tecla Enter
+        }
+    })
     function sortTable(nameCol) {
         let colIndex
         let cabecalhos = document.querySelectorAll('#table-conta > thead > tr > th')

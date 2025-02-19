@@ -33,7 +33,7 @@ const cabecalhoDefaultColunas = {
     protocolo_banco: 'Protocolo banco', comprovante_pag: 'Comprovante pagamento', cadastramento: 'Cadastramento', 
     doc_pagamento: 'Documento pagamento', vencimento: 'Vencimento', referencia: 'Referência',
     relacao: 'Relacao', fixar_parcelas: 'Fixar Parcelas', numero_parcelas: 'N° de parcelas', numero_dias: 'N° de dias', 
-    observacao: 'Observação', rateio: 'Rateiro', rateio_dre: 'Rateio Dre', reembolso: 'Reembolso',
+    observacao: 'Observação', rateio: 'Rateio', rateio_dre: 'Rateio Dre', reembolso: 'Reembolso',
     num_pedido_compra: 'N° pedido de compra', data_compra: 'Data compra', emissao_nf: 'Emissão nf',
     num_comprovante: 'N° comprovante', data_entrega_mercad: 'Data entrega mercadoria', vinculado: "Vinculado", 
     vinculado_dre: "Vinculado Dre",
@@ -183,7 +183,7 @@ router.post('/posicao-colunas/cadastrar', async (req, res) => {
             }
         } 
     }
-    console.log(newPosicaoColunas)
+    // console.log(newPosicaoColunas)
     let nickname = req.user.dataValues.nickname
     let posicaoColunas = await PosicaoColunaTabConta.findOne({ where: { usuario: nickname } })
     if (!posicaoColunas) {
@@ -212,29 +212,78 @@ router.get('/abrir-conta', eAdmin, async (req, res) => {
     contas = JSON.parse(JSON.stringify(contas, null, 2))
     if ( contas.length == 0 ) {
         let itens = {proximo_numero_conta: 1, tipo_situacao: situacao}
-        console.log(itens)
+        // console.log(itens)
         return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { itens })
     }
     let item = await ItensConta.findOne({ where: { tipo_situacao: contas[0].situacao } })
     item = JSON.parse(JSON.stringify(item, null, 2))
     delete item.tipo_situacao
     let itens = { ...item }
+    let dres = {}
     if ( !dre ) {
         var umRegistro = false
-        var ultimaConta = [contas[contas.length-1]]
-        contas = contas.filter(item=>{
-            if ( new Date(item.vencimento_parcela.split('/').reverse().join('-')) > new Date() && !umRegistro ) {
+        // var ultimaConta = [contas[contas.length-1]]
+        var novaContas = []
+        var parcela_atual = ""
+        contas = contas.filter((item, index)=>{
+            if ( typeof dres[item.numero_conta] == 'undefined' ) {
+                dres[item.numero_conta] = []
+            }
+            item.vencimento = item.vencimento.split('/').reverse().join('-')
+            item.vencimento_parcela = item.vencimento_parcela.split('/').reverse().join('-')
+            dres[item.numero_conta].push({ 
+                departamento: item.departamento,
+                descricao: item.descricao,
+                valor_dre: item.valor_dre,
+                rateio_dre: item.rateio_dre,
+                vinculado_dre: item.vinculado_dre,
+                categoria: item.categoria,
+                grupo: item.grupo,
+                subgrupo: item.subgrupo,
+                sistema_1: item.sistema_1,
+                num_sistema_1: item.num_sistema_1, 
+                sistema_2: item.sistema_2, 
+                num_sistema_2: item.num_sistema_2, 
+                sistema_3: item.sistema_3, 
+                num_sistema_3: item.num_sistema_3
+            })
+            if ( index == 0 ) {
+                novaContas[0] = item
+            }
+            if ( index > 0 ) {
+               novaContas[0]['departamento_'+(index+1)] = item.departamento,
+               novaContas[0]['descricao_'+(index+1)] = item.descricao,
+               novaContas[0]['valor_dre_'+(index+1)] = item.valor_dre,
+               novaContas[0]['rateio_dre_'+(index+1)] = item.rateio_dre,
+               novaContas[0]['vinculado_dre_'+(index+1)] = item.vinculado_dre,
+               novaContas[0]['categoria_'+(index+1)] = item.categoria,
+               novaContas[0]['grupo_'+(index+1)] = item.grupo,
+               novaContas[0]['subgrupo_'+(index+1)] = item.subgrupo,
+               novaContas[0]['sistema_1_'+(index+1)] = item.sistema_1,
+               novaContas[0]['num_sistema_1_'+(index+1)] = item.num_sistema_1, 
+               novaContas[0]['sistema_2_'+(index+1)] = item.sistema_2, 
+               novaContas[0]['num_sistema_2_'+(index+1)] = item.num_sistema_2, 
+               novaContas[0]['sistema_3_'+(index+1)] = item.sistema_3, 
+               novaContas[0]['num_sistema_3_'+(index+1)] = item.num_sistema_3
+            }
+            parcela_atual = `${item.numero_parcela}/${item.numero_parcelas}`
+            if ( new Date(item.vencimento_parcela) > new Date() && !umRegistro ) {
                 umRegistro = true
+                parcela_atual = `${item.numero_parcela}/${item.numero_parcelas}`
                 return item
             }
+            
         })
-        if ( ultimaConta.length && !contas.length ) {
-            contas = ultimaConta
-        }
+        // if ( ultimaConta.length && !contas.length ) {
+        //     contas = ultimaConta
+        // }
         
     }
-    var parcela_atual = contas.length == 0 ? "" : `${contas[0].numero_parcela}/${contas[0].numero_parcelas}`
-    res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { parcela_atual, itens, dados: contas[0], data_script: JSON.stringify(contas) })
+    contas = novaContas
+    qtdeDres = Object.values(dres)[0].length
+    // var parcela_atual = contas.length == 0 ? "" : `${contas[0].numero_parcela}/${contas[0].numero_parcelas}`
+    console.log(parcela_atual)
+    return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { parcela_atual, itens, dados: contas[0], data_script: JSON.stringify(contas) })
 })
 
 router.get('/cadastrar', eAdmin, async (req, res) => {
@@ -248,7 +297,7 @@ router.get('/cadastrar', eAdmin, async (req, res) => {
     let itens = { ...item, tipo_situacao: (req.query.situacao || "Aberto") }
     if (contas.length > 0) {
         itens.proximo_numero_conta = (contas ? Number(contas[contas.length - 1].numero_conta) : 0) + 1
-        console.log(Number(contas[contas.length - 1].numero_conta) + 1)
+        // console.log(Number(contas[contas.length - 1].numero_conta) + 1)
     } else { itens.proximo_numero_conta = 1 }
 
     let optionsChavePix = ""
@@ -257,7 +306,7 @@ router.get('/cadastrar', eAdmin, async (req, res) => {
             <option value="${registro.tipo}">${registro.tipo}</option>
         `
     }
-    res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { itens, optionsChavePix })
+    return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { itens, optionsChavePix})
 })
 
 router.post('/cadastrar', eAdmin, async (req, res) => {
@@ -307,7 +356,7 @@ router.post('/cadastrar', eAdmin, async (req, res) => {
                 numero_conta = Number(numero_conta) + num_parc
                 if ( num_parc == 0 ) { num_parc = 1 }
                 for ( let num_dre = 1; num_dre <= qtdeDre; num_dre++ ) {
-                    console.log(numero_conta, parcela)
+                    // console.log(numero_conta, parcela)
                     if (num_dre == 1) {
                         var departamento_edit = "departamento"
                         var descricao_edit = "descricao"
@@ -339,7 +388,9 @@ router.post('/cadastrar', eAdmin, async (req, res) => {
                         var sistema_3_edit = "sistema_3_" + num_dre
                         var num_sistema_3_edit = "num_sistema_3_" + num_dre
                     }
-                    var new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (numero_dias * num_dre) 
+                    // console.log('\n\n', parcela)
+                    var new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (parseInt(numero_dias.replace(' dias', '')) * num_dre) 
+                    //console.log('\n\n', new_numero_dias, '--', numero_dias, '---', parcela.numero_dias, '\n\n')
                     var contaNova = await conta.create({
                         departamento: req.body[departamento_edit],
                         descricao: req.body[descricao_edit],
@@ -439,7 +490,7 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
     if (!posicaoColunas) {
         var posColunas = posicaoDefaultColunas
     } else {
-        posicaoColunas = JSON.parse(JSON.stringify(posicaoColunas, null, 2))
+        posicaoColunas = JSON.parse(JSON.stringify(posicaoColunas, null, 2)) 
         var posColunas = {}
         for (let col of Object.entries(posicaoColunas)) {
             if (col[0] != "usuario" && col[0] != "id") {
@@ -536,6 +587,7 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                     let index = 1
                     for (key of Object.keys(item.dataValues)) {
                         if (visibilidadeColunas) {
+                        // console.log(visibilidadeColunas[posColunas[index]], visibilidadeColunas, index, '\n\n')
                             var classVisibleColumn = visibilidadeColunas[posColunas[index]] ? "" : "class='d-none'"
                         } else {
                             var classVisibleColumn = visibilidadeColunasDefault[posColunas[index]] ? "" : "class='d-none'"
@@ -556,21 +608,31 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                             if ( index == 1 ) {
                                 htmlBodyPart += `
                                     <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
-                                        <div class="position-relative" style="left: -25px;">
+                                        <div class="position-relative d-flex gap-2" style="left: 2px; top: 2px;">
+                                            <i class="fas fa-search cursor-pointer position-relative" onclick="abrirContaPeloDre('${item.dataValues.numero_conta}', '${(item.dataValues.situacao || "Aberto")}', false)"></i>
                                             <i id="btn-hide-dre${item.dataValues.numero_conta}" onclick="showHideDre('${item.dataValues.numero_conta}', 'hide', ${indexBtnShowHide})" class="d-none bi bi-dash-square-fill cursor-pointer text-blue-pk"></i>
                                             <i id="btn-show-dre${item.dataValues.numero_conta}" onclick="showHideDre('${item.dataValues.numero_conta}', 'show', ${indexBtnShowHide})" class="bi bi-plus-square-fill cursor-pointer text-blue-pk"></i>
+                                            <span>${item.dataValues[posColunas[index]]}</span>
                                         </div>
-                                        ${item.dataValues[posColunas[index]]}
                                     </td>
                                 `
                                 indexBtnShowHide++
                             }
                             else {
-                                htmlBodyPart += `
-                                    <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
-                                        ${item.dataValues[posColunas[index]]}
-                                    </td>
-                                `
+                                if ( posColunas[index] == "numero_parcelas" ) {
+                                    htmlBodyPart += `
+                                        <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
+                                            ${item.dataValues.numero_parcela}/${item.dataValues.numero_parcelas}
+                                        </td>
+                                    `
+                                }
+                                else {
+                                    htmlBodyPart += `
+                                        <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
+                                            ${item.dataValues[posColunas[index]]}
+                                        </td>
+                                    `
+                                }                                
                             }
                         }
                         
