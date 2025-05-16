@@ -103,6 +103,9 @@ th, td {
 .mt-01 {
     margin-top: -10px !important;
 }
+.col-pk {
+    width: 11% !important;
+}
 .animation-downtop {
     animation: showTopAnimation ease 0.5s;
     animation-iteration-count: 1;

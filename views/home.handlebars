@@ -11,7 +11,7 @@
 <script>
     const baseUrl = "http://localhost:8089"
     async function setPageHome() {
-       let resultado = await fetch(`${ baseUrl }/configuracao/set-page-home`)//http://localhost:8089
+       let resultado = await fetch(`${ baseUrl }/configuracao/set-page-home`)
         resultado = await resultado.json()
         let a = document.querySelector('#redirect-page-incial')
         a.href = resultado.href

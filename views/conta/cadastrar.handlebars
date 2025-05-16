@@ -17,12 +17,12 @@
 </div>
 <div class="card card-body shadow-lg h-pkflex-80">
     <div id="card-conta" class="card-body overflow-auto scroll">
-        <form action="/conta/cadastrar" method="post">
-            <div class="row rem0948">
+        <form action="/conta/cadastrar" method="post" enctype="multipart/form-data">
+            <div class="row rem0788">
 
                 {{!-- seção de controle e valor --}}
-                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm rem0888">
-                    <div class="col-12 col-md-6 col-lg-2">
+                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm rem0788">
+                    <div class="col-12 col-md-6 col-lg-1">
                         <label for="controle" class="col-form-label">N° Controle <span
                                 class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
@@ -30,7 +30,7 @@
                                 value="{{dados.numero_conta}}{{itens.proximo_numero_conta}}" required readonly>
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4">
+                    <div class="col-12 col-md-6 col-pk">
                         <label for="valor_conta" class="col-form-label">Valor da Conta<span
                                 class="text-danger fw-bolder"> *</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
@@ -39,7 +39,7 @@
                             >
                         </div>
                     </div>
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-pk">
                         {{#if itens.rateio}}
                         <label for="rateio" class="col-form-label">Rateio <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -59,7 +59,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-pk">
                         {{#if itens.vinculado}}
                         <label for="vinculado" class="col-form-label">Vinculado <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -79,7 +79,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6 col-lg-8">
+                    <div class="col-12 col-md-6 col-lg-4">
                         {{#if itens.historico}}
                         <label for="historico" class="col-form-label">Histórico <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -95,7 +95,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4">
+                    <div class="col-12 col-md-6 col-pk">
                         {{#if itens.situacao}}
                         <label for="situacao" class="col-form-label">Situação <span
                             class="text-danger fw-bolder">*</span></label>
@@ -123,10 +123,68 @@
                         </div>
                         {{/if}}
                     </div>
+
+                    {{!-- inserido para teste se fica bom --}}
+                    <div class="col-12 col-pk">
+                        {{#if itens.chave}}
+                        <label for="chave" class="col-form-label">chave <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="chave" required>
+                                {{{optionsChavePix}}}
+                            </select>
+                        </div>
+                        {{else}}
+                        <label for="chave" class="col-form-label">chave</label>
+                        <div class="input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="chave" required>
+                                {{{optionsChavePix}}}
+                            </select>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.via_pagamento}}
+                        <label for="via_pagamento" class="col-form-label">Via de pagamento <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="via_pagamento" value="{{dados.via_pagamento}}"
+                                required autocomplete="off">
+                        </div>
+                        {{else}}
+                        <label for="via_pagamento" class="col-form-label">Via de pagamento</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="via_pagamento" value="{{dados.via_pagamento}}"
+                                autocomplete="off">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-lg-3">
+                        {{#if itens.fornecedor}}
+                        <label for="fornecedor" class="col-form-label">Fornecedor <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" autocomplete="off" onkeyup="filtro(this, 'fornecedores')"
+                                placeholder="busca inteligente..." class="form-control" name="fornecedor"
+                                value="{{dados.fornecedor}}" required autofocus>
+                            <div id="popupFiltro-fornecedor"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{else}}
+                        <label for="fornecedor" class="col-form-label">Fornecedor</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" autocomplete="off" onkeyup="filtro(this, 'fornecedores')"
+                                placeholder="busca inteligente..." class="form-control" name="fornecedor"
+                                value="{{dados.fornecedor}}" autofocus>
+                            <div id="popupFiltro-fornecedor"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{/if}}
+                    </div>
                 </div>
 
                 {{!-- seção de fornecedor --}}
-                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm rem0888">
+                {{!-- <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm">
                     <div class="col-12 col-md-6">
                         {{#if itens.fornecedor}}
                         <label for="fornecedor" class="col-form-label">Fornecedor <span
@@ -183,13 +241,13 @@
                         </div>
                         {{/if}}
                     </div>
-                </div>
+                </div> --}}
 
                 {{!-- seção de DRE --}}
-                <div class="row d-flex justify-content-center mb-1 mt-2 p-3 bg-blue-1 shadow-sm rem0888" id="secao-dre">
+                <div class="row d-flex justify-content-center mb-1 mt-2 p-3 bg-blue-1 shadow-sm" id="secao-dre">
                     <span class="fw-bold fs-5 mb-1 border border-top-0 border-end-0 border-start-0 text-blue-pk">DRE</span>
                     <div id="dre-1" class="row p-0">
-                        <div class="col-12 col-sm-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-lg-4">
                             {{#if itens.descricao}}
                             <label for="descricao" class="col-form-label">Descrição <span
                                     class="text-danger fw-bolder">*</span></label>
@@ -211,7 +269,7 @@
                             </div>
                             {{/if}}
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-pk">
                             {{#if itens.departamento}}
                             <label for="departamento" class="col-form-label">Departamento <span
                                     class="text-danger fw-bolder">*</span></label>
@@ -233,7 +291,7 @@
                             </div>
                             {{/if}}
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4">{{!-- marcador 1 é o mesmo que rateio  --}}
+                        <div class="col-12 col-sm-6 col-pk">{{!-- marcador 1 é o mesmo que rateio  --}}
                             {{#if itens.rateio_dre}}
                             <label for="rateio_dre" class="col-form-label">Marcador 1 <span
                                     class="text-danger fw-bolder">*</span></label>
@@ -253,7 +311,7 @@
                             </div>
                             {{/if}}
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-pk">
                             {{#if itens.categoria}}
                             <label for="categoria" class="col-form-label">Categoria <span
                                     class="text-danger  fw-bolder">*</span></label>
@@ -275,7 +333,7 @@
                             </div>
                             {{/if}}
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-pk">
                             {{#if itens.valor_dre}}
                             <label for="valor_dre" class="col-form-label">Valor <span
                                     class="text-danger fw-bolder">*</span></label>
@@ -291,7 +349,7 @@
                             </div> {{!-- onchange="compareValor()" --}}
                             {{/if}}
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4">{{!--  marcador 2 é o mesmo que vinculado --}}
+                        <div class="col-12 col-sm-6 col-pk">{{!--  marcador 2 é o mesmo que vinculado --}}
                             {{#if itens.vinculado_dre}}
                             <label for="vinculado_dre" class="col-form-label">Marcador 2 <span
                                     class="text-danger fw-bolder">*</span></label>
@@ -311,14 +369,14 @@
                             </div>
                             {{/if}}
                         </div>
-                        <div class="d-none col-12 col-sm-6 col-md-4">
+                        <div class="d-none col-12 col-sm-6 col-pk">
                             <label for="grupo" class="col-form-label">Grupo</label>
                             <div class="col-sm-12 input-group input-group-sm">
                                 <input autocomplete="off" type="text" class="form-control" name="grupo"
                                     value="{{dados.grupo}}">
                             </div>
                         </div>
-                        <div class="d-none col-12 col-sm-6 col-md-4">
+                        <div class="d-none col-12 col-sm-6 col-pk">
                             <label for="subgrupo" class="col-form-label">Sub Grupo</label>
                             <div class="col-sm-12 input-group input-group-sm">
                                 <input autocomplete="off" type="text" class="form-control" name="subgrupo"
@@ -326,7 +384,7 @@
                             </div>
                         </div>
 
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-pk">
                             {{#if itens.num_sistema_1}}
                             <label for="num_sistema_1" class="col-form-label">Número sistema 1 <span
                                     class="text-danger fw-bolder">*</span></label>
@@ -342,7 +400,7 @@
                             </div>
                             {{/if}}
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-pk">
                             {{#if itens.sistema_1}}
                             <label for="sistema_1" class="col-form-label">Sistema 1 <span
                                     class="text-danger fw-bolder">*</span></label>
@@ -364,7 +422,7 @@
                             </div>
                             {{/if}}
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-pk">
                             {{#if itens.num_sistema_2}}
                             <label for="num_sistema_2" class="col-form-label">Número sistema 2 <span
                                     class="text-danger fw-bolder">*</span></label>
@@ -380,7 +438,7 @@
                             </div>
                             {{/if}}
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-pk">
                             {{#if itens.sistema_2}}
                             <label for="sistema_2" class="col-form-label">Sistema 2 <span
                                     class="text-danger fw-bolder">*</span></label>
@@ -402,7 +460,7 @@
                             </div>
                             {{/if}}
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-pk">
                             {{#if itens.num_sistema_3}}
                             <label for="num_sistema_3" class="col-form-label">Número sistema 3 <span
                                     class="text-danger fw-bolder">*</span></label>
@@ -418,7 +476,7 @@
                             </div>
                             {{/if}}
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-pk">
                             {{#if itens.sistema_3}}
                             <label for="sistema_3" class="col-form-label">Sistema 3 <span
                                     class="text-danger fw-bolder">*</span></label>
@@ -441,20 +499,20 @@
                             {{/if}}
                         </div>
 
-                        <div class="col-12 col-sm-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-pk">
                             <label class="col-form-label">Cadastramento</label>
                             <div class="col-sm-12 input-group input-group-sm">
                                 <input type="date" class="form-control" name="cadastramento_dre"
                                     value="{{dados.cadastramento}}" readonly>
                             </div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-pk">
                             <label for="vencimento" class="col-form-label">Vencimento</label>
                             <div class="col-sm-12 input-group input-group-sm">
                                 <input type="date" class="form-control" name="vencimento_dre" value="{{dados.vencimento}}" readonly>
                             </div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-pk">
                             <label for="relacao" class="col-form-label">Relação</label>
                             <div class="col-sm-12 input-group input-group-sm">
                                 <input type="text" class="form-control" name="relacao_dre" value="{{dados.relacao}}" readonly>
@@ -468,8 +526,8 @@
                 </div>
 
                 {{!-- seção de observação e parcelas --}}
-                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm rem0888">
-                    <div class="col-12 col-sm-6 col-md-4">
+                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm">
+                    <div class="col-12 col-sm-6 col-pk">
                         {{#if itens.cadastramento}}
                         <label for="cadastramento" class="col-form-label">Cadastramento <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -485,7 +543,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-sm-6 col-md-4">
+                    <div class="col-12 col-sm-6 col-pk">
                         {{#if itens.parcela_atual}}
                         <label for="parcela_atual" class="col-form-label">Parcela <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -501,23 +559,23 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-sm-6 col-md-4">
+                    <div class="col-12 col-sm-6 col-pk">
                         {{#if itens.doc_pagamento}}
-                        <label for="doc_pagamento" class="col-form-label">Documento pagamento <span
+                        <label for="doc_pagamento" class="col-form-label">Doc pagamento <span
                                 class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input required type="text" class="form-control" name="doc_pagamento"
                                 value="{{dados.doc_pagamento}}">
                         </div>
                         {{else}}
-                        <label for="doc_pagamento" class="col-form-label">Documento pagamento</label>
+                        <label for="doc_pagamento" class="col-form-label">Doc pagamento</label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input type="text" class="form-control" name="doc_pagamento"
                                 value="{{dados.doc_pagamento}}">
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-sm-6 col-md-4">
+                    <div class="col-12 col-sm-6 col-pk">
                         {{#if itens.vencimento}}
                         <label for="vencimento" class="col-form-label">Vencimento <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -532,7 +590,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-sm-6 col-md-4">
+                    <div class="col-12 col-sm-6 col-pk">
                         {{#if itens.referencia}}
                         <label for="referencia" class="col-form-label">Referência <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -547,7 +605,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-sm-6 col-md-4">
+                    <div class="col-12 col-sm-6 col-pk">
                         {{#if itens.relacao}}
                         <label for="relacao" class="col-form-label">Relação <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -561,7 +619,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12">
+                    <div class="col-12 col-sm-6 col-md-4">
                         {{#if itens.observacao}}
                         <label for="observacao" class="col-form-label">Observação <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -579,8 +637,8 @@
                 </div>
 
                 {{!-- seção de bancos --}}
-                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm rem0888">
-                    <div class="col-12 col-md-6">
+                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm">
+                    <div class="col-12 col-pk">
                         {{#if itens.forma_pagamento}}
                         <label for="forma_pagamento" class="col-form-label">Forma de pagamento <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -602,23 +660,23 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.num_cartao_cred}}
-                        <label for="num_cartao_cred" class="col-form-label">Número cartão de crédito <span
+                        <label for="num_cartao_cred" class="col-form-label">N° cartão de crédito <span
                                 class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input autocomplete="off" required type="text" class="form-control" name="num_cartao_cred"
                                 value="{{dados.num_cartao_cred}}">
                         </div>
                         {{else}}
-                        <label for="num_cartao_cred" class="col-form-label">Número cartão de crédito</label>
+                        <label for="num_cartao_cred" class="col-form-label">N° cartão de crédito</label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input autocomplete="off" type="text" class="form-control" name="num_cartao_cred"
                                 value="{{dados.num_cartao_cred}}">
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.agendamento}}
                         <label for="agendamento" class="col-form-label">Agendamento <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -633,7 +691,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.cheque_compens}}
                         <label for="cheque_compens" class="col-form-label">Cheque compensado <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -649,7 +707,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.pagamento}}
                         <label for="pagamento" class="col-form-label">Pagamento <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -664,7 +722,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.agencia}}
                         <label for="agencia" class="col-form-label">Agência <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -680,7 +738,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.banco}}
                         <label for="banco" class="col-form-label">Banco <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -702,7 +760,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.conta_corrente}}
                         <label for="conta_corrente" class="col-form-label">Conta corrente <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -718,7 +776,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.protocolo_banco}}
                         <label for="protocolo_banco" class="col-form-label">Protocolo banco <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -734,18 +792,18 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-md-3">
                         {{#if itens.comprovante_pag}}
-                        <label for="comprovante_pag" class="col-form-label">Comprovante de pagamento <span
+                        <label for="comprovante_pag" class="col-form-label">Comp. de pagamento <span
                                 class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
-                            <input required type="text" class="form-control" name="comprovante_pag"
+                            <input required type="file" class="form-control" name="comprovante_pag"
                                 value="{{dados.comprovante_pag}}">
                         </div>
                         {{else}}
-                        <label for="comprovante_pag" class="col-form-label">Comprovante de pagamento</label>
+                        <label for="comprovante_pag" class="col-form-label">Comp. de pagamento</label>
                         <div class="col-sm-12 input-group input-group-sm">
-                            <input type="text" class="form-control" name="comprovante_pag"
+                            <input type="file" class="form-control" name="comprovante_pag"
                                 value="{{dados.comprovante_pag}}">
                         </div>
                         {{/if}}
@@ -754,8 +812,8 @@
                 </div>
 
                 {{!-- secão de compra --}}
-                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm rem0888">
-                    <div class="col-12 col-md-6">
+                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm">
+                    <div class="col-12 col-pk">
                         {{#if itens.num_pedido_compra}}
                         <label for="num_pedido_compra" class="col-form-label">Número pedido <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -771,7 +829,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.data_compra}}
                         <label for="data_compra" class="col-form-label">Data compra <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -786,7 +844,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.emissao_nf}}
                         <label for="emissao_nf" class="col-form-label">Emissão NF <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -801,7 +859,7 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.num_comprovante}}
                         <label for="num_comprovante" class="col-form-label">Número comprovante <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -817,23 +875,23 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.data_entrega_mercad}}
-                        <label for="data_entrega_mercad" class="col-form-label">Data entrega mercadoria <span
+                        <label for="data_entrega_mercad" class="col-form-label">Dt entrega mercad.<span
                                 class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input required type="Date" class="form-control" name="data_entrega_mercad"
                                 value="{{dados.data_entrega_mercad}}">
                         </div>
                         {{else}}
-                        <label for="data_entrega_mercad" class="col-form-label">Data entrega mercadoria</label>
+                        <label for="data_entrega_mercad" class="col-form-label">Dt entrega mercad.</label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input type="Date" class="form-control" name="data_entrega_mercad"
                                 value="{{dados.data_entrega_mercad}}">
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.mercadoria_entregue}}
                         <label for="mercadoria_entregue" class="col-form-label">Mercadoria entregue <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -849,23 +907,23 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.comprovante_mercad}}
-                        <label for="comprovante_mercad" class="col-form-label">Comprovante mercadoria <span
+                        <label for="comprovante_mercad" class="col-form-label">Comp. de mercadoria <span
                                 class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input required type="text" class="form-control" name="comprovante_mercad"
                                 value="{{dados.comprovante_mercad}}">
                         </div>
                         {{else}}
-                        <label for="comprovante_mercad" class="col-form-label">Comprovante mercadoria</label>
+                        <label for="comprovante_mercad" class="col-form-label">Comp. de mercadoria</label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input type="text" class="form-control" name="comprovante_mercad"
                                 value="{{dados.comprovante_mercad}}">
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-pk">
                         {{#if itens.reembolso}}
                         <label for="reembolso" class="col-form-label">Reembolso <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -884,8 +942,8 @@
                 </div>
 
                 {{!-- seção de rateio --}}
-                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm rem0888">
-                    {{!-- <div class="col-12 col-md-6">
+                {{!--<div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm">
+                     <div class="col-12 col-md-6">
                         {{#if itens.rateio}}
                         <label for="rateio" class="col-form-label">Rateio <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -940,11 +998,11 @@
                                 value="{{dados.reembolso}}">
                         </div>
                         {{/if}}
-                    </div> --}}
-                </div>
+                    </div> 
+                </div>--}}
 
                 {{!-- seção de sistemas --}}
-                {{!-- <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm rem0888">
+                {{!-- <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm">
                     <div class="col-12 col-md-6">
                         {{#if itens.num_sistema_1}}
                         <label for="num_sistema_1" class="col-form-label">Número sistema 1 <span
@@ -1062,7 +1120,7 @@
                 </div> --}}
 
                 {{!-- seção de parcelas --}}
-                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm rem0888">
+                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm">
                     <div class="col-12 col-md-6 col-lg-3">
                         {{#if itens.parcela}}
                         <label for="numero_parcelas" class="col-form-label">Número de Parcelas <span
@@ -1255,18 +1313,18 @@
                 </div>
 
                 {{!-- seção de botões --}}
-                <div class="row mb-1 mt-4 p-3 rem0888">
+                <div class="row mb-1 mt-4 p-3">
                     <div class="col-sm-12 col-md-6 col-lg-3 mb-2 d-flex justify-content-center">
-                        <a onclick="esquecerConta(true)" class="btn btn-danger fw-bold w-100 rem0888">Esquecer Conta</a>
+                        <a onclick="esquecerConta(true)" class="btn btn-danger fw-bold w-100 rem0788">Esquecer Conta</a>
                     </div>
                     <div class="col-sm-12 col-md-6 col-lg-3 mb-2 d-flex justify-content-center">
-                        <a id="btn-gerar-parcelas" class="btn btn-warning fw-bold w-100 rem0888">Gerar parcelas</a>
+                        <a id="btn-gerar-parcelas" class="btn btn-warning fw-bold w-100 rem0788">Gerar parcelas</a>
                     </div>
                     <div class="col-sm-12 col-md-6 col-lg-3 mb-2 d-flex justify-content-center">
-                        <a id="btn-salvar-duplicar" class="btn btn-success fw-bold w-100 rem0888">Salvar e Duplicar</a>
+                        <a id="btn-salvar-duplicar" class="btn btn-success fw-bold w-100 rem0788">Salvar e Duplicar</a>
                     </div> 
                     <div class="col-sm-12 col-md-6 col-lg-3 mb-2 d-flex justify-content-center">
-                        <button id="btn-salvar" type="submit" class="btn btn-primary fw-bold w-100 rem0888">Salvar Conta</button>
+                        <button id="btn-salvar" type="submit" class="btn btn-primary fw-bold w-100 rem0788">Salvar Conta</button>
                     </div>
                     <button class="d-none" id="btn-salvar-oculto" type="submit"></button>
                 </div>
@@ -1398,7 +1456,7 @@
                 </div>
                 {{/if}}
             </div>
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-sm-6 col-pk">
                 {{#if itens.departamento}}
                 <label for="departamento" class="col-form-label">Departamento <span
                         class="text-danger fw-bolder">*</span></label>
@@ -1421,7 +1479,7 @@
                 {{/if}}
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-sm-6 col-pk">
                 {{#if itens.rateio_dre}}
                 <label for="rateio_dre" class="col-form-label">Marcador 1 <span
                         class="text-danger fw-bolder">*</span></label>
@@ -1441,7 +1499,7 @@
                 </div>
                 {{/if}}
             </div>
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-sm-6 col-pk">
                 {{#if itens.categoria}}
                 <label for="categoria" class="col-form-label">Categoria <span
                         class="text-danger fw-bolder">*</span></label>
@@ -1463,7 +1521,7 @@
                 </div>
                 {{/if}}
             </div>
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-sm-6 col-pk">
                 {{#if itens.valor}}
                 <label class="col-form-label">Valor <span
                         class="text-danger fw-bolder">*</span></label>
@@ -1481,7 +1539,7 @@
                 </div>
                 {{/if}}
             </div>
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-sm-6 col-pk">
                 {{#if itens.vinculado_dre}}
                 <label for="vinculado_dre" class="col-form-label">Marcador 2 <span
                         class="text-danger fw-bolder">*</span></label>
@@ -1501,14 +1559,14 @@
                 </div>
                 {{/if}}
             </div>
-            <div class="d-none col-12 col-sm-6 col-md-4">
+            <div class="d-none col-12 col-sm-6 col-pk">
                 <label class="col-form-label">Grupo</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" class="form-control" name="grupo_${ qtdeDre + 1 }"
                         value="{{dados.["grupo_${ qtdeDre + 1 }"]}}">
                 </div>
             </div>
-            <div class="d-none col-12 col-sm-6 col-md-4">
+            <div class="d-none col-12 col-sm-6 col-pk">
                 <label for="subgrupo" class="col-form-label">Sub Grupo</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" class="form-control" name="subgrupo_${ qtdeDre + 1 }"
@@ -1516,7 +1574,7 @@
                 </div>
             </div>
 
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-pk">
                 {{#if itens.num_sistema_1}}
                 <label for="num_sistema_1_${ qtdeDre + 1 }" class="col-form-label">Número sistema 1 <span
                         class="text-danger fw-bolder">*</span></label>
@@ -1532,7 +1590,7 @@
                 </div>
                 {{/if}}
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-pk">
                 {{#if itens.sistema_1}}
                 <label for="sistema_1_${ qtdeDre + 1 }" class="col-form-label">Sistema 1 <span
                         class="text-danger fw-bolder">*</span></label>
@@ -1554,7 +1612,7 @@
                 </div>
                 {{/if}}
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-pk">
                 {{#if itens.num_sistema_2}}
                 <label for="num_sistema_2_${ qtdeDre + 1 }" class="col-form-label">Número sistema 2 <span
                         class="text-danger fw-bolder">*</span></label>
@@ -1570,7 +1628,7 @@
                 </div>
                 {{/if}}
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-pk">
                 {{#if itens.sistema_2}}
                 <label for="sistema_2_${ qtdeDre + 1 }" class="col-form-label">Sistema 2 <span
                         class="text-danger fw-bolder">*</span></label>
@@ -1592,7 +1650,7 @@
                 </div>
                 {{/if}}
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-pk">
                 {{#if itens.num_sistema_3}}
                 <label for="num_sistema_3_${ qtdeDre + 1 }" class="col-form-label">Número sistema 3 <span
                         class="text-danger fw-bolder">*</span></label>
@@ -1608,7 +1666,7 @@
                 </div>
                 {{/if}}
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-pk">
                 {{#if itens.sistema_3}}
                 <label for="sistema_3_${ qtdeDre + 1 }" class="col-form-label">Sistema 3 <span
                         class="text-danger fw-bolder">*</span></label>
@@ -1630,21 +1688,21 @@
                 </div>
                 {{/if}}
             </div>
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-sm-6 col-pk">
                 <label class="col-form-label">Cadastramento</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input type="date" class="form-control" name="cadastramento_dre"
                         value="{{dados.cadastramento}}${cadastramento}" readonly>
                 </div>
             </div>
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-sm-6 col-pk">
                 <label for="vencimento" class="col-form-label">Vencimento</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input type="date" class="form-control" name="vencimento_dre" 
                       value="{{dados.vencimento}}${vencimento}" readonly>
                 </div>
             </div>
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-sm-6 col-pk">
                 <label for="relacao" class="col-form-label">Relação</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input type="text" class="form-control" name="relacao_dre" 
@@ -1735,11 +1793,11 @@
         let somaDres = 0
         for ( item of formData.entries() ) {
             if ( item[0].includes("valor_dre") ) {
-                objForm[item[0]] = parseFloat(item[1].replace("R$ ", "").replace("R$", "").replace(",", ".")).toFixed(2)
-                somaDres += parseFloat(parseFloat(item[1].replace("R$ ", "").replace("R$", "").replace(",", ".") || 0).toFixed(2))
+                objForm[item[0]] = parseFloat(item[1].replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
+                somaDres += parseFloat(parseFloat(item[1].replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2))
             }
             if( item[0].includes('valor_conta') ) {
-                objForm[item[0]] = parseFloat(item[1].replace("R$ ", "").replace("R$", "").replace(",", ".")).toFixed(2)
+                objForm[item[0]] = parseFloat(item[1].replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
             }
         }
         let erros = []
@@ -1758,10 +1816,10 @@
         for ( let dre=1;dre<=qtdeDre;dre++ ) {
             objParcelasGeradas = []
             if ( dre == 1 ) {
-                var valorDre = parseFloat(document.getElementsByName("valor_dre")[0].value.replace("R$ ", "").replace("R$", "").replace(",", ".")).toFixed(2)
+                var valorDre = parseFloat(document.getElementsByName("valor_dre")[0].value.replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
             }
             else {
-                var valorDre = parseFloat(document.getElementsByName("valor_dre_"+dre)[0].value.replace("R$ ", "").replace("R$", "").replace(",", ".")).toFixed(2)
+                var valorDre = parseFloat(document.getElementsByName("valor_dre_"+dre)[0].value.replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
             }
             let parcelas = `
                 <div id="parcelas-dre-${dre}">
@@ -1889,48 +1947,93 @@
     })
     document.querySelector('#btn-salvar').addEventListener('click', async function(e) {
         e.preventDefault();
-        var formulario = document.getElementsByTagName('form')[1]
-        var formData = new FormData(formulario);
-        // output as an object
-        objForm = Object.fromEntries(formData)
-        if ( objForm.numero_parcelas == "" || objForm.numero_parcelas < 1 || objParcelasGeradas.length == 0 ) {
-            if ( document.URL.toString().includes('abrir-conta') ) {
-                document.querySelector('#btn-gerar-parcelas').click()
-            }else {
-              return alert("As parcelas não foram geradas, clique no botão gerar parcelas antes de salvar a conta.")  
-            }
-        } 
-        let somaDres = 0
-        for ( item of formData.entries() ) {
-            if ( item[0].includes("valor_dre") ) {
-                objForm[item[0]] = parseFloat(item[1].replace("R$ ", "").replace("R$", "").replace(",", ".")).toFixed(2)
-                somaDres += parseFloat(parseFloat(item[1].replace("R$ ", "").replace("R$", "").replace(",", ".") || 0).toFixed(2))
-            }
-            if( item[0].includes('valor_conta') ) {
-                objForm[item[0]] = parseFloat(item[1].replace("R$ ", "").replace("R$", "").replace(",", ".")).toFixed(2)
-            }
-        }
-        if ( objForm.valor_conta > somaDres ) {
-            return alert('O valor da conta é maior que a soma do(s) Dre(s).')
-        }
-        if ( objForm.valor_conta < somaDres ) {
-            return alert('A soma do(s) Dre(s) é maior que o valor da conta.')
-        } 
-        objForm.parcelas_geradas = objParcelasGeradas
+        //var formulario = document.getElementsByTagName('form')[1]
+        //var formData = new FormData(formulario);
+        //// output as an object
+        //objForm = Object.fromEntries(formData)
+        //if ( objForm.numero_parcelas == "" || objForm.numero_parcelas < 1 || objParcelasGeradas.length == 0 ) {
+        //    if ( document.URL.toString().includes('abrir-conta') ) {
+        //        document.querySelector('#btn-gerar-parcelas').click()
+        //    }else {
+        //      return alert("As parcelas não foram geradas, clique no botão gerar parcelas antes de salvar a conta.")  
+        //    }
+        //} 
+        //let somaDres = 0
+        //for ( item of formData.entries() ) {
+        //    if ( item[0].includes("valor_dre") ) {
+        //        objForm[item[0]] = parseFloat(item[1].replace("R$ ", "").replace("R$", "").replace(",", ".")).toFixed(2)
+        //        somaDres += parseFloat(parseFloat(item[1].replace("R$ ", "").replace("R$", "").replace(",", ".") || 0).toFixed(2))
+        //    }
+        //    if( item[0].includes('valor_conta') ) {
+        //        objForm[item[0]] = parseFloat(item[1].replace("R$ ", "").replace("R$", "").replace(",", ".")).toFixed(2)
+        //    }
+        //}
+        //if ( objForm.valor_conta > somaDres ) {
+        //    return alert('O valor da conta é maior que a soma do(s) Dre(s).')
+        //}
+        //if ( objForm.valor_conta < somaDres ) {
+        //    return alert('A soma do(s) Dre(s) é maior que o valor da conta.')
+        //} 
+        //objForm.parcelas_geradas = objParcelasGeradas
+//
+        //// ...or iterate through the name-value pairs
+        //let qtdeDre = 0
+        //for (var pair of formData.entries()) {
+        //    if ( pair[0].toString().includes("valor_dre") ) { qtdeDre++ }
+        //}
+        //const options = {
+        //    method: 'POST',
+        //    body: JSON.stringify({...objForm}),
+        //}
+        
+        const formulario = document.getElementsByTagName('form')[1];
+        const formData = new FormData(formulario); // Contém arquivo + campos
 
-        // ...or iterate through the name-value pairs
-        let qtdeDre = 0
-        for (var pair of formData.entries()) {
-            if ( pair[0].toString().includes("valor_dre") ) { qtdeDre++ }
+        // Processa os campos numéricos sem transformar em JSON
+        let somaDres = 0;
+        for (let [key, value] of formData.entries()) {
+            if (key.includes("valor_dre")) {
+            const val = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2);
+            console.log(key, value, val, 'valor_dre')
+            formData.set(key, val);
+            somaDres += parseFloat(val);
+            }
+            if (key.includes("valor_conta")) {
+            const val = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2);
+            console.log(key, value, val, 'valor_conta')
+            formData.set(key, val);
+            }
         }
-        const options = {
+
+        const valorConta = parseFloat(formData.get("valor_conta"));
+        if (valorConta > somaDres) return alert('O valor da conta é maior que a soma do(s) Dre(s).');
+        if (valorConta < somaDres) return alert('A soma do(s) Dre(s) é maior que o valor da conta.');
+
+        // Verifica se há parcelas
+        const parcelas = typeof objParcelasGeradas !== "undefined" ? objParcelasGeradas : [];
+        if (!formData.get("numero_parcelas") || formData.get("numero_parcelas") < 1 || parcelas.length === 0) {
+            if (document.URL.includes('abrir-conta')) {
+            document.querySelector('#btn-gerar-parcelas').click();
+            } else {
+            return alert("As parcelas não foram geradas, clique no botão gerar parcelas antes de salvar a conta.");
+            }
+        }
+
+        // Adiciona array de parcelas como string JSON
+        formData.append("parcelas_geradas", JSON.stringify(parcelas));
+
+        // Conta os campos tipo DRE
+        let qtdeDre = 0;
+        for (let [key] of formData.entries()) {
+            if (key.includes("valor_dre")) qtdeDre++;
+        }
+
+        let cadastro = await fetch(`${baseUrl}/conta/cadastrar?qtdeDre=${qtdeDre}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({...objForm}),
-        }
-        console.log(objForm)
-        let cadastro = await fetch(`${ baseUrl }/conta/cadastrar?qtdeDre=${ qtdeDre }`, options)
+            body: formData,
+        });
         cadastro = await cadastro.json()
+        
         if ( cadastro.erro && cadastro.erro == "campos não preenchidos" ) {
             return document.querySelector('#btn-salvar-oculto').click()
         }

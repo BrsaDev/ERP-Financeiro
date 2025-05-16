@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const path = require('path')
+const multer = require('multer')
+const fs = require('fs')
 const conta = require('../models/Conta')
 const PosicaoColunaTabConta = require('../models/PosicaoColunaTabConta')
 const TamanhoColunaTabConta = require('../models/TamanhoColunaTabConta')
@@ -12,6 +14,25 @@ const { eAdmin } = require("../helpers/eAdmin")
 const { getVisibleColumns } = require("../helpers/gets")
 const { Op, literal, fn, col, where } = require('sequelize')
 const { Sequelize } = require('sequelize')
+
+const uploadDir = path.join(__dirname.toString().replace("\\routes", ""), "\\public\\comprovantes pagamento")
+fs.mkdirSync(uploadDir, { recursive: true });
+
+// Armazenamento configurado para salvar com nome vindo do formulário
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    const customName = req.body.nomeArquivo
+      ? req.body.nomeArquivo + ext
+      : file.originalname;
+    cb(null, customName);
+  }
+});
+
+const upload = multer({ storage });
 
 const tamanhoColunasDefault = {
         numero_conta: '69px', historico: "399px", valor_conta: '103px', fornecedor: '83px', via_pagamento: '124px', descricao: '399px',
@@ -309,7 +330,20 @@ router.get('/cadastrar', eAdmin, async (req, res) => {
     return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { itens, optionsChavePix})
 })
 
-router.post('/cadastrar', eAdmin, async (req, res) => {
+router.post('/cadastrar', eAdmin, upload.single('comprovante_pag'), async (req, res) => {
+    
+    // console.log('🗂️ Caminho completo onde o arquivo foi salvo:');
+    // console.log(req.file.path);
+
+    // console.log('📝 Nome original do arquivo enviado:');
+    // console.log(req.file.originalname);
+
+    // console.log('📄 Nome final salvo no servidor:');
+    // console.log(req.file.filename);
+
+    // console.log('📬 Dados adicionais do formulário (req.body):');
+    // console.log(req.body);
+
     try {
         let { cadastrarDuplicar, qtdeDre } = req.query
         let { numero_conta, historico, valor_conta, fornecedor, via_pagamento, descricao, departamento, 
@@ -321,6 +355,8 @@ router.post('/cadastrar', eAdmin, async (req, res) => {
             mercadoria_entregue, comprovante_mercad, sistema_1, num_sistema_1, sistema_2, num_sistema_2, 
             sistema_3, num_sistema_3, vinculado, parcelas_geradas, chave
         } = req.body
+
+        if ( req.file.filename ) comprovante_pag = uploadDir + "\\" + req.file.filename
 
         let erros = []
         let situacoes = { "Aberto": true, "Pago": true, "Em andamento": true, "Cancelado": true }
@@ -351,8 +387,8 @@ router.post('/cadastrar', eAdmin, async (req, res) => {
         }
         if (erros.length == 0) {
             let num_parc = 0
-            // console.log(parcelas_geradas)
-            for ( let parcela of parcelas_geradas ) {
+            // console.log(typeof parcelas_geradas)
+            for ( let parcela of JSON.parse(parcelas_geradas) ) {
                 numero_conta = Number(numero_conta) + num_parc
                 if ( num_parc == 0 ) { num_parc = 1 }
                 for ( let num_dre = 1; num_dre <= qtdeDre; num_dre++ ) {
@@ -388,7 +424,7 @@ router.post('/cadastrar', eAdmin, async (req, res) => {
                         var sistema_3_edit = "sistema_3_" + num_dre
                         var num_sistema_3_edit = "num_sistema_3_" + num_dre
                     }
-                    // console.log('\n\n', parcela)
+                    // console.log('\n\n', parcela, 'num-dre', num_dre)
                     var new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (parseInt(numero_dias.replace(' dias', '')) * num_dre) 
                     //console.log('\n\n', new_numero_dias, '--', numero_dias, '---', parcela.numero_dias, '\n\n')
                     var contaNova = await conta.create({
@@ -550,7 +586,8 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                     item.dataValues.data_entrega_mercad = item.dataValues.data_entrega_mercad == "" ? "" : item.dataValues.data_entrega_mercad.slice(8) + "/" + item.dataValues.data_entrega_mercad.slice(5, 7) + "/" + item.dataValues.data_entrega_mercad.slice(0, 4)
                     item.dataValues.valor_dre = item.dataValues.valor_dre == "" ? "0" : (item.dataValues.valor_dre).toString().indexOf('.') != -1 ? (item.dataValues.valor_dre).toString().replace('.', ',') : (item.dataValues.valor_dre).toString() + ',00'
                     item.dataValues.valor_conta = item.dataValues.valor_conta == "" ? "0" : (item.dataValues.valor_conta).toString().indexOf('.') != -1 ? (item.dataValues.valor_conta).toString().replace('.', ',') : (item.dataValues.valor_conta).toString() + ',00'
-                    
+                    item.dataValues.comprovante_pag = item.dataValues.comprovante_pag == "" ? "" : item.dataValues.comprovante_pag.split('\\').pop()
+
                     if ( typeof primeiroItemConta[item.dataValues.numero_conta] == 'undefined' ) {
                         primeiroItemConta[item.dataValues.numero_conta] = true
                         var htmlBodyPart = `<tr name="${item.dataValues.numero_conta}" class="text-nowrap">`
