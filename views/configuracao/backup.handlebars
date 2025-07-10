@@ -50,7 +50,7 @@
 
 <script>
     let nomesBackups = {{{nomesBackup}}}
-    const baseUrl = "http://localhost:8089"
+    const baseUrl = "http://bruno.local:8089"
     document.querySelector("#select_backup_criar").classList.add('border-b-blue')
     if ( nomesBackups.length ) {
        document.querySelector("#span-ultimo-backup-criado").innerText = nomesBackups[nomesBackups.length-1] || ""

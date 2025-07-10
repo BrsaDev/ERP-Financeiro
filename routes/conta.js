@@ -9,13 +9,17 @@ const TamanhoColunaTabConta = require('../models/TamanhoColunaTabConta')
 const VisibilidadeColunaTabConta = require('../models/VisibilidadeColunaTabConta')
 const ItensConta = require('../models/ItensConta')
 const TipoChavePix = require('../models/TipoChavePix')
-const bcrypt = require("bcrypt")
-const { eAdmin } = require("../helpers/eAdmin")
-const { getVisibleColumns } = require("../helpers/gets")
+const bcrypt = require(`bcrypt`)
+const { eAdmin } = require(`../helpers/eAdmin`)
+const { getVisibleColumns } = require(`../helpers/gets`)
 const { Op, literal, fn, col, where } = require('sequelize')
 const { Sequelize } = require('sequelize')
+const {resolveRoutes} = require(`../helpers/resolveRoutes`)
 
-const uploadDir = path.join(__dirname.toString().replace("\\routes", ""), "\\public\\comprovantes pagamento")
+
+const barraRoute = resolveRoutes()
+
+const uploadDir = path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}public${barraRoute}comprovantes pagamento`)
 fs.mkdirSync(uploadDir, { recursive: true });
 
 // Armazenamento configurado para salvar com nome vindo do formulário
@@ -35,17 +39,17 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const tamanhoColunasDefault = {
-        numero_conta: '69px', historico: "399px", valor_conta: '103px', fornecedor: '83px', via_pagamento: '124px', descricao: '399px',
+        numero_conta: '69px', historico: `399px`, valor_conta: '103px', fornecedor: '83px', via_pagamento: '124px', descricao: '399px',
         departamento: '102px', valor_dre: '53px', categoria: '399px', grupo: '157px', subgrupo: '105px', forma_pagamento: '143px',
         agendamento: '100px', pagamento: '83px', agencia: '64px', conta_corrente: '104px', num_cartao_cred: '117px', cheque_compens: '139px',
         situacao: '66px', banco: '115px', protocolo_banco: '113px', comprovante_pag: '167px', cadastramento: '106px', doc_pagamento: '156px',
         vencimento: '86px', referencia: '78px', relacao: '62px', numero_dias: '85px', fixar_parcelas: '96px', numero_parcelas: '101px',
         observacao: '85px', rateio: '59px', reembolso: '81px', num_pedido_compra: '142px', data_compra: '92px', emissao_nf: '80px',
         num_comprovante: '113px', data_entrega_mercad: '164px', mercadoria_entregue: '140px', comprovante_mercad: '167px', sistema_1: '77px',
-        num_sistema_1: '90px', sistema_2: '73px', num_sistema_2: '90px', sistema_3: '73px', num_sistema_3: '90px', vinculado: "101px", chave: "90px"
+        num_sistema_1: '90px', sistema_2: '73px', num_sistema_2: '90px', sistema_3: '73px', num_sistema_3: '90px', vinculado: `101px`, chave: `90px`
 }
 const cabecalhoDefaultColunas = {
-    id: 'Id', historico: "Histórico", valor_conta: "Valor da Conta", numero_conta: 'N° Conta', fornecedor: 'Fornecedor', 
+    id: 'Id', historico: `Histórico`, valor_conta: `Valor da Conta`, numero_conta: 'N° Conta', fornecedor: 'Fornecedor', 
     via_pagamento: 'Via de pagamento', descricao: 'Descricao',
     departamento: 'Departamento', valor_dre: 'Valor', categoria: 'Categoria', grupo: 'Grupo', subgrupo: 'Subgrupo',
     forma_pagamento: 'Forma de pagamento', agendamento: 'Agendamento', pagamento: 'Pagamento', agencia: 'Agencia',
@@ -56,13 +60,13 @@ const cabecalhoDefaultColunas = {
     relacao: 'Relacao', fixar_parcelas: 'Fixar Parcelas', numero_parcelas: 'N° de parcelas', numero_dias: 'N° de dias', 
     observacao: 'Observação', rateio: 'Rateio', rateio_dre: 'Rateio Dre', reembolso: 'Reembolso',
     num_pedido_compra: 'N° pedido de compra', data_compra: 'Data compra', emissao_nf: 'Emissão nf',
-    num_comprovante: 'N° comprovante', data_entrega_mercad: 'Data entrega mercadoria', vinculado: "Vinculado", 
-    vinculado_dre: "Vinculado Dre",
+    num_comprovante: 'N° comprovante', data_entrega_mercad: 'Data entrega mercadoria', vinculado: `Vinculado`, 
+    vinculado_dre: `Vinculado Dre`,
     mercadoria_entregue: 'Mercadoria entregue', comprovante_mercad: 'Comprovante mercadoria',
     sistema_1: 'Sistema 1', num_sistema_1: 'N° sistema 1', sistema_2: 'Sistema 2', num_sistema_2: 'N° sistema 2',
-    sistema_3: 'Sistema 3', num_sistema_3: 'N° sistema 3', numero_parcela: "N° da parcela", 
-    valor_parcela: "Valor da parcela", 
-    vencimento_parcela: "Vencimento da parcela", chave: "Chave"
+    sistema_3: 'Sistema 3', num_sistema_3: 'N° sistema 3', numero_parcela: `N° da parcela`, 
+    valor_parcela: `Valor da parcela`, 
+    vencimento_parcela: `Vencimento da parcela`, chave: `Chave`
 }
 const visibilidadeColunasDefault = {
     numero_conta: true,        historico: true,      valor_conta: true,     fornecedor: true,      via_pagamento: true, 
@@ -129,11 +133,11 @@ const cabecalhoDefaultColunasReverse = {
 }
 
 
-router.get("/visibilidade-colunas/obter", getVisibleColumns, (req, res) => {
+router.get(`/visibilidade-colunas/obter`, getVisibleColumns, (req, res) => {
     if ( !req.visibleColumns ) return res.json({ resultado: visibilidadeColunasDefault })
     return res.json({ resultado: req.visibleColumns })
 })
-router.post("/visibilidade-colunas/cadastrar", async (req, res) => {
+router.post(`/visibilidade-colunas/cadastrar`, async (req, res) => {
     let itens = {
         numero_conta: false, historico: false, valor_conta: false, fornecedor: false, via_pagamento: false, descricao: false, departamento: false, rateio_dre: false, vinculado_dre: false, valor_dre: false, categoria: false,
         grupo: false, subgrupo: false, forma_pagamento: false, agendamento: false, pagamento: false, agencia: false, conta_corrente: false, num_cartao_cred: false,
@@ -151,7 +155,7 @@ router.post("/visibilidade-colunas/cadastrar", async (req, res) => {
             usuario: nickname, ...itens
         })
             .then(() => {
-                res.json({ resultado: "SUCESSO" })
+                res.json({ resultado: `SUCESSO` })
             })
             .catch((erro) => {
                 res.json({ erro })
@@ -159,7 +163,7 @@ router.post("/visibilidade-colunas/cadastrar", async (req, res) => {
     } else {
         VisibilidadeColunaTabConta.update(itens, { where: { usuario: nickname } })
             .then(() => {
-                res.json({ resultado: "SUCESSO" })
+                res.json({ resultado: `SUCESSO` })
             })
             .catch((erro) => {
                 res.json({ erro })
@@ -175,7 +179,7 @@ router.post('/tamanho-colunas/cadastrar', async (req, res) => {
             usuario: nickname, ...req.body
         })
             .then(() => {
-                res.json({ resultado: "SUCESSO" })
+                res.json({ resultado: `SUCESSO` })
             })
             .catch((erro) => {
                 res.json({ erro })
@@ -183,7 +187,7 @@ router.post('/tamanho-colunas/cadastrar', async (req, res) => {
     } else {
         TamanhoColunaTabConta.update(req.body, { where: { usuario: nickname } })
             .then(() => {
-                res.json({ resultado: "SUCESSO" })
+                res.json({ resultado: `SUCESSO` })
             })
             .catch((erro) => {
                 res.json({ erro })
@@ -198,7 +202,7 @@ router.post('/posicao-colunas/cadastrar', async (req, res) => {
         var newPosicaoColunas = {}
         let index = 1
         for (let coluna of req.body.colunas) {
-            if (coluna != "id" && coluna != 'undefined') {
+            if (coluna != `id` && coluna != 'undefined') {
                 newPosicaoColunas[cabecalhoDefaultColunasReverse[coluna]] = index
                 index++
             }
@@ -212,7 +216,7 @@ router.post('/posicao-colunas/cadastrar', async (req, res) => {
             usuario: nickname, ...newPosicaoColunas
         })
             .then((pos) => {
-                res.json({ resultado: "SUCESSO" })
+                res.json({ resultado: `SUCESSO` })
             })
             .catch((erro) => {
                 res.json({ erro })
@@ -220,7 +224,7 @@ router.post('/posicao-colunas/cadastrar', async (req, res) => {
     } else {
         PosicaoColunaTabConta.update(newPosicaoColunas, { where: { usuario: nickname } })
             .then((pos) => {
-                res.json({ resultado: "SUCESSO" })
+                res.json({ resultado: `SUCESSO` })
             })
             .catch((erro) => {
                 res.json({ erro })
@@ -234,7 +238,7 @@ router.get('/abrir-conta', eAdmin, async (req, res) => {
     if ( contas.length == 0 ) {
         let itens = {proximo_numero_conta: 1, tipo_situacao: situacao}
         // console.log(itens)
-        return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { itens })
+        return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { itens })
     }
     let item = await ItensConta.findOne({ where: { tipo_situacao: contas[0].situacao } })
     item = JSON.parse(JSON.stringify(item, null, 2))
@@ -245,7 +249,7 @@ router.get('/abrir-conta', eAdmin, async (req, res) => {
         var umRegistro = false
         // var ultimaConta = [contas[contas.length-1]]
         var novaContas = []
-        var parcela_atual = ""
+        var parcela_atual = ``
         contas = contas.filter((item, index)=>{
             if ( typeof dres[item.numero_conta] == 'undefined' ) {
                 dres[item.numero_conta] = []
@@ -302,32 +306,32 @@ router.get('/abrir-conta', eAdmin, async (req, res) => {
     }
     contas = novaContas
     qtdeDres = Object.values(dres)[0].length
-    // var parcela_atual = contas.length == 0 ? "" : `${contas[0].numero_parcela}/${contas[0].numero_parcelas}`
+    // var parcela_atual = contas.length == 0 ? `` : `${contas[0].numero_parcela}/${contas[0].numero_parcelas}`
     console.log(parcela_atual)
-    return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { parcela_atual, itens, dados: contas[0], data_script: JSON.stringify(contas) })
+    return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { parcela_atual, itens, dados: contas[0], data_script: JSON.stringify(contas) })
 })
 
 router.get('/cadastrar', eAdmin, async (req, res) => {
     let tipoChavePix = await TipoChavePix.findAll()
     tipoChavePix = JSON.parse(JSON.stringify(tipoChavePix, null, 2))
 
-    let item = await ItensConta.findOne({ where: { tipo_situacao: (req.query.situacao || "Aberto") } })
-    let contas = await conta.findAll({ where: { situacao: (req.query.situacao || "Aberto") } })
+    let item = await ItensConta.findOne({ where: { tipo_situacao: (req.query.situacao || `Aberto`) } })
+    let contas = await conta.findAll({ where: { situacao: (req.query.situacao || `Aberto`) } })
     contas = JSON.parse(JSON.stringify(contas, null, 2))
     item = JSON.parse(JSON.stringify(item, null, 2))
-    let itens = { ...item, tipo_situacao: (req.query.situacao || "Aberto") }
+    let itens = { ...item, tipo_situacao: (req.query.situacao || `Aberto`) }
     if (contas.length > 0) {
         itens.proximo_numero_conta = (contas ? Number(contas[contas.length - 1].numero_conta) : 0) + 1
         // console.log(Number(contas[contas.length - 1].numero_conta) + 1)
     } else { itens.proximo_numero_conta = 1 }
 
-    let optionsChavePix = ""
+    let optionsChavePix = ``
     for ( registro of tipoChavePix ) {
         optionsChavePix += `
-            <option value="${registro.tipo}">${registro.tipo}</option>
+            <option value='${registro.tipo}'>${registro.tipo}</option>
         `
     }
-    return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { itens, optionsChavePix})
+    return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { itens, optionsChavePix})
 })
 
 router.post('/cadastrar', eAdmin, upload.single('comprovante_pag'), async (req, res) => {
@@ -356,24 +360,24 @@ router.post('/cadastrar', eAdmin, upload.single('comprovante_pag'), async (req, 
             sistema_3, num_sistema_3, vinculado, parcelas_geradas, chave
         } = req.body
 
-        if ( req.file.filename ) comprovante_pag = uploadDir + "\\" + req.file.filename
+        if ( req.file.filename ) comprovante_pag = uploadDir + `${barraRoute}` + req.file.filename
 
         let erros = []
         let situacoes = { "Aberto": true, "Pago": true, "Em andamento": true, "Cancelado": true }
         if (typeof situacoes[situacao] == 'undefined') {
-            let erros = [{ text: 'O campo "Situação" deve ser preenchido corretamente.' }]
-            if (cadastrarDuplicar == "sim" || qtdeDre) {
-                return res.json({ erro: "campos não preenchidos" })
+            let erros = [{ text: 'O campo `Situação` deve ser preenchido corretamente.' }]
+            if (cadastrarDuplicar == `sim` || qtdeDre) {
+                return res.json({ erro: `campos não preenchidos` })
             } else {
-                return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { erros, dados: req.body })
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })
             }
         }
         let item = await ItensConta.findOne({ where: { tipo_situacao: situacao } })
         if (!item) {
-            if (cadastrarDuplicar == "sim" || qtdeDre) {
-                return res.json({ erro: "situação não cadastrada" })
+            if (cadastrarDuplicar == `sim` || qtdeDre) {
+                return res.json({ erro: `situação não cadastrada` })
             } else {
-                return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\itens-conta?situacao=" + situacao))
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}itens-conta?situacao=` + situacao))
             }
         }
         item = JSON.parse(JSON.stringify(item, null, 2))
@@ -382,7 +386,7 @@ router.post('/cadastrar', eAdmin, upload.single('comprovante_pag'), async (req, 
             let key = entreis[0]
             let value = entreis[1]
             if (item[key] && (!value || typeof value == undefined || value == null)) {
-                erros.push({ text: key.replaceAll('_', ' ').replace('num', 'número').replace('doc', 'documento').replace('mercad', 'mercadoria') + " inválido." })
+                erros.push({ text: key.replaceAll('_', ' ').replace('num', 'número').replace('doc', 'documento').replace('mercad', 'mercadoria') + ` inválido.` })
             }
         }
         if (erros.length == 0) {
@@ -394,35 +398,35 @@ router.post('/cadastrar', eAdmin, upload.single('comprovante_pag'), async (req, 
                 for ( let num_dre = 1; num_dre <= qtdeDre; num_dre++ ) {
                     // console.log(numero_conta, parcela)
                     if (num_dre == 1) {
-                        var departamento_edit = "departamento"
-                        var descricao_edit = "descricao"
-                        var valor_dre_edit = "valor_dre"
-                        var rateio_dre_edit = "rateio_dre"
-                        var vinculado_dre_edit = "vinculado_dre"
-                        var categoria_edit = "categoria"
-                        var grupo_edit = "grupo"
-                        var subgrupo_edit = "subgrupo"
-                        var sistema_1_edit = "sistema_1"
-                        var num_sistema_1_edit = "num_sistema_1"
-                        var sistema_2_edit = "sistema_2"
-                        var num_sistema_2_edit = "num_sistema_2"
-                        var sistema_3_edit = "sistema_3"
-                        var num_sistema_3_edit = "num_sistema_3"
+                        var departamento_edit = `departamento`
+                        var descricao_edit = `descricao`
+                        var valor_dre_edit = `valor_dre`
+                        var rateio_dre_edit = `rateio_dre`
+                        var vinculado_dre_edit = `vinculado_dre`
+                        var categoria_edit = `categoria`
+                        var grupo_edit = `grupo`
+                        var subgrupo_edit = `subgrupo`
+                        var sistema_1_edit = `sistema_1`
+                        var num_sistema_1_edit = `num_sistema_1`
+                        var sistema_2_edit = `sistema_2`
+                        var num_sistema_2_edit = `num_sistema_2`
+                        var sistema_3_edit = `sistema_3`
+                        var num_sistema_3_edit = `num_sistema_3`
                     } else {
-                        var departamento_edit = "departamento_" + num_dre
-                        var descricao_edit = "descricao_" + num_dre
-                        var valor_dre_edit = "valor_dre_" + num_dre
-                        var rateio_dre_edit = "rateio_dre_" + num_dre
-                        var vinculado_dre_edit = "vinculado_dre_" + num_dre
-                        var categoria_edit = "categoria_" + num_dre
-                        var grupo_edit = "grupo_" + num_dre
-                        var subgrupo_edit = "subgrupo_" + num_dre
-                        var sistema_1_edit = "sistema_1_" + num_dre
-                        var num_sistema_1_edit = "num_sistema_1_" + num_dre
-                        var sistema_2_edit = "sistema_2_" + num_dre
-                        var num_sistema_2_edit = "num_sistema_2_" + num_dre
-                        var sistema_3_edit = "sistema_3_" + num_dre
-                        var num_sistema_3_edit = "num_sistema_3_" + num_dre
+                        var departamento_edit = `departamento_` + num_dre
+                        var descricao_edit = `descricao_` + num_dre
+                        var valor_dre_edit = `valor_dre_` + num_dre
+                        var rateio_dre_edit = `rateio_dre_` + num_dre
+                        var vinculado_dre_edit = `vinculado_dre_` + num_dre
+                        var categoria_edit = `categoria_` + num_dre
+                        var grupo_edit = `grupo_` + num_dre
+                        var subgrupo_edit = `subgrupo_` + num_dre
+                        var sistema_1_edit = `sistema_1_` + num_dre
+                        var num_sistema_1_edit = `num_sistema_1_` + num_dre
+                        var sistema_2_edit = `sistema_2_` + num_dre
+                        var num_sistema_2_edit = `num_sistema_2_` + num_dre
+                        var sistema_3_edit = `sistema_3_` + num_dre
+                        var num_sistema_3_edit = `num_sistema_3_` + num_dre
                     }
                     // console.log('\n\n', parcela, 'num-dre', num_dre)
                     var new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (parseInt(numero_dias.replace(' dias', '')) * num_dre) 
@@ -458,30 +462,30 @@ router.post('/cadastrar', eAdmin, upload.single('comprovante_pag'), async (req, 
             }
             if (contaNova) {
                 contaNova = JSON.parse(JSON.stringify(contaNova, null, 2))
-                if (cadastrarDuplicar == "sim" || qtdeDre) {
+                if (cadastrarDuplicar == `sim` || qtdeDre) {
                     res.json({ numero_conta: (Number(contaNova.numero_conta) + 1) })
                 } else {
-                    req.flash("success_msg", "Conta cadastrada com sucesso!")
-                    res.redirect("/")
+                    req.flash(`success_msg`, `Conta cadastrada com sucesso!`)
+                    res.redirect(`/`)
                 }
             } else {
-                if (cadastrarDuplicar == "sim" || qtdeDre) {
-                    res.json({ erro: "OK" })
+                if (cadastrarDuplicar == `sim` || qtdeDre) {
+                    res.json({ erro: `OK` })
                 } else {
-                    let erros = [{ text: "Erro ao cadastrar conta, se persistir informar o desenvolvedor." }]
-                    res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { erros, dados: req.body })
+                    let erros = [{ text: `Erro ao cadastrar conta, se persistir informar o desenvolvedor.` }]
+                    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })
                 }
             }
         } else {
-            if (cadastrarDuplicar == "sim" || qtdeDre) {
-                res.json({ erro: "campos não preenchidos" })
+            if (cadastrarDuplicar == `sim` || qtdeDre) {
+                res.json({ erro: `campos não preenchidos` })
             } else {
-                return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\cadastrar"), { erros, dados: req.body })
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })
             }
         }
     } catch (e) {
         console.log(e)
-        res.json({ erro: "OK" })
+        res.json({ erro: `OK` })
     }
 })
 
@@ -490,33 +494,33 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
     let posicaoColunas = await PosicaoColunaTabConta.findOne({ where: { usuario: nickname } })
     let tamanhoColunas = await TamanhoColunaTabConta.findOne({ where: { usuario: nickname } })
     let visibilidadeColunas = req.visibleColumns
-    let htmlHead = `<tr class="text-center text-nowrap text-light bg-blue-pk">`
-    let htmlBody = ""
+    let htmlHead = `<tr class='text-center text-nowrap text-light bg-blue-pk'>`
+    let htmlBody = ''
     let objHeadDuplicado = {}
     let primeiroItemConta = {}
     let headPageDre = `
-        <tr class="text-center text-nowrap text-light bg-blue-pk">
-            <th name="tab-N_Conta"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_Conta')"></i><span><i onclick="sortTable('tab-N_Conta')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> N° Conta</span></th>
-            <th name="tab-Valor"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Valor')"></i><span><i onclick="sortTable('tab-Valor')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Valor</span></th>
-            <th name="tab-Descricao"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Descricao')"></i><span><i onclick="sortTable('tab-Descricao')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Descrição</span></th>
-            <th name="tab-Departamento"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Departamento')"></i><span><i onclick="sortTable('tab-Departamento')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Departamento</span></th>
-            <th name="tab-Vencimento"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Vencimento')"></i><span><i onclick="sortTable('tab-Vencimento')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Vencimento</span></th>
-            <th name="tab-Pagamento"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Pagamento')"></i><span><i onclick="sortTable('tab-Pagamento')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Pagamento</span></th>
-            <th name="tab-Relacao"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Relacao')"></i><span><i onclick="sortTable('tab-Relacao')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Relação</span></th>
-            <th name="tab-Marcador_1"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Marcador_1')"></i><span><i onclick="sortTable('tab-Marcador_1')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Marcador 1</span></th>
-            <th name="tab-Marcador_2"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Marcador_2')"></i><span><i onclick="sortTable('tab-Marcador_2')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Marcador 2</span></th>
-            <th name="tab-Categoria"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Categoria')"></i><span><i onclick="sortTable('tab-Categoria')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Categoria</span></th>
-            <th name="tab-Grupo"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Grupo')"></i><span><i onclick="sortTable('tab-Grupo')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Grupo</span></th>
-            <th name="tab-Sub_Grupo"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sub_Grupo')"></i><span><i onclick="sortTable('tab-Sub_Grupo')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Sub Grupo</span></th>
-            <th name="tab-Sistema_1"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sistema_1')"></i><span><i onclick="sortTable('tab-Sistema_1')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Sistema 1</span></th>
-            <th name="tab-N_sistema_1"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_sistema_1')"></i><span><i onclick="sortTable('tab-N_sistema_1')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> N° sistema 1</span></th>
-            <th name="tab-Sistema_2"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sistema_2')"></i><span><i onclick="sortTable('tab-Sistema_2')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Sistema 2</span></th>
-            <th name="tab-N_sistema_2"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_sistema_2')"></i><span><i onclick="sortTable('tab-N_sistema_2')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> N° sistema 2</span></th>
-            <th name="tab-Sistema_3"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-Sistema_3')"></i><span><i onclick="sortTable('tab-Sistema_3')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> Sistema 3</span></th>
-            <th name="tab-N_sistema_3"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-N_sistema_3')"></i><span><i onclick="sortTable('tab-N_sistema_3')" style="margin-right: 8px;" class="position-relative fas fa-arrows-alt-v"></i> N° sistema 3</span></th>
+        <tr class='text-center text-nowrap text-light bg-blue-pk'>
+            <th name='tab-N_Conta'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-N_Conta')'></i><span><i onclick='sortTable('tab-N_Conta')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° Conta</span></th>
+            <th name='tab-Valor'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Valor')'></i><span><i onclick='sortTable('tab-Valor')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Valor</span></th>
+            <th name='tab-Descricao'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Descricao')'></i><span><i onclick='sortTable('tab-Descricao')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Descrição</span></th>
+            <th name='tab-Departamento'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Departamento')'></i><span><i onclick='sortTable('tab-Departamento')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Departamento</span></th>
+            <th name='tab-Vencimento'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Vencimento')'></i><span><i onclick='sortTable('tab-Vencimento')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Vencimento</span></th>
+            <th name='tab-Pagamento'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Pagamento')'></i><span><i onclick='sortTable('tab-Pagamento')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Pagamento</span></th>
+            <th name='tab-Relacao'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Relacao')'></i><span><i onclick='sortTable('tab-Relacao')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Relação</span></th>
+            <th name='tab-Marcador_1'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Marcador_1')'></i><span><i onclick='sortTable('tab-Marcador_1')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Marcador 1</span></th>
+            <th name='tab-Marcador_2'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Marcador_2')'></i><span><i onclick='sortTable('tab-Marcador_2')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Marcador 2</span></th>
+            <th name='tab-Categoria'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Categoria')'></i><span><i onclick='sortTable('tab-Categoria')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Categoria</span></th>
+            <th name='tab-Grupo'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Grupo')'></i><span><i onclick='sortTable('tab-Grupo')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Grupo</span></th>
+            <th name='tab-Sub_Grupo'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Sub_Grupo')'></i><span><i onclick='sortTable('tab-Sub_Grupo')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sub Grupo</span></th>
+            <th name='tab-Sistema_1'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Sistema_1')'></i><span><i onclick='sortTable('tab-Sistema_1')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sistema 1</span></th>
+            <th name='tab-N_sistema_1'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-N_sistema_1')'></i><span><i onclick='sortTable('tab-N_sistema_1')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° sistema 1</span></th>
+            <th name='tab-Sistema_2'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Sistema_2')'></i><span><i onclick='sortTable('tab-Sistema_2')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sistema 2</span></th>
+            <th name='tab-N_sistema_2'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-N_sistema_2')'></i><span><i onclick='sortTable('tab-N_sistema_2')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° sistema 2</span></th>
+            <th name='tab-Sistema_3'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Sistema_3')'></i><span><i onclick='sortTable('tab-Sistema_3')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sistema 3</span></th>
+            <th name='tab-N_sistema_3'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-N_sistema_3')'></i><span><i onclick='sortTable('tab-N_sistema_3')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° sistema 3</span></th>
         </tr>
     `
-    let bodyPageDre = ""
+    let bodyPageDre = ``
     if (!tamanhoColunas) {
         var tamColunas = tamanhoColunasDefault
     } else {
@@ -529,71 +533,71 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
         posicaoColunas = JSON.parse(JSON.stringify(posicaoColunas, null, 2)) 
         var posColunas = {}
         for (let col of Object.entries(posicaoColunas)) {
-            if (col[0] != "usuario" && col[0] != "id") {
+            if (col[0] != `usuario` && col[0] != `id`) {
                 posColunas[col[1]] = col[0]
             }
         }
     }
     // console.log(posColunas)
-    conta.findAll({ where: { situacao: (req.query.situacao_select || "Aberto") } })
+    conta.findAll({ where: { situacao: (req.query.situacao_select || `Aberto`) } })
         .then((contas) => {
-            if ( req.query.page && req.query.page == "page-dre" ) {
+            if ( req.query.page && req.query.page == `page-dre` ) {
                 contas = contas.filter(item => {
-                    item.dataValues.pagamento = item.dataValues.pagamento == "" ? "" : item.dataValues.pagamento.slice(8) + "/" + item.dataValues.pagamento.slice(5, 7) + "/" + item.dataValues.pagamento.slice(0, 4)
-                    item.dataValues.valor_dre = item.dataValues.valor_dre == "" ? "0" : (item.dataValues.valor_dre).toString().indexOf('.') != -1 ? (item.dataValues.valor_dre).toString().replace('.', ',') : (item.dataValues.valor_dre).toString() + ',00'
+                    item.dataValues.pagamento = item.dataValues.pagamento == `` ? `` : item.dataValues.pagamento.slice(8) + `/` + item.dataValues.pagamento.slice(5, 7) + `/` + item.dataValues.pagamento.slice(0, 4)
+                    item.dataValues.valor_dre = item.dataValues.valor_dre == `` ? `0` : (item.dataValues.valor_dre).toString().indexOf('.') != -1 ? (item.dataValues.valor_dre).toString().replace('.', ',') : (item.dataValues.valor_dre).toString() + ',00'
                     
                     bodyPageDre += `
-                        <tr class="text-nowrap">
-                            <td name="tab-N_Conta" class="text-center">
-                                    <i class="fas fa-search cursor-pointer position-relative" style="left: -20px;" onclick="abrirContaPeloDre('${item.dataValues.numero_conta}', '${(req.query.situacao_select || "Aberto")}', true)"></i>
+                        <tr class='text-nowrap'>
+                            <td name='tab-N_Conta' class='text-center'>
+                                    <i class='fas fa-search cursor-pointer position-relative' style='left: -20px;' onclick='abrirContaPeloDre('${item.dataValues.numero_conta}', '${(req.query.situacao_select || 'Aberto')}', true)'></i>
                                      ${item.dataValues.numero_conta}
                             </td>
-                            <td name="tab-Valor" class="text-center">${item.dataValues.valor_dre}</td>
-                            <td name="tab-Descricao" class="text-center">${item.dataValues.descricao}</td>
-                            <td name="tab-Departamento" class="text-center">${item.dataValues.departamento}</td>
-                            <td name="tab-Vencimento" class="text-center">${item.dataValues.vencimento}</td>
-                            <td name="tab-Pagamento" class="text-center">${item.dataValues.pagamento}</td>
-                            <td name="tab-Relacao" class="text-center">${item.dataValues.relacao}</td>
-                            <td name="tab-Marcador_1" class="text-center">${item.dataValues.rateio_dre}</td>
-                            <td name="tab-Marcador_2" class="text-center">${item.dataValues.vinculado_dre}</td>
-                            <td name="tab-Categoria" class="text-center">${item.dataValues.categoria}</td>
-                            <td name="tab-Grupo" class="text-center">${item.dataValues.grupo}</td>
-                            <td name="tab-Sub_Grupo" class="text-center">${item.dataValues.subgrupo}</td>
-                            <td name="tab-Sistema_1" class="text-center">${item.dataValues.sistema_1}</td>
-                            <td name="tab-N_sistema_1" class="text-center">${item.dataValues.num_sistema_1}</td>
-                            <td name="tab-Sistema_2" class="text-center">${item.dataValues.sistema_2}</td>
-                            <td name="tab-N_sistema_2" class="text-center">${item.dataValues.num_sistema_2}</td>
-                            <td name="tab-Sistema_3" class="text-center">${item.dataValues.sistema_3}</td>
-                            <td name="tab-N_sistema_3" class="text-center">${item.dataValues.num_sistema_3}</td>
+                            <td name='tab-Valor' class='text-center'>${item.dataValues.valor_dre}</td>
+                            <td name='tab-Descricao' class='text-center'>${item.dataValues.descricao}</td>
+                            <td name='tab-Departamento' class='text-center'>${item.dataValues.departamento}</td>
+                            <td name='tab-Vencimento' class='text-center'>${item.dataValues.vencimento}</td>
+                            <td name='tab-Pagamento' class='text-center'>${item.dataValues.pagamento}</td>
+                            <td name='tab-Relacao' class='text-center'>${item.dataValues.relacao}</td>
+                            <td name='tab-Marcador_1' class='text-center'>${item.dataValues.rateio_dre}</td>
+                            <td name='tab-Marcador_2' class='text-center'>${item.dataValues.vinculado_dre}</td>
+                            <td name='tab-Categoria' class='text-center'>${item.dataValues.categoria}</td>
+                            <td name='tab-Grupo' class='text-center'>${item.dataValues.grupo}</td>
+                            <td name='tab-Sub_Grupo' class='text-center'>${item.dataValues.subgrupo}</td>
+                            <td name='tab-Sistema_1' class='text-center'>${item.dataValues.sistema_1}</td>
+                            <td name='tab-N_sistema_1' class='text-center'>${item.dataValues.num_sistema_1}</td>
+                            <td name='tab-Sistema_2' class='text-center'>${item.dataValues.sistema_2}</td>
+                            <td name='tab-N_sistema_2' class='text-center'>${item.dataValues.num_sistema_2}</td>
+                            <td name='tab-Sistema_3' class='text-center'>${item.dataValues.sistema_3}</td>
+                            <td name='tab-N_sistema_3' class='text-center'>${item.dataValues.num_sistema_3}</td>
                         </tr>`
                     return item
                 })
                 contas = JSON.parse(JSON.stringify(contas, null, 2))
                 let dres = JSON.stringify({})
                 if (contas.length == 0) {
-                    res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\listar"), { dados: { situacao_select: (req.query.situacao_select || "Aberto"), titulo: "DRE´s" }, drePage: true, bodyPageDre, headPageDre, dres })
+                    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}listar`), { dados: { situacao_select: (req.query.situacao_select || `Aberto`), titulo: `DRE´s` }, drePage: true, bodyPageDre, headPageDre, dres })
                 } else {
-                    res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\listar"), { dados: { situacao_select: (req.query.situacao_select || "Aberto"), titulo: "DRE´s" }, contasDre: contas, drePage: true, bodyPageDre, headPageDre, dres })
+                    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}listar`), { dados: { situacao_select: (req.query.situacao_select || `Aberto`), titulo: `DRE´s` }, contasDre: contas, drePage: true, bodyPageDre, headPageDre, dres })
                 }
             } else {
                 let dres = {}
                 var indexBtnShowHide = 1
                 contas = contas.filter(item => {
-                    item.dataValues.cadastramento = item.dataValues.cadastramento == "" ? "" : item.dataValues.cadastramento.slice(8) + "/" + item.dataValues.cadastramento.slice(5, 7) + "/" + item.dataValues.cadastramento.slice(0, 4)
-                    item.dataValues.pagamento = item.dataValues.pagamento == "" ? "" : item.dataValues.pagamento.slice(8) + "/" + item.dataValues.pagamento.slice(5, 7) + "/" + item.dataValues.pagamento.slice(0, 4)
-                    item.dataValues.data_compra = item.dataValues.data_compra == "" ? "" : item.dataValues.data_compra.slice(8) + "/" + item.dataValues.data_compra.slice(5, 7) + "/" + item.dataValues.data_compra.slice(0, 4)
-                    item.dataValues.emissao_nf = item.dataValues.emissao_nf == "" ? "" : item.dataValues.emissao_nf.slice(8) + "/" + item.dataValues.emissao_nf.slice(5, 7) + "/" + item.dataValues.emissao_nf.slice(0, 4)
-                    item.dataValues.data_entrega_mercad = item.dataValues.data_entrega_mercad == "" ? "" : item.dataValues.data_entrega_mercad.slice(8) + "/" + item.dataValues.data_entrega_mercad.slice(5, 7) + "/" + item.dataValues.data_entrega_mercad.slice(0, 4)
-                    item.dataValues.valor_dre = item.dataValues.valor_dre == "" ? "0" : (item.dataValues.valor_dre).toString().indexOf('.') != -1 ? (item.dataValues.valor_dre).toString().replace('.', ',') : (item.dataValues.valor_dre).toString() + ',00'
-                    item.dataValues.valor_conta = item.dataValues.valor_conta == "" ? "0" : (item.dataValues.valor_conta).toString().indexOf('.') != -1 ? (item.dataValues.valor_conta).toString().replace('.', ',') : (item.dataValues.valor_conta).toString() + ',00'
-                    item.dataValues.comprovante_pag = item.dataValues.comprovante_pag == "" ? "" : item.dataValues.comprovante_pag.split('\\').pop()
+                    item.dataValues.cadastramento = item.dataValues.cadastramento == `` ? `` : item.dataValues.cadastramento.slice(8) + `/` + item.dataValues.cadastramento.slice(5, 7) + `/` + item.dataValues.cadastramento.slice(0, 4)
+                    item.dataValues.pagamento = item.dataValues.pagamento == `` ? `` : item.dataValues.pagamento.slice(8) + `/` + item.dataValues.pagamento.slice(5, 7) + `/` + item.dataValues.pagamento.slice(0, 4)
+                    item.dataValues.data_compra = item.dataValues.data_compra == `` ? `` : item.dataValues.data_compra.slice(8) + `/` + item.dataValues.data_compra.slice(5, 7) + `/` + item.dataValues.data_compra.slice(0, 4)
+                    item.dataValues.emissao_nf = item.dataValues.emissao_nf == `` ? `` : item.dataValues.emissao_nf.slice(8) + `/` + item.dataValues.emissao_nf.slice(5, 7) + `/` + item.dataValues.emissao_nf.slice(0, 4)
+                    item.dataValues.data_entrega_mercad = item.dataValues.data_entrega_mercad == `` ? `` : item.dataValues.data_entrega_mercad.slice(8) + `/` + item.dataValues.data_entrega_mercad.slice(5, 7) + `/` + item.dataValues.data_entrega_mercad.slice(0, 4)
+                    item.dataValues.valor_dre = item.dataValues.valor_dre == `` ? `0` : (item.dataValues.valor_dre).toString().indexOf('.') != -1 ? (item.dataValues.valor_dre).toString().replace('.', ',') : (item.dataValues.valor_dre).toString() + ',00'
+                    item.dataValues.valor_conta = item.dataValues.valor_conta == `` ? `0` : (item.dataValues.valor_conta).toString().indexOf('.') != -1 ? (item.dataValues.valor_conta).toString().replace('.', ',') : (item.dataValues.valor_conta).toString() + ',00'
+                    item.dataValues.comprovante_pag = item.dataValues.comprovante_pag == `` ? `` : item.dataValues.comprovante_pag.split('${barraRoute}').pop()
 
                     if ( typeof primeiroItemConta[item.dataValues.numero_conta] == 'undefined' ) {
                         primeiroItemConta[item.dataValues.numero_conta] = true
-                        var htmlBodyPart = `<tr name="${item.dataValues.numero_conta}" class="text-nowrap">`
+                        var htmlBodyPart = `<tr name='${item.dataValues.numero_conta}' class='text-nowrap'>`
                         var primeiraLinhaConta = true
                     }else {
-                        //var htmlBodyPart = `<tr name="${item.dataValues.numero_conta}" class="d-none text-nowrap table-light">`
+                        //var htmlBodyPart = `<tr name=`${item.dataValues.numero_conta}` class=`d-none text-nowrap table-light`>`
                         var primeiraLinhaConta = false
                     }
 
@@ -625,30 +629,30 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                     for (key of Object.keys(item.dataValues)) {
                         if (visibilidadeColunas) {
                         // console.log(visibilidadeColunas[posColunas[index]], visibilidadeColunas, index, '\n\n')
-                            var classVisibleColumn = visibilidadeColunas[posColunas[index]] ? "" : "class='d-none'"
+                            var classVisibleColumn = visibilidadeColunas[posColunas[index]] ? `` : `class='d-none'`
                         } else {
-                            var classVisibleColumn = visibilidadeColunasDefault[posColunas[index]] ? "" : "class='d-none'"
+                            var classVisibleColumn = visibilidadeColunasDefault[posColunas[index]] ? `` : `class='d-none'`
                         }
                         if ( typeof objHeadDuplicado[cabecalhoDefaultColunas[posColunas[index]]] == 'undefined' && typeof itensDre[posColunas[index]] == 'undefined' ) {
                             
                             htmlHead += `
-                                <th scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" style="min-width: ${tamColunas[posColunas[index]]} !important"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick="popupFiltroColuna('tab-${posColunas[index]}')"></i><span>${cabecalhoDefaultColunas[posColunas[index]]}</span></th>
+                                <th scope='col' ${classVisibleColumn} name='tab-${posColunas[index]}' style='min-width: ${tamColunas[posColunas[index]]} !important'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-${posColunas[index]}')'></i><span>${cabecalhoDefaultColunas[posColunas[index]]}</span></th>
                             `   
                             objHeadDuplicado[cabecalhoDefaultColunas[posColunas[index]]] = true
                         }
                         if ( posColunas[index] == 'historico' ) {
-                            var tipoText = 'class="text-start"'
+                            var tipoText = 'class=`text-start`'
                         }else {
-                            var tipoText = 'class="text-center"'
+                            var tipoText = 'class=`text-center`'
                         }
                         if ( typeof itensDre[posColunas[index]] == 'undefined' && primeiraLinhaConta ) {
                             if ( index == 1 ) {
                                 htmlBodyPart += `
-                                    <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
-                                        <div class="position-relative d-flex gap-2" style="left: 2px; top: 2px;">
-                                            <i class="fas fa-search cursor-pointer position-relative" onclick="abrirContaPeloDre('${item.dataValues.numero_conta}', '${(item.dataValues.situacao || "Aberto")}', false)"></i>
-                                            <i id="btn-hide-dre${item.dataValues.numero_conta}" onclick="showHideDre('${item.dataValues.numero_conta}', 'hide', ${indexBtnShowHide})" class="d-none bi bi-dash-square-fill cursor-pointer text-blue-pk"></i>
-                                            <i id="btn-show-dre${item.dataValues.numero_conta}" onclick="showHideDre('${item.dataValues.numero_conta}', 'show', ${indexBtnShowHide})" class="bi bi-plus-square-fill cursor-pointer text-blue-pk"></i>
+                                    <td scope='col' ${classVisibleColumn} name='tab-${posColunas[index]}' ${tipoText}>
+                                        <div class='position-relative d-flex gap-2' style='left: 2px; top: 2px;'>
+                                            <i class='fas fa-search cursor-pointer position-relative' onclick='abrirContaPeloDre('${item.dataValues.numero_conta}', '${(item.dataValues.situacao || 'Aberto')}', false)'></i>
+                                            <i id='btn-hide-dre${item.dataValues.numero_conta}' onclick='showHideDre('${item.dataValues.numero_conta}', 'hide', ${indexBtnShowHide})' class='d-none bi bi-dash-square-fill cursor-pointer text-blue-pk'></i>
+                                            <i id='btn-show-dre${item.dataValues.numero_conta}' onclick='showHideDre('${item.dataValues.numero_conta}', 'show', ${indexBtnShowHide})' class='bi bi-plus-square-fill cursor-pointer text-blue-pk'></i>
                                             <span>${item.dataValues[posColunas[index]]}</span>
                                         </div>
                                     </td>
@@ -656,16 +660,16 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                                 indexBtnShowHide++
                             }
                             else {
-                                if ( posColunas[index] == "numero_parcelas" ) {
+                                if ( posColunas[index] == `numero_parcelas` ) {
                                     htmlBodyPart += `
-                                        <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
+                                        <td scope='col' ${classVisibleColumn} name='tab-${posColunas[index]}' ${tipoText}>
                                             ${item.dataValues.numero_parcela}/${item.dataValues.numero_parcelas}
                                         </td>
                                     `
                                 }
                                 else {
                                     htmlBodyPart += `
-                                        <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
+                                        <td scope='col' ${classVisibleColumn} name='tab-${posColunas[index]}' ${tipoText}>
                                             ${item.dataValues[posColunas[index]]}
                                         </td>
                                     `
@@ -676,31 +680,31 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                         index++
                     }
                     if ( primeiraLinhaConta ) {
-                        htmlBodyPart += "</tr>"
+                        htmlBodyPart += `</tr>`
                         htmlBody += htmlBodyPart
                     }                
                     
                     return item
                 })
-                htmlHead += "</tr>"
+                htmlHead += `</tr>`
                 contas = JSON.parse(JSON.stringify(contas, null, 2))
                 dres = JSON.stringify(dres)
                 if (contas.length == 0) {
-                    res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\listar"), { dados: { situacao_select: (req.query.situacao_select || "Aberto"), titulo: "Contas" }, tabHead: htmlHead, tabBody: htmlBody, dres })
+                    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}listar`), { dados: { situacao_select: (req.query.situacao_select || `Aberto`), titulo: `Contas` }, tabHead: htmlHead, tabBody: htmlBody, dres })
                 } else {
-                    res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\listar"), { dados: { situacao_select: (req.query.situacao_select || "Aberto"), titulo: "Contas" }, contas, tabHead: htmlHead, tabBody: htmlBody, dres })
+                    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}listar`), { dados: { situacao_select: (req.query.situacao_select || `Aberto`), titulo: `Contas` }, contas, tabHead: htmlHead, tabBody: htmlBody, dres })
                 }
             }
         })
         .catch((e) => {
             console.log('ERRO PK',e)
-            res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\conta\\listar"), { dados: { situacao_select: (req.query.situacao_select || "Aberto"), titulo: req.query.page == "page-dre" ? "DRE´s" : "Contas" }, tabHead: htmlHead, tabBody: htmlBody })
+            res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}listar`), { dados: { situacao_select: (req.query.situacao_select || `Aberto`), titulo: req.query.page == `page-dre` ? `DRE´s` : `Contas` }, tabHead: htmlHead, tabBody: htmlBody })
         })
 })
 
 router.get('/obter', async (req, res) => {
     let contas = await conta.findAll()
-    if ( !contas ) return res.json({erro: "Não há contas."})
+    if ( !contas ) return res.json({erro: `Não há contas.`})
     contas = JSON.parse(JSON.stringify(contas, null, 2))
     return res.json({contas})
 })

@@ -2,7 +2,11 @@ const express = require('express')
 const router = express.Router()
 const path = require('path')
 const banco = require('../models/Banco')
-const { eAdmin } = require("../helpers/eAdmin")
+const { eAdmin } = require(`../helpers/eAdmin`)
+const {resolveRoutes} = require(`../helpers/resolveRoutes`)
+
+
+const barraRoute = resolveRoutes()
 
 
 router.get('/obter', async (req, res)=> {
@@ -11,30 +15,30 @@ router.get('/obter', async (req, res)=> {
 })
 
 router.get('/cadastrar', eAdmin, (re, res) => {
-    res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\banco\\cadastrar"))
+    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}banco${barraRoute}cadastrar`))
 })
 
 router.post('/cadastrar', eAdmin, async (req, res) => {
     let { nome, agencia, conta_corrente } = req.body
     let erros = []
-    if ( !nome || typeof nome == undefined || nome == null ) erros.push({text: "Banco inválido."})
-    if ( !agencia || typeof agencia == undefined || agencia == null ) erros.push({text: "Banco inválido."})
-    if ( !conta_corrente || typeof conta_corrente == undefined || conta_corrente == null ) erros.push({text: "Banco inválido."})
+    if ( !nome || typeof nome == undefined || nome == null ) erros.push({text: `Banco inválido.`})
+    if ( !agencia || typeof agencia == undefined || agencia == null ) erros.push({text: `Banco inválido.`})
+    if ( !conta_corrente || typeof conta_corrente == undefined || conta_corrente == null ) erros.push({text: `Banco inválido.`})
 
     let bancoCompare = await banco.findOne({where: {conta_corrente}})
     if ( !bancoCompare ) {
         banco.create({ nome: nome, agencia, conta_corrente })
         .then(() => {
-            req.flash("success_msg", "Banco cadastrado com sucesso!")
-            res.redirect("/")
+            req.flash(`success_msg`, `Banco cadastrado com sucesso!`)
+            res.redirect(`/`)
         })
         .catch((erro) => {
             let erros = [{text: erro.errors[0].message}]
-            res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\banco\\cadastrar"), {erros, dados: req.body})
+            res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}banco${barraRoute}cadastrar`), {erros, dados: req.body})
         })
     }else {
-        erros.push({text: "Banco com essa conta já cadastrado."})
-        res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\banco\\cadastrar"), {erros, dados: req.body})
+        erros.push({text: `Banco com essa conta já cadastrado.`})
+        res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}banco${barraRoute}cadastrar`), {erros, dados: req.body})
     }
 
 })
@@ -43,9 +47,9 @@ router.get('/listar', async (req, res) => {
     let bancos = await banco.findAll()
     bancos = JSON.parse(JSON.stringify(bancos, null, 2))
     if ( bancos.length == 0 ) {
-        res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\banco\\listar"))
+        res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}banco${barraRoute}listar`))
     }else {
-        res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\banco\\listar"), {bancos})
+        res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}banco${barraRoute}listar`), {bancos})
     }
 })
 

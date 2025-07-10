@@ -4,8 +4,12 @@ const path = require('path')
 const ItensConta = require('../models/ItensConta')
 const PaginaHome = require('../models/PaginaHome')
 const TipoChavePix = require('../models/TipoChavePix')
-const { eAdmin } = require("../helpers/eAdmin")
-const { backup, restore, list_files_backup } = require("../models/backup/backup")
+const { eAdmin } = require(`../helpers/eAdmin`)
+const { backup, restore, list_files_backup } = require(`../models/backup/backup`)
+const {resolveRoutes} = require(`../helpers/resolveRoutes`)
+
+
+const barraRoute = resolveRoutes()
 
 
 router.get('/pagina-home', eAdmin, async (req, res) => {
@@ -14,9 +18,9 @@ router.get('/pagina-home', eAdmin, async (req, res) => {
     let dados = JSON.stringify(paginaHome)
     if ( !dados ) {
         // dados = JSON.stringify({campo: 'conta', href: '/conta/listar'})
-        return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\paginaHome"))
+        return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}paginaHome`))
     }
-    res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\paginaHome"), {dados})
+    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}paginaHome`), {dados})
 })
 
 router.post('/pagina-home', async (req, res) => {
@@ -24,49 +28,49 @@ router.post('/pagina-home', async (req, res) => {
     let erros = []
     let item = req.body//Object.entries(req.body).filter(item => item[1])
     if ( Object.keys(item).length == 0 ) {
-        erros.push({ text: "É preciso selecionar pelo menos 1 item!" })
-        return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\paginaHome"), {erros})
+        erros.push({ text: `É preciso selecionar pelo menos 1 item!` })
+        return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}paginaHome`), {erros})
     }
     let paginaHome = await PaginaHome.findOne({where: {usuario: nickname}})
     paginaHome = JSON.parse(JSON.stringify(paginaHome, null, 2))
     if ( paginaHome ) {        
         await PaginaHome.update({
             campo: Object.keys(item)[0],
-            href: "/" + Object.keys(item)[0].replace('_', '-') + "/listar"
+            href: `/` + Object.keys(item)[0].replace('_', '-') + `/listar`
         }, {where: {usuario: nickname}})
         .then(() => {
-            req.flash("success_msg", "Página Home configurada com sucesso!")
-            res.redirect("/")
+            req.flash(`success_msg`, `Página Home configurada com sucesso!`)
+            res.redirect(`/`)
         })
         .catch((erro) => {
-            let erros = [{ text: "Erro ao configurar Página Home, se persistir informar o desenvolvedor." }]
-            res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\paginaHome"), {erros})
+            let erros = [{ text: `Erro ao configurar Página Home, se persistir informar o desenvolvedor.` }]
+            res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}paginaHome`), {erros})
         })
     }else {
         PaginaHome.create({
             campo: Object.keys(item)[0],
-            href: "/" + Object.keys(item)[0].replace('_', '-') + "/listar",
+            href: `/` + Object.keys(item)[0].replace('_', '-') + `/listar`,
             usuario: nickname
         })
         .then(() => {
-            req.flash("success_msg", "Página Home configurada com sucesso!")
-            res.redirect("/")
+            req.flash(`success_msg`, `Página Home configurada com sucesso!`)
+            res.redirect(`/`)
         })
         .catch((erro) => {
-            let erros = [{ text: "Erro ao configurar Página Home, se persistir informar o desenvolvedor." }]
-            res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\paginaHome"), {erros})
+            let erros = [{ text: `Erro ao configurar Página Home, se persistir informar o desenvolvedor.` }]
+            res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}paginaHome`), {erros})
         })
     }
 })
 
 router.get('/itens-conta', eAdmin, async (req, res) => {
-    let item = await ItensConta.findOne({ where: { tipo_situacao: (req.query.situacao || "Aberto") } })
+    let item = await ItensConta.findOne({ where: { tipo_situacao: (req.query.situacao || `Aberto`) } })
     let itensConta = JSON.parse(JSON.stringify(item, null, 2))
     if ( item ) {
-        itensConta = {...itensConta, tipo_situacao: (req.query.situacao || "Aberto")}
-        res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\itensConta"), { itensConta })
+        itensConta = {...itensConta, tipo_situacao: (req.query.situacao || `Aberto`)}
+        res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}itensConta`), { itensConta })
     }else {
-        res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\itensConta"), {itensConta: {tipo_situacao: (req.query.situacao || "Aberto") }})
+        res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}itensConta`), {itensConta: {tipo_situacao: (req.query.situacao || `Aberto`) }})
     }
     
 })
@@ -100,29 +104,29 @@ router.post('/itens-conta', eAdmin, async (req, res) => {
         if ( !item ) {
             ItensConta.create(itens)
             .then(() => {
-                req.flash("success_msg", "Itens da conta configurados com sucesso!")
-                res.redirect("/")
+                req.flash(`success_msg`, `Itens da conta configurados com sucesso!`)
+                res.redirect(`/`)
             })
             .catch((erro) => {
                 console.log(erro)
-                let erros = [{ text: "Erro ao configurar itens da conta, se persistir informar o desenvolvedor." }]
-                res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\itensConta"), {erros, dados: req.body})
+                let erros = [{ text: `Erro ao configurar itens da conta, se persistir informar o desenvolvedor.` }]
+                res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}itensConta`), {erros, dados: req.body})
             })
         }else {
             ItensConta.update(itens, {where: { tipo_situacao: req.body.tipo_situacao }})
             .then(() => {
-                req.flash("success_msg", "Itens da conta configurados com sucesso!")
-                res.redirect("/")
+                req.flash(`success_msg`, `Itens da conta configurados com sucesso!`)
+                res.redirect(`/`)
             })
             .catch((erro) => {
                 console.log(erro)
-                let erros = [{ text: "Erro ao configurar itens da conta, se persistir informar o desenvolvedor." }]
-                res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\itensConta"), {erros, dados: req.body})
+                let erros = [{ text: `Erro ao configurar itens da conta, se persistir informar o desenvolvedor.` }]
+                res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}itensConta`), {erros, dados: req.body})
             })
         }
         
     }else {
-        res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\itensConta"), {erros, dados: req.body})
+        res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}itensConta`), {erros, dados: req.body})
     }
 })
 
@@ -131,35 +135,35 @@ router.get('/set-page-home', eAdmin, async (req, res) => {
     let paginaHome = await PaginaHome.findOne({where: {usuario: nickname}})
     paginaHome = JSON.parse(JSON.stringify(paginaHome, null, 2))
     if ( !paginaHome ) {
-        res.json({href: "/conta/listar"})
+        res.json({href: `/conta/listar`})
     }else res.json({href: paginaHome.href})
 })
 
 router.get('/chave-pix', eAdmin, async (req, res) => {
-    return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\chavePix"))
+    return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}chavePix`))
 })
 
 
 router.post('/chave-pix', async (req, res) => {
     let { tipo } = req.body
     let erros = []
-    if ( tipo == "" || !tipo ) erros.push({ text: "Campo não pode ser vazio nem nulo." })
+    if ( tipo == `` || !tipo ) erros.push({ text: `Campo não pode ser vazio nem nulo.` })
     let item = await TipoChavePix.findOne({ where: { tipo } })
-    if ( erros.length > 0 )  return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\chavePix"), {erros})
+    if ( erros.length > 0 )  return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}chavePix`), {erros})
     if ( !item ) {
         TipoChavePix.create({tipo})
         .then(() => {
-            req.flash("success_msg", "Tipo de chave pix configurados com sucesso!")
-            res.redirect("/")
+            req.flash(`success_msg`, `Tipo de chave pix configurados com sucesso!`)
+            res.redirect(`/`)
         })
         .catch((erro) => {
             console.log(erro)
-            erros.push({ text: "Erro ao configurar tipo de chave pix, se persistir informar o desenvolvedor." })
-            res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\chavePix"), {erros })
+            erros.push({ text: `Erro ao configurar tipo de chave pix, se persistir informar o desenvolvedor.` })
+            res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}chavePix`), {erros })
         })
     }else {
-        erros.push({ text: "Erro ao configurar tipo de chave pix, tipo de chave já existe." })
-        return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\chavePix"), {erros})
+        erros.push({ text: `Erro ao configurar tipo de chave pix, tipo de chave já existe.` })
+        return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}chavePix`), {erros})
     }
 })
 
@@ -167,7 +171,7 @@ router.get('/backup', eAdmin, async (req, res) => {
     let response = await list_files_backup()
     if ( !response.erro ) nomesBackup = JSON.stringify(response.nomesArquivos)
     else nomesBackup = JSON.stringify([])
-    return res.render(path.join(__dirname.toString().replace("\\routes", ""), "\\views\\configuracao\\backup"), {nomesBackup})
+    return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}backup`), {nomesBackup})
 })
 
 router.get('/criar-backup', async (req, res) => {
@@ -189,21 +193,21 @@ router.get('/listar-backups', async (req, res) => {
 
 router.get('/restore-backup', async (req, res) => {
     let { nome, isbackup } = req.query
-    if ( !nome || nome == "" ) return res.json({erro: true, message: "Precisa sinalizar qual backup vai restaurar."})
+    if ( !nome || nome == `` ) return res.json({erro: true, message: `Precisa sinalizar qual backup vai restaurar.`})
     var resBackup = null
-    if ( isbackup == "sim" ) {
+    if ( isbackup == `sim` ) {
         let responseBackup = await backup()
         if ( !responseBackup.erro ) {
             let response = await list_files_backup()
             if ( !response.erro ) resBackup = response.nomesArquivos
             else resBackup = JSON.stringify([])
         }else {
-            resBackup = "ERRO"
+            resBackup = `ERRO`
         }
     }
     let response = await restore(nome)
-    if ( response ) return res.json({resultado: {restore: "OK", nomesBackup: resBackup}})
-    return res.json({erro: "Não conseguimos restaurar o banco de dados nesse momento."})
+    if ( response ) return res.json({resultado: {restore: `OK`, nomesBackup: resBackup}})
+    return res.json({erro: `Não conseguimos restaurar o banco de dados nesse momento.`})
 })
 
 module.exports = router

@@ -79,22 +79,6 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4">
-                        {{#if itens.historico}}
-                        <label for="historico" class="col-form-label">Histórico <span
-                                class="text-danger fw-bolder">*</span></label>
-                        <div class="col-sm-12 input-group input-group-sm">
-                            <input type="text" class="form-control" name="historico" value="{{dados.historico}}"
-                                required autocomplete="off">
-                        </div>
-                        {{else}}
-                        <label for="historico" class="col-form-label">Histórico</label>
-                        <div class="col-sm-12 input-group input-group-sm">
-                            <input type="text" class="form-control" name="historico" value="{{dados.historico}}"
-                                autocomplete="off">
-                        </div>
-                        {{/if}}
-                    </div>
                     <div class="col-12 col-md-6 col-pk">
                         {{#if itens.situacao}}
                         <label for="situacao" class="col-form-label">Situação <span
@@ -123,26 +107,6 @@
                         </div>
                         {{/if}}
                     </div>
-
-                    {{!-- inserido para teste se fica bom --}}
-                    <div class="col-12 col-pk">
-                        {{#if itens.chave}}
-                        <label for="chave" class="col-form-label">chave <span
-                                class="text-danger fw-bolder">*</span></label>
-                        <div class="input-group input-group-sm">
-                            <select class="form-select form-select-sm" name="chave" required>
-                                {{{optionsChavePix}}}
-                            </select>
-                        </div>
-                        {{else}}
-                        <label for="chave" class="col-form-label">chave</label>
-                        <div class="input-group input-group-sm">
-                            <select class="form-select form-select-sm" name="chave" required>
-                                {{{optionsChavePix}}}
-                            </select>
-                        </div>
-                        {{/if}}
-                    </div>
                     <div class="col-12 col-pk">
                         {{#if itens.via_pagamento}}
                         <label for="via_pagamento" class="col-form-label">Via de pagamento <span
@@ -159,6 +123,10 @@
                         </div>
                         {{/if}}
                     </div>
+                </div>
+
+                {{!-- seção de fornecedor --}}
+                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm">
                     <div class="col-12 col-lg-3">
                         {{#if itens.fornecedor}}
                         <label for="fornecedor" class="col-form-label">Fornecedor <span
@@ -181,33 +149,7 @@
                         </div>
                         {{/if}}
                     </div>
-                </div>
-
-                {{!-- seção de fornecedor --}}
-                {{!-- <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm">
-                    <div class="col-12 col-md-6">
-                        {{#if itens.fornecedor}}
-                        <label for="fornecedor" class="col-form-label">Fornecedor <span
-                                class="text-danger fw-bolder">*</span></label>
-                        <div class="col-sm-12 input-group input-group-sm">
-                            <input type="text" autocomplete="off" onkeyup="filtro(this, 'fornecedores')"
-                                placeholder="busca inteligente..." class="form-control" name="fornecedor"
-                                value="{{dados.fornecedor}}" required autofocus>
-                            <div id="popupFiltro-fornecedor"
-                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
-                        </div>
-                        {{else}}
-                        <label for="fornecedor" class="col-form-label">Fornecedor</label>
-                        <div class="col-sm-12 input-group input-group-sm">
-                            <input type="text" autocomplete="off" onkeyup="filtro(this, 'fornecedores')"
-                                placeholder="busca inteligente..." class="form-control" name="fornecedor"
-                                value="{{dados.fornecedor}}" autofocus>
-                            <div id="popupFiltro-fornecedor"
-                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
-                        </div>
-                        {{/if}}
-                    </div>
-                    <div class="col-12 col-md-2">
+                    <div class="col-12 col-pk">
                         {{#if itens.chave}}
                         <label for="chave" class="col-form-label">chave <span
                                 class="text-danger fw-bolder">*</span></label>
@@ -225,23 +167,23 @@
                         </div>
                         {{/if}}
                     </div>
-                    <div class="col-12 col-md-4">
-                        {{#if itens.via_pagamento}}
-                        <label for="via_pagamento" class="col-form-label">Via de pagamento <span
+                    <div class="col-12 col-md-6 col-lg-4">
+                        {{#if itens.historico}}
+                        <label for="historico" class="col-form-label">Histórico <span
                                 class="text-danger fw-bolder">*</span></label>
                         <div class="col-sm-12 input-group input-group-sm">
-                            <input type="text" class="form-control" name="via_pagamento" value="{{dados.via_pagamento}}"
+                            <input type="text" class="form-control" name="historico" value="{{dados.historico}}"
                                 required autocomplete="off">
                         </div>
                         {{else}}
-                        <label for="via_pagamento" class="col-form-label">Via de pagamento</label>
+                        <label for="historico" class="col-form-label">Histórico</label>
                         <div class="col-sm-12 input-group input-group-sm">
-                            <input type="text" class="form-control" name="via_pagamento" value="{{dados.via_pagamento}}"
+                            <input type="text" class="form-control" name="historico" value="{{dados.historico}}"
                                 autocomplete="off">
                         </div>
                         {{/if}}
                     </div>
-                </div> --}}
+                </div>
 
                 {{!-- seção de DRE --}}
                 <div class="row d-flex justify-content-center mb-1 mt-2 p-3 bg-blue-1 shadow-sm" id="secao-dre">
@@ -349,9 +291,9 @@
                             </div> {{!-- onchange="compareValor()" --}}
                             {{/if}}
                         </div>
-                        <div class="col-12 col-sm-6 col-pk">{{!--  marcador 2 é o mesmo que vinculado --}}
+                        <div class="col-12 col-sm-6 col-pk">{{!--  Distribuição é o mesmo que vinculado --}}
                             {{#if itens.vinculado_dre}}
-                            <label for="vinculado_dre" class="col-form-label">Marcador 2 <span
+                            <label for="vinculado_dre" class="col-form-label">Distribuição <span
                                     class="text-danger fw-bolder">*</span></label>
                             <div class="col-sm-12 input-group input-group-sm">
                                 <input autocomplete="off" required type="text" autocomplete="off" onkeyup="filtro(this, 'dres', false, '', true)"
@@ -360,7 +302,7 @@
                                     class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                             </div>
                             {{else}}
-                            <label for="vinculado_dre" class="col-form-label">Marcador 2</label>
+                            <label for="vinculado_dre" class="col-form-label">Distribuição</label>
                             <div class="col-sm-12 input-group input-group-sm">
                                 <input autocomplete="off" type="text" autocomplete="off" onkeyup="filtro(this, 'dres', false, '', true)"
                                    placeholder="busca inteligente..." class="form-control" name="vinculado_dre" value="{{dados.vinculado_dre}}">
@@ -1541,7 +1483,7 @@
             </div>
             <div class="col-12 col-sm-6 col-pk">
                 {{#if itens.vinculado_dre}}
-                <label for="vinculado_dre" class="col-form-label">Marcador 2 <span
+                <label for="vinculado_dre" class="col-form-label">Distribuição <span
                         class="text-danger fw-bolder">*</span></label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="text" autocomplete="off"  onkeyup="filtro(this, 'dres', false, '_${ qtdeDre + 1 }', true)"
@@ -1550,7 +1492,7 @@
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
                 {{else}}
-                <label for="vinculado_dre" class="col-form-label">Marcador 2</label>
+                <label for="vinculado_dre" class="col-form-label">Distribuição</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" autocomplete="off" onkeyup="filtro(this, 'dres', false, '_${ qtdeDre + 1 }', true)"
                        placeholder="busca inteligente..." class="form-control" name="vinculado_dre_${ qtdeDre + 1 }" value="{{dados.["vinculado_dre_${ qtdeDre + 1 }"]}}">
