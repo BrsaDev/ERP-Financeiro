@@ -56,7 +56,11 @@ const VisibilidadeColunaTabConta = db.sequelize.define('visibilidade_coluna_tab_
     sistema_2:           { type: db.Sequelize.BOOLEAN },
     num_sistema_2:       { type: db.Sequelize.BOOLEAN },
     sistema_3:           { type: db.Sequelize.BOOLEAN },
-    num_sistema_3:       { type: db.Sequelize.BOOLEAN }
+    num_sistema_3:       { type: db.Sequelize.BOOLEAN },
+    uf_favorecida:       { type: db.Sequelize.BOOLEAN },
+    cpf_cnpj:            { type: db.Sequelize.BOOLEAN },
+    codigo_barras:       { type: db.Sequelize.BOOLEAN },
+    numero_documento_origem: { type: db.Sequelize.BOOLEAN }
 
 }, { timestamps: false } )
 

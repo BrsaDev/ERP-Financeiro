@@ -14,6 +14,7 @@
     <div><h5>Cadastrar Conta</h5> </div>
     <div class="ms-2"><i id="scroll-bottom" class="bi bi-arrow-down-circle-fill rem1200 cursor-pointer"></i></div>
     <div class="ms-2"><i id="scroll-top" class="bi bi-arrow-up-circle-fill rem1200 cursor-pointer"></i></div>
+    <div id="icone-download-pdf-conta" class="d-none ms-2 mt-1"><a href="/conta/download/{{dados.file_name}}"><i class="far fa-file-pdf fs-5 text-blue-pk cursor-pointer"></i></a></div>
 </div>
 <div class="card card-body shadow-lg h-pkflex-80">
     <div id="card-conta" class="card-body overflow-auto scroll">
@@ -31,11 +32,10 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-pk">
-                        <label for="valor_conta" class="col-form-label">Valor da Conta<span
-                                class="text-danger fw-bolder"> *</span></label>
+                        <label for="valor_conta" class="col-form-label">Valor da Conta</label>
                         <div class="col-sm-12 input-group input-group-sm">
                             <input onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" type="text" step="0.01" placeholder="0" class="form-control" name="valor_conta" value="{{dados.valor_conta}}"
-                                required autofocus autocomplete="off"
+                                autofocus autocomplete="off"
                             >
                         </div>
                     </div>
@@ -123,6 +123,167 @@
                         </div>
                         {{/if}}
                     </div>
+                    
+                </div>
+
+                {{!-- seção de NF --}}
+                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm bg-blue-1">
+
+                    <div class="col-12 col-md-4">
+                        {{#if itens.pdfs}}
+                        <label for="pdfs" class="col-form-label">Comprovantes PDF´s <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="file" class="form-control" name="pdfs" accept=".pdf" multiple 
+                                value="{{dados.pdfs}}">
+                        </div>
+                        {{else}}
+                        <label for="pdfs" class="col-form-label">Comprovantes PDF´s</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="file" class="form-control" name="pdfs" accept=".pdf" multiple 
+                                value="{{dados.pdfs}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.numero_documento_origem}}
+                        <label for="numero_documento_origem" class="col-form-label">N° Doc. Origem <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="numero_documento_origem" value="{{dados.numero_documento_origem}}"
+                                required autocomplete="off">
+                        </div>
+                        {{else}}
+                        <label for="numero_documento_origem" class="col-form-label">N° Doc. Origem</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="numero_documento_origem" value="{{dados.numero_documento_origem}}"
+                                autocomplete="off">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.cpf_cnpj}}
+                        <label for="cpf_cnpj" class="col-form-label">CPF/CNPJ <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="cpf_cnpj" value="{{dados.cpf_cnpj}}"
+                                required autocomplete="off">
+                        </div>
+                        {{else}}
+                        <label for="cpf_cnpj" class="col-form-label">CPF/CNPJ</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="cpf_cnpj" value="{{dados.cpf_cnpj}}"
+                                autocomplete="off">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.uf_favorecida}}
+                        <label for="uf_favorecida" class="col-form-label">UF Favorecida <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="uf_favorecida" required>
+                                <option selected>{{dados.uf_favorecida}}{{itens.uf_favorecida}}</option>
+                                <option value="AC">AC</option>
+                                <option value="AL">AL</option>
+                                <option value="AP">AP</option>
+                                <option value="AM">AM</option>
+                                <option value="BA">BA</option>
+                                <option value="CE">CE</option>
+                                <option value="DF">DF</option>
+                                <option value="ES">ES</option>
+                                <option value="GO">GO</option>
+                                <option value="MA">MA</option>
+                                <option value="MT">MT</option>
+                                <option value="MS">MS</option>
+                                <option value="MG">MG</option>
+                                <option value="PA">PA</option>
+                                <option value="PB">PB</option>
+                                <option value="PR">PR</option>
+                                <option value="PE">PE</option>
+                                <option value="PI">PI</option>
+                                <option value="RJ">RJ</option>
+                                <option value="RN">RN</option>
+                                <option value="RS">RS</option>
+                                <option value="RO">RO</option>
+                                <option value="RR">RR</option>
+                                <option value="SC">SC</option>
+                                <option value="SP">SP</option>
+                                <option value="SE">SE</option>
+                                <option value="TO">TO</option>
+                            </select>
+                        </div>
+                        {{else}}
+                        <label for="uf_favorecida" class="col-form-label">UF Favorecida</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="uf_favorecida">
+                                <option selected>{{dados.uf_favorecida}}{{itens.uf_favorecida}}</option>
+                                <option value="AC">AC</option>
+                                <option value="AL">AL</option>
+                                <option value="AP">AP</option>
+                                <option value="AM">AM</option>
+                                <option value="BA">BA</option>
+                                <option value="CE">CE</option>
+                                <option value="DF">DF</option>
+                                <option value="ES">ES</option>
+                                <option value="GO">GO</option>
+                                <option value="MA">MA</option>
+                                <option value="MT">MT</option>
+                                <option value="MS">MS</option>
+                                <option value="MG">MG</option>
+                                <option value="PA">PA</option>
+                                <option value="PB">PB</option>
+                                <option value="PR">PR</option>
+                                <option value="PE">PE</option>
+                                <option value="PI">PI</option>
+                                <option value="RJ">RJ</option>
+                                <option value="RN">RN</option>
+                                <option value="RS">RS</option>
+                                <option value="RO">RO</option>
+                                <option value="RR">RR</option>
+                                <option value="SC">SC</option>
+                                <option value="SP">SP</option>
+                                <option value="SE">SE</option>
+                                <option value="TO">TO</option>
+                            </select>
+                        </div>
+                        {{/if}}
+                    </div>
+                    {{!-- <div class="col-12 col-pk">
+                        {{#if itens.total_recolher}}
+                        <label for="total_recolher" class="col-form-label">Total a recolher <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="total_recolher" value="{{dados.total_recolher}}"
+                                required autocomplete="off" step="0.01" placeholder="0"
+                                   onchange="formataValorInput(this)" onkeyup="validarCaracter(this)">
+                        </div>
+                        {{else}}
+                        <label for="total_recolher" class="col-form-label">Total a recolher</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="total_recolher" value="{{dados.total_recolher}}"
+                                autocomplete="off" step="0.01" placeholder="0"
+                                   onchange="formataValorInput(this)" onkeyup="validarCaracter(this)">
+                        </div>
+                        {{/if}}
+                    </div> --}}
+                    <div class="col-12 col-sm-4">
+                        {{#if itens.codigo_barras}}
+                        <label for="codigo_barras" class="col-form-label">Código de barras <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="codigo_barras" value="{{dados.codigo_barras}}"
+                                required autocomplete="off">
+                        </div>
+                        {{else}}
+                        <label for="codigo_barras" class="col-form-label">Código de barras</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="codigo_barras" value="{{dados.codigo_barras}}"
+                                autocomplete="off">
+                        </div>
+                        {{/if}}
+                    </div>
+
                 </div>
 
                 {{!-- seção de fornecedor --}}
@@ -280,13 +441,13 @@
                             <label for="valor_dre" class="col-form-label">Valor <span
                                     class="text-danger fw-bolder">*</span></label>
                             <div class="col-sm-12 input-group input-group-sm">
-                                <input autocomplete="off" required type="text" step="0.01" placeholder="0"
+                                <input required type="text" step="0.01" placeholder="0"
                                    onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" autocomplete="off" class="form-control" name="valor_dre" value="{{dados.valor_dre}}">
                             </div>
                             {{else}}
                             <label for="valor_dre" class="col-form-label">Valor</label>
                             <div class="col-sm-12 input-group input-group-sm">
-                                <input autocomplete="off" type="text" step="0.01" placeholder="0" autocomplete="off"
+                                <input type="text" step="0.01" placeholder="0" autocomplete="off"
                                    onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" class="form-control" name="valor_dre" value="{{dados.valor_dre}}">
                             </div> {{!-- onchange="compareValor()" --}}
                             {{/if}}
@@ -1318,6 +1479,15 @@
     const baseUrl = "http://localhost:8089"
 
 
+    if ( document.getElementsByName("codigo_barras")[0].value != "" ) {
+        document.querySelector("#icone-download-pdf-conta").classList.remove('d-none')
+        document.getElementsByName("pdfs")[0].disabled = true
+    }else {
+        document.querySelector("#icone-download-pdf-conta").classList.add('d-none')
+        document.getElementsByName("pdfs")[0].disabled = false
+    }
+
+
     async function listDadosParaConta(tipoUri, tipo) {
         let resultado = await fetch(`${ baseUrl }/${tipoUri}/obter`)
         resultado = await resultado.json()
@@ -1732,6 +1902,8 @@
         let qtdeParcelas = document.getElementsByName('numero_parcelas')[0].value
         let valorConta = document.getElementsByName("valor_conta")[0].value.replace("R$ ", "")
         let fixarParcelas = document.getElementsByName("fixar_parcelas")[0].value
+        let arquivosPdfs = document.getElementsByName("pdfs")[0].value
+
         let somaDres = 0
         for ( item of formData.entries() ) {
             if ( item[0].includes("valor_dre") ) {
@@ -1743,7 +1915,7 @@
             }
         }
         let erros = []
-        if ( valorConta == "" ) { erros.push({erro: 'O campo "Valor da Conta" precisa ser preenchido.'})}
+        if ( valorConta == "" && arquivosPdfs == "" ) { erros.push({erro: 'O campo "Valor da Conta" precisa ser preenchido.'})}
         if ( qtdeParcelas == "" ) { erros.push({erro: 'O campo "Número de Parcelas" precisa ser preenchido.'})}
         if ( numeroDias == "Desabilitado" && fixarParcelas == "Desabilitado" && qtdeParcelas > 1 ) { 
             erros.push({erro: 'O campo "Número de Dias" ou o campo "Fixar Parcelas" precisa ser setado.'})

@@ -56,7 +56,11 @@ const TamanhoColunaTabConta = db.sequelize.define('tamanho_coluna_tab_conta', {
     sistema_2:           { type: db.Sequelize.STRING },
     num_sistema_2:       { type: db.Sequelize.STRING },
     sistema_3:           { type: db.Sequelize.STRING },
-    num_sistema_3:       { type: db.Sequelize.STRING }
+    num_sistema_3:       { type: db.Sequelize.STRING },
+    uf_favorecida:       { type: db.Sequelize.STRING },
+    cpf_cnpj:            { type: db.Sequelize.STRING },
+    codigo_barras:       { type: db.Sequelize.STRING },
+    numero_documento_origem: { type: db.Sequelize.STRING }
 
 }, { timestamps: false } )
 

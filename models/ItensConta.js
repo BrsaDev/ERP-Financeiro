@@ -54,7 +54,11 @@ const ItensConta = db.sequelize.define('itens_contas', {
     sistema_2:           { type: db.Sequelize.BOOLEAN, allowNull: false },
     num_sistema_2:       { type: db.Sequelize.BOOLEAN, allowNull: false },
     sistema_3:           { type: db.Sequelize.BOOLEAN, allowNull: false },
-    num_sistema_3:       { type: db.Sequelize.BOOLEAN, allowNull: false }
+    num_sistema_3:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    uf_favorecida:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    cpf_cnpj:            { type: db.Sequelize.BOOLEAN, allowNull: false },
+    codigo_barras:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    numero_documento_origem: { type: db.Sequelize.BOOLEAN, allowNull: false },
 
 }, { timestamps: false } )
 
