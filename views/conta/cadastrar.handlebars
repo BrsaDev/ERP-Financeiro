@@ -17,9 +17,9 @@
     <div id="icone-download-pdf-conta" class="d-none ms-2 mt-1"><a href="/conta/download/{{dados.file_name}}"><i class="far fa-file-pdf fs-5 text-blue-pk cursor-pointer"></i></a></div>
 </div>
 <div class="card card-body shadow-lg h-pkflex-80">
-    <div id="card-conta" class="card-body overflow-auto scroll">
+    <div id="card-conta" class="card-body scroll">
         <form action="/conta/cadastrar" method="post" enctype="multipart/form-data">
-            <div class="row rem0788">
+            <div class="row rem0788 w-100">
 
                 {{!-- seção de controle e valor --}}
                 <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm rem0788">
@@ -127,7 +127,7 @@
                 </div>
 
                 {{!-- seção de NF --}}
-                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm bg-blue-1">
+                <div class="row mb-1 mt-2 p-3 bg-gray-1 shadow-sm">
 
                     <div class="col-12 col-md-4">
                         {{#if itens.pdfs}}
@@ -347,7 +347,7 @@
                 </div>
 
                 {{!-- seção de DRE --}}
-                <div class="row d-flex justify-content-center mb-1 mt-2 p-3 bg-blue-1 shadow-sm" id="secao-dre">
+                <div class="row d-flex justify-content-center mb-1 mt-2 ms-4 p-3 bg-blue-1 shadow-sm w-pkflex-97" id="secao-dre">
                     <span class="fw-bold fs-5 mb-1 border border-top-0 border-end-0 border-start-0 text-blue-pk">DRE</span>
                     <div id="dre-1" class="row p-0">
                         <div class="col-12 col-sm-6 col-lg-4">
@@ -623,7 +623,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mb-2 mt-01">
+                <div class="mb-2 mt-01 ms-4">
                     <i id="btn-remove-dre" class="bi bi-dash-square-fill cursor-pointer text-blue-pk"></i>
                     <i id="btn-add-dre" class="bi bi-plus-square-fill cursor-pointer text-blue-pk"></i>
                 </div>
@@ -1485,6 +1485,17 @@
     }else {
         document.querySelector("#icone-download-pdf-conta").classList.add('d-none')
         document.getElementsByName("pdfs")[0].disabled = false
+    }
+
+    if ( document.getElementsByName('cadastramento')[0].value == "" ) {
+        const hoje = new Date()
+
+        // Formata a data para o formato AAAA-MM-DD
+        const ano = hoje.getFullYear()
+        const mes = String(hoje.getMonth() + 1).padStart(2, '0')
+        const dia = String(hoje.getDate()).padStart(2, '0')
+        document.getElementsByName('cadastramento')[0].value = `${ano}-${mes}-${dia}`
+        for ( let element of document.getElementsByName('cadastramento_dre') ) { element.value = `${ano}-${mes}-${dia}` }
     }
 
 

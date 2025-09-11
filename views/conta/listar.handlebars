@@ -2,7 +2,8 @@
     <div class="col-12 mb-2">
         <a data-bs-toggle="modal" data-bs-target="#exampleModal"
             class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Abrir pagamento</a>
-        <a  href="#" onclick="abrirContaPopup(true)" class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Cadastrar pagamento</a>
+        {{!-- abaixo tinha um onclick="abrirContaPopup(true) para abrir a conta num popup, foi tirado" --}}
+        <a  href="/conta/cadastrar" target="_blank" class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Cadastrar pagamento</a>
         <a target="_blank" href="#"
             class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Consulta</a>
         <a target="_blank" href="#"
@@ -891,7 +892,7 @@
     let situacaoSelected = document.querySelector('#situacao_select_' + depositoSituacao.innerText.toLowerCase().replace(' ', '_'))
     situacaoSelected.classList.add("border-b-blue")
 
-    function abrirContaPopup(contaNova, numeroConta, situacao) {
+    function abrirContaPopup(contaNova, numeroConta, situacao) {// estava abrindo a conta pela tela de listagem em um popup, por enquanto sem uso para conta
         // Definindo tamanho do popup
         var largura = 900;
         var altura = 700;
@@ -915,7 +916,7 @@
         }
         
     }
-
+    
     function handleDragStart(e) {
         if (!mudarPosicaoColuna) return true
         dragColl = this
@@ -1457,6 +1458,7 @@
         }
         alert("Ocorreu um erro ao salvar a configuração de visibildade de colunas!")
     })
+    
     function resetOcultarColunaSemSalvar(nameInput, check) {
         let elements = document.getElementsByName("tab-" + nameInput)
         if (check) {
@@ -1571,6 +1573,7 @@
         return document.querySelectorAll('#tdbody-dre > tr')
     }
     function abrirContaPeloDre(numeroConta, situacao, dre) {
+console.log('------------')
         let linkAbrirContaPorDre = document.querySelector("#btn-abrir-conta-por-dre")
         if ( !dre ) {
             linkAbrirContaPorDre.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}`
@@ -1578,6 +1581,7 @@
         else {
             linkAbrirContaPorDre.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}&dre=${dre}`  
         }
+        
         linkAbrirContaPorDre.click()
     }
     document.addEventListener('keydown', function(event) {

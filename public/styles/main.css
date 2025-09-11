@@ -127,6 +127,9 @@ th, td {
 .h-pkflex-80 {
     height: 90% !important;
 }
+.w-pkflex-97 {
+    width: 97.5% !important;
+}
 .mh-pkflex-70 {
     max-height: 70% !important;
 }
@@ -220,7 +223,7 @@ input {
     min-width: 80px !important;
 }
 .scroll {
-    overflow: auto !important;
+    overflow-y: auto !important;
 }
 
 .hold {

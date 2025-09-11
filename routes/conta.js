@@ -173,7 +173,8 @@ router.post(`/visibilidade-colunas/cadastrar`, async (req, res) => {
         doc_pagamento: false, vencimento: false, referencia: false, relacao: false, numero_dias: false, observacao: false, rateio: false, reembolso: false, num_pedido_compra: false,
         data_compra: false, emissao_nf: false, num_comprovante: false, data_entrega_mercad: false, mercadoria_entregue: false, comprovante_mercad: false, sistema_1: false,
         num_sistema_1: false, sistema_2: false, num_sistema_2: false, sistema_3: false, num_sistema_3: false, vinculado: false,
-        numero_parcela: false, valor_parcela: false, vencimento_parcela: false, chave: false, uf_favorecida: true
+        numero_parcela: false, valor_parcela: false, vencimento_parcela: false, chave: false, uf_favorecida: true, 
+        numero_documento_origem: true, codigo_barras: true, cpf_cnpj: true
     }
     for (let item of Object.entries(req.body)) { itens[item[0]] = true }
     let nickname = req.user.dataValues.nickname
@@ -263,14 +264,17 @@ router.get('/abrir-conta', eAdmin, async (req, res) => {
     let {numero_conta, situacao, dre} = req.query
     let contas = await conta.findAll({ where: { [Op.and]: {numero_conta, situacao} } })
     contas = JSON.parse(JSON.stringify(contas, null, 2))
+        
     if ( contas.length == 0 ) {
         let itens = {proximo_numero_conta: 1, tipo_situacao: situacao}
-        // console.log(itens)
         return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { itens })
     }
-    let item = await ItensConta.findOne({ where: { tipo_situacao: contas[0].situacao } })
+    let item = await ItensConta.findOne({ where: { tipo_situacao: situacao } })
     item = JSON.parse(JSON.stringify(item, null, 2))
-    delete item.tipo_situacao
+    if ( item && item.tipo_situacao ) {
+        delete item.tipo_situacao
+    }
+    
     let itens = { ...item }
     let dres = {}
     if ( !dre ) {
@@ -375,24 +379,24 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
     let primeiroItemConta = {}
     let headPageDre = `
         <tr class='text-center text-nowrap text-light bg-blue-pk'>
-            <th name='tab-N_Conta'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-N_Conta')'></i><span><i onclick='sortTable('tab-N_Conta')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° Conta</span></th>
-            <th name='tab-Valor'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Valor')'></i><span><i onclick='sortTable('tab-Valor')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Valor</span></th>
-            <th name='tab-Descricao'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Descricao')'></i><span><i onclick='sortTable('tab-Descricao')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Descrição</span></th>
-            <th name='tab-Departamento'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Departamento')'></i><span><i onclick='sortTable('tab-Departamento')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Departamento</span></th>
-            <th name='tab-Vencimento'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Vencimento')'></i><span><i onclick='sortTable('tab-Vencimento')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Vencimento</span></th>
-            <th name='tab-Pagamento'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Pagamento')'></i><span><i onclick='sortTable('tab-Pagamento')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Pagamento</span></th>
-            <th name='tab-Relacao'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Relacao')'></i><span><i onclick='sortTable('tab-Relacao')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Relação</span></th>
-            <th name='tab-Marcador_1'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Marcador_1')'></i><span><i onclick='sortTable('tab-Marcador_1')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Marcador 1</span></th>
-            <th name='tab-Marcador_2'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Marcador_2')'></i><span><i onclick='sortTable('tab-Marcador_2')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Marcador 2</span></th>
-            <th name='tab-Categoria'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Categoria')'></i><span><i onclick='sortTable('tab-Categoria')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Categoria</span></th>
-            <th name='tab-Grupo'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Grupo')'></i><span><i onclick='sortTable('tab-Grupo')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Grupo</span></th>
-            <th name='tab-Sub_Grupo'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Sub_Grupo')'></i><span><i onclick='sortTable('tab-Sub_Grupo')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sub Grupo</span></th>
-            <th name='tab-Sistema_1'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Sistema_1')'></i><span><i onclick='sortTable('tab-Sistema_1')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sistema 1</span></th>
-            <th name='tab-N_sistema_1'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-N_sistema_1')'></i><span><i onclick='sortTable('tab-N_sistema_1')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° sistema 1</span></th>
-            <th name='tab-Sistema_2'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Sistema_2')'></i><span><i onclick='sortTable('tab-Sistema_2')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sistema 2</span></th>
-            <th name='tab-N_sistema_2'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-N_sistema_2')'></i><span><i onclick='sortTable('tab-N_sistema_2')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° sistema 2</span></th>
-            <th name='tab-Sistema_3'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-Sistema_3')'></i><span><i onclick='sortTable('tab-Sistema_3')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sistema 3</span></th>
-            <th name='tab-N_sistema_3'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-N_sistema_3')'></i><span><i onclick='sortTable('tab-N_sistema_3')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° sistema 3</span></th>
+            <th name='tab-N_Conta'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-N_Conta')"></i><span><i onclick='sortTable('tab-N_Conta')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° Conta</span></th>
+            <th name='tab-Valor'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Valor')"></i><span><i onclick='sortTable('tab-Valor')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Valor</span></th>
+            <th name='tab-Descricao'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Descricao')"></i><span><i onclick='sortTable('tab-Descricao')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Descrição</span></th>
+            <th name='tab-Departamento'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Departamento')"></i><span><i onclick='sortTable('tab-Departamento')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Departamento</span></th>
+            <th name='tab-Vencimento'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Vencimento')"></i><span><i onclick='sortTable('tab-Vencimento')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Vencimento</span></th>
+            <th name='tab-Pagamento'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Pagamento')"></i><span><i onclick='sortTable('tab-Pagamento')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Pagamento</span></th>
+            <th name='tab-Relacao'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Relacao')"></i><span><i onclick='sortTable('tab-Relacao')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Relação</span></th>
+            <th name='tab-Marcador_1'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Marcador_1')"></i><span><i onclick='sortTable('tab-Marcador_1')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Marcador 1</span></th>
+            <th name='tab-Marcador_2'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Marcador_2')"></i><span><i onclick='sortTable('tab-Marcador_2')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Marcador 2</span></th>
+            <th name='tab-Categoria'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Categoria')"></i><span><i onclick='sortTable('tab-Categoria')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Categoria</span></th>
+            <th name='tab-Grupo'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Grupo')"></i><span><i onclick='sortTable('tab-Grupo')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Grupo</span></th>
+            <th name='tab-Sub_Grupo'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Sub_Grupo')"></i><span><i onclick='sortTable('tab-Sub_Grupo')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sub Grupo</span></th>
+            <th name='tab-Sistema_1'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Sistema_1')"></i><span><i onclick='sortTable('tab-Sistema_1')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sistema 1</span></th>
+            <th name='tab-N_sistema_1'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-N_sistema_1')"></i><span><i onclick='sortTable('tab-N_sistema_1')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° sistema 1</span></th>
+            <th name='tab-Sistema_2'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Sistema_2')"></i><span><i onclick='sortTable('tab-Sistema_2')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sistema 2</span></th>
+            <th name='tab-N_sistema_2'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-N_sistema_2')"></i><span><i onclick='sortTable('tab-N_sistema_2')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° sistema 2</span></th>
+            <th name='tab-Sistema_3'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-Sistema_3')"></i><span><i onclick='sortTable('tab-Sistema_3')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> Sistema 3</span></th>
+            <th name='tab-N_sistema_3'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick="popupFiltroColuna('tab-N_sistema_3')"></i><span><i onclick='sortTable('tab-N_sistema_3')' style='margin-right: 8px;' class='position-relative fas fa-arrows-alt-v'></i> N° sistema 3</span></th>
         </tr>
     `
     let bodyPageDre = ``
@@ -422,28 +426,28 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                     item.dataValues.valor_dre = item.dataValues.valor_dre == `` ? `0` : (item.dataValues.valor_dre).toString().indexOf('.') != -1 ? (item.dataValues.valor_dre).toString().replace('.', ',') : (item.dataValues.valor_dre).toString() + ',00'
                     
                     bodyPageDre += `
-                        <tr class='text-nowrap'>
-                            <td name='tab-N_Conta' class='text-center'>
-                                    <i class='fas fa-search cursor-pointer position-relative' style='left: -20px;' onclick='abrirContaPeloDre('${item.dataValues.numero_conta}', '${(req.query.situacao_select || 'Aberto')}', true)'></i>
+                        <tr class="text-nowrap">
+                            <td name="tab-N_Conta" class="text-center">
+                                    <i class="fas fa-search cursor-pointer position-relative" style="left: -20px;" onclick='abrirContaPeloDre("${item.dataValues.numero_conta.trim()}", "${(req.query.situacao_select || "Aberto")}", true)'></i>
                                      ${item.dataValues.numero_conta}
                             </td>
-                            <td name='tab-Valor' class='text-center'>${item.dataValues.valor_dre}</td>
-                            <td name='tab-Descricao' class='text-center'>${item.dataValues.descricao}</td>
-                            <td name='tab-Departamento' class='text-center'>${item.dataValues.departamento}</td>
-                            <td name='tab-Vencimento' class='text-center'>${item.dataValues.vencimento}</td>
-                            <td name='tab-Pagamento' class='text-center'>${item.dataValues.pagamento}</td>
-                            <td name='tab-Relacao' class='text-center'>${item.dataValues.relacao}</td>
-                            <td name='tab-Marcador_1' class='text-center'>${item.dataValues.rateio_dre}</td>
-                            <td name='tab-Marcador_2' class='text-center'>${item.dataValues.vinculado_dre}</td>
-                            <td name='tab-Categoria' class='text-center'>${item.dataValues.categoria}</td>
-                            <td name='tab-Grupo' class='text-center'>${item.dataValues.grupo}</td>
-                            <td name='tab-Sub_Grupo' class='text-center'>${item.dataValues.subgrupo}</td>
-                            <td name='tab-Sistema_1' class='text-center'>${item.dataValues.sistema_1}</td>
-                            <td name='tab-N_sistema_1' class='text-center'>${item.dataValues.num_sistema_1}</td>
-                            <td name='tab-Sistema_2' class='text-center'>${item.dataValues.sistema_2}</td>
-                            <td name='tab-N_sistema_2' class='text-center'>${item.dataValues.num_sistema_2}</td>
-                            <td name='tab-Sistema_3' class='text-center'>${item.dataValues.sistema_3}</td>
-                            <td name='tab-N_sistema_3' class='text-center'>${item.dataValues.num_sistema_3}</td>
+                            <td name="tab-Valor" class="text-center">${item.dataValues.valor_dre}</td>
+                            <td name="tab-Descricao" class="text-center">${item.dataValues.descricao}</td>
+                            <td name="tab-Departamento" class="text-center">${item.dataValues.departamento}</td>
+                            <td name="tab-Vencimento" class="text-center">${item.dataValues.vencimento}</td>
+                            <td name="tab-Pagamento" class="text-center">${item.dataValues.pagamento}</td>
+                            <td name="tab-Relacao" class="text-center">${item.dataValues.relacao}</td>
+                            <td name="tab-Marcador_1" class="text-center">${item.dataValues.rateio_dre}</td>
+                            <td name="tab-Marcador_2" class="text-center">${item.dataValues.vinculado_dre}</td>
+                            <td name="tab-Categoria" class="text-center">${item.dataValues.categoria}</td>
+                            <td name="tab-Grupo" class="text-center">${item.dataValues.grupo}</td>
+                            <td name="tab-Sub_Grupo" class="text-center">${item.dataValues.subgrupo}</td>
+                            <td name="tab-Sistema_1" class="text-center">${item.dataValues.sistema_1}</td>
+                            <td name="tab-N_sistema_1" class="text-center">${item.dataValues.num_sistema_1}</td>
+                            <td name="tab-Sistema_2" class="text-center">${item.dataValues.sistema_2}</td>
+                            <td name="tab-N_sistema_2" class="text-center">${item.dataValues.num_sistema_2}</td>
+                            <td name="tab-Sistema_3" class="text-center">${item.dataValues.sistema_3}</td>
+                            <td name="tab-N_sistema_3" class="text-center">${item.dataValues.num_sistema_3}</td>
                         </tr>`
                     return item
                 })
@@ -504,30 +508,30 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                     for (key of Object.keys(item.dataValues)) {
                         if (visibilidadeColunas) {
                         // console.log(visibilidadeColunas[posColunas[index]], visibilidadeColunas, index, '\n\n')
-                            var classVisibleColumn = visibilidadeColunas[posColunas[index]] ? `` : `class='d-none'`
+                            var classVisibleColumn = visibilidadeColunas[posColunas[index]] ? `` : `class="d-none"`
                         } else {
-                            var classVisibleColumn = visibilidadeColunasDefault[posColunas[index]] ? `` : `class='d-none'`
+                            var classVisibleColumn = visibilidadeColunasDefault[posColunas[index]] ? `` : `class="d-none"`
                         }
-                        if ( typeof objHeadDuplicado[cabecalhoDefaultColunas[posColunas[index]]] == 'undefined' && typeof itensDre[posColunas[index]] == 'undefined' ) {
+                        if ( typeof objHeadDuplicado[cabecalhoDefaultColunas[posColunas[index]]] == "undefined" && typeof itensDre[posColunas[index]] == "undefined" ) {
                             
                             htmlHead += `
-                                <th scope='col' ${classVisibleColumn} name='tab-${posColunas[index]}' style='min-width: ${tamColunas[posColunas[index]]} !important'><i class='d-none fas fa-filter me-3 rem0550 cursor-pointer' onclick='popupFiltroColuna('tab-${posColunas[index]}')'></i><span>${cabecalhoDefaultColunas[posColunas[index]]}</span></th>
+                                <th scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" style="min-width: ${tamColunas[posColunas[index]]} !important"><i class="d-none fas fa-filter me-3 rem0550 cursor-pointer" onclick='popupFiltroColuna("tab-${posColunas[index]}")'></i><span>${cabecalhoDefaultColunas[posColunas[index]]}</span></th>
                             `   
                             objHeadDuplicado[cabecalhoDefaultColunas[posColunas[index]]] = true
                         }
-                        if ( posColunas[index] == 'historico' ) {
-                            var tipoText = 'class=`text-start`'
+                        if ( posColunas[index] == "historico" ) {
+                            var tipoText = 'class="text-start"'
                         }else {
-                            var tipoText = 'class=`text-center`'
+                            var tipoText = 'class="text-center"'
                         }
                         if ( typeof itensDre[posColunas[index]] == 'undefined' && primeiraLinhaConta ) {
                             if ( index == 1 ) {
                                 htmlBodyPart += `
-                                    <td scope='col' ${classVisibleColumn} name='tab-${posColunas[index]}' ${tipoText}>
-                                        <div class='position-relative d-flex gap-2' style='left: 2px; top: 2px;'>
-                                            <i class='fas fa-search cursor-pointer position-relative' onclick='abrirContaPeloDre('${item.dataValues.numero_conta}', '${(item.dataValues.situacao || 'Aberto')}', false)'></i>
-                                            <i id='btn-hide-dre${item.dataValues.numero_conta}' onclick='showHideDre('${item.dataValues.numero_conta}', 'hide', ${indexBtnShowHide})' class='d-none bi bi-dash-square-fill cursor-pointer text-blue-pk'></i>
-                                            <i id='btn-show-dre${item.dataValues.numero_conta}' onclick='showHideDre('${item.dataValues.numero_conta}', 'show', ${indexBtnShowHide})' class='bi bi-plus-square-fill cursor-pointer text-blue-pk'></i>
+                                    <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
+                                        <div class="position-relative d-flex gap-2" style="left: 2px; top: 2px;">
+                                            <i class="fas fa-search cursor-pointer position-relative" onclick='abrirContaPeloDre("${item.dataValues.numero_conta.trim()}", "${(item.dataValues.situacao || "Aberto")}", false)'></i>
+                                            <i id="btn-hide-dre${item.dataValues.numero_conta}" onclick='showHideDre("${item.dataValues.numero_conta.trim()}", "hide", ${indexBtnShowHide})' class="d-none bi bi-dash-square-fill cursor-pointer text-blue-pk"></i>
+                                            <i id="btn-show-dre${item.dataValues.numero_conta}" onclick='showHideDre("${item.dataValues.numero_conta.trim()}", "show", ${indexBtnShowHide})' class="bi bi-plus-square-fill cursor-pointer text-blue-pk"></i>
                                             <span>${item.dataValues[posColunas[index]]}</span>
                                         </div>
                                     </td>
@@ -537,14 +541,14 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                             else {
                                 if ( posColunas[index] == `numero_parcelas` ) {
                                     htmlBodyPart += `
-                                        <td scope='col' ${classVisibleColumn} name='tab-${posColunas[index]}' ${tipoText}>
+                                        <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
                                             ${item.dataValues.numero_parcela}/${item.dataValues.numero_parcelas}
                                         </td>
                                     `
                                 }
                                 else {
                                     htmlBodyPart += `
-                                        <td scope='col' ${classVisibleColumn} name='tab-${posColunas[index]}' ${tipoText}>
+                                        <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
                                             ${item.dataValues[posColunas[index]]}
                                         </td>
                                     `
