@@ -4,7 +4,7 @@
             <i class="fs-5 bi-house text-black"></i>
         </a>
     </div>
-    <div><h5>Categorias</h5></div>
+    <div><h5>Plano de Contas</h5></div>
 </div>
 <div class="row">
     <div class="col-auto">
@@ -29,11 +29,11 @@
                     </thead>
                     {{#each categorias}}
                     <tbody>
-                        <tr class="text-nowrap">
+                        <tr id="{{id}}" class="text-nowrap">
                             <td class="text-center" scope="col">{{id}}</td>
-                            <td scope="col">{{nome}}</td>
-                            <td scope="col">{{subgrupo}}</td>
-                            <td scope="col">{{grupo}}</td>
+                            <td onclick="editarConteudoPlanoContas(this)" onblur="finalizarEditacaoConteudoPlanoContas(this)" scope="col">{{nome}}</td>
+                            <td onclick="editarConteudoPlanoContas(this)" onblur="finalizarEditacaoConteudoPlanoContas(this)" scope="col">{{subgrupo}}</td>
+                            <td onclick="editarConteudoPlanoContas(this)" onblur="finalizarEditacaoConteudoPlanoContas(this)" scope="col">{{grupo}}</td>
                             <td scope="col" class="col-vazia"></td>
                             <td scope="col" class="col-vazia"></td>
                             <td scope="col" class="col-vazia"></td>
@@ -52,3 +52,69 @@
         </div>
     </div>
 </div>
+
+<script>
+    const baseUrl = "http://localhost:8089"
+
+    function editarConteudoPlanoContas(e) {
+        // ativa a edição
+        e.setAttribute('contenteditable', 'true')
+        e.focus()
+    }
+
+    // desativa edição ao sair do foco
+    async function finalizarEditacaoConteudoPlanoContas(e) {
+        e.removeAttribute('contenteditable')
+        //console.log('Novo valor:', e.textContent) // pega o texto editado
+        const data = getRowDataAsJson(e.parentNode.id)
+        let retorno = await editarCategoria(data)
+        if ( retorno.success ) {
+            console.log("sucesso ao editar categoria")
+        }else {
+            console.log("erro ao editar categoria")
+        }
+    }
+
+
+    function getRowDataAsJson(id) {
+        const row = document.querySelector(`tbody tr[id="${id}"]`);
+        if (!row) return null; // se não encontrar a linha
+
+        const headers = Array.from(document.querySelectorAll('thead th'))
+            .map(th => th.textContent.trim());
+
+        const cells = Array.from(row.querySelectorAll('td'));
+
+        // Monta o JSON usando headers como chaves
+        const jsonData = {};
+        headers.forEach((header, index) => {
+            
+            if ( cells[index].textContent != "" ) {
+                let key = header.toLowerCase();
+
+                // Troca "categoria" por "nome"
+                if (key === 'categoria') {
+                    key = 'nome'
+                }
+                jsonData[key] = cells[index] ? cells[index].textContent.trim() : null; 
+            }
+        });
+
+        return jsonData;
+    }
+
+    async function editarCategoria(data) {
+        let categoria = await fetch(`${baseUrl}/categoria/cadastrar?editar=true`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json' // importante para JSON
+            }
+        });
+        categoria = await categoria.json()
+        return categoria
+    }
+
+
+
+</script>

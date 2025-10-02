@@ -6,6 +6,7 @@ const TamanhoColunaTabConta = db.sequelize.define('tamanho_coluna_tab_conta', {
     usuario:         { type: db.Sequelize.STRING },
     numero_conta:    { type: db.Sequelize.STRING },
     historico:       { type: db.Sequelize.STRING },
+    responsavel:     { type: db.Sequelize.STRING },
     valor_conta:     { type: db.Sequelize.STRING },
     fornecedor:      { type: db.Sequelize.STRING },
     chave:           { type: db.Sequelize.STRING },

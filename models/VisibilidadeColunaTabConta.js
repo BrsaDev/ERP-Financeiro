@@ -6,6 +6,7 @@ const VisibilidadeColunaTabConta = db.sequelize.define('visibilidade_coluna_tab_
     usuario:         { type: db.Sequelize.STRING },
     numero_conta:    { type: db.Sequelize.BOOLEAN },
     historico:       { type: db.Sequelize.BOOLEAN },
+    responsavel:     { type: db.Sequelize.BOOLEAN },
     valor_conta:     { type: db.Sequelize.BOOLEAN },
     fornecedor:      { type: db.Sequelize.BOOLEAN },
     chave:           { type: db.Sequelize.BOOLEAN },

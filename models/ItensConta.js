@@ -5,6 +5,7 @@ const ItensConta = db.sequelize.define('itens_contas', {
     id:              { type: db.Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
     tipo_situacao:   { type: db.Sequelize.STRING,  allowNull: false },
     historico:       { type: db.Sequelize.BOOLEAN, allowNull: false },
+    responsavel:     { type: db.Sequelize.BOOLEAN, allowNull: false },
     fornecedor:      { type: db.Sequelize.BOOLEAN, allowNull: false },
     chave:           { type: db.Sequelize.BOOLEAN, allowNull: false },
     via_pagamento:   { type: db.Sequelize.BOOLEAN, allowNull: false },

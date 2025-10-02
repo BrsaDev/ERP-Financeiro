@@ -344,6 +344,22 @@
                         </div>
                         {{/if}}
                     </div>
+                    <div class="col-12 col-md-6 col-lg-2">
+                        {{#if itens.responsavel}}
+                        <label for="responsavel" class="col-form-label">Responsável <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="responsavel" value="{{dados.responsavel}}"
+                                required autocomplete="off">
+                        </div>
+                        {{else}}
+                        <label for="responsavel" class="col-form-label">Responsável</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="responsavel" value="{{dados.responsavel}}"
+                                autocomplete="off">
+                        </div>
+                        {{/if}}
+                    </div>
                 </div>
 
                 {{!-- seção de DRE --}}
@@ -1919,7 +1935,7 @@
         for ( item of formData.entries() ) {
             if ( item[0].includes("valor_dre") ) {
                 objForm[item[0]] = parseFloat(item[1].replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
-                somaDres += parseFloat(parseFloat(item[1].replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2))
+                somaDres += parseFloat(parseFloat(item[1].replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2)) || 0
             }
             if( item[0].includes('valor_conta') ) {
                 objForm[item[0]] = parseFloat(item[1].replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
@@ -1941,10 +1957,10 @@
         for ( let dre=1;dre<=qtdeDre;dre++ ) {
             objParcelasGeradas = []
             if ( dre == 1 ) {
-                var valorDre = parseFloat(document.getElementsByName("valor_dre")[0].value.replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
+                var valorDre = parseFloat(document.getElementsByName("valor_dre")[0].value.replace(/[R$\s.]/g, '').replace(',', '.')  || 0).toFixed(2) || 0
             }
             else {
-                var valorDre = parseFloat(document.getElementsByName("valor_dre_"+dre)[0].value.replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
+                var valorDre = parseFloat(document.getElementsByName("valor_dre_"+dre)[0].value.replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2) || 0
             }
             let parcelas = `
                 <div id="parcelas-dre-${dre}">
@@ -2118,13 +2134,13 @@
         let somaDres = 0;
         for (let [key, value] of formData.entries()) {
             if (key.includes("valor_dre")) {
-            const val = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2);
+            const val = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2);
             console.log(key, value, val, 'valor_dre')
             formData.set(key, val);
             somaDres += parseFloat(val);
             }
             if (key.includes("valor_conta")) {
-            const val = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2);
+            const val = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2);
             console.log(key, value, val, 'valor_conta')
             formData.set(key, val);
             }

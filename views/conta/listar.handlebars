@@ -1433,11 +1433,13 @@
         //console.log(element.clientWidth)
     }
     document.querySelector('#btn-salvar-tamanho-colunas').addEventListener('click', async function () {
-        var formulario = document.getElementsByTagName('form')[1]
+        var elementPopupTamanhoColuna = document.querySelector("#popup-tamanho-coluna")
+        var formulario = elementPopupTamanhoColuna.getElementsByTagName('form')[0]
         var formData = new FormData(formulario)
         objForm = Object.fromEntries(formData)
         let newObj = {}
         for (let obj of Object.entries(objForm)) {
+            console.log(obj)
             newObj[obj[0].replace('T_', '')] = obj[1] + 'px'
         }
         const options = {
@@ -1526,7 +1528,7 @@
                     </tr>`
             }
             let trConta = document.querySelector(`#table-conta > tbody > tr[name="${indexBtnShowHide}"]`) //(`#table-conta > tbody > tr:nth-child(${(indexBtnShowHide)})`)
-            console.log(trConta, indexBtnShowHide)
+            //console.log(trConta, indexBtnShowHide)
             trConta.classList.add("table-primary")
             trConta.classList.add("fw-bold")
             trConta.insertAdjacentHTML('afterend', addDre)
@@ -1573,7 +1575,6 @@
         return document.querySelectorAll('#tdbody-dre > tr')
     }
     function abrirContaPeloDre(numeroConta, situacao, dre) {
-console.log('------------')
         let linkAbrirContaPorDre = document.querySelector("#btn-abrir-conta-por-dre")
         if ( !dre ) {
             linkAbrirContaPorDre.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}`

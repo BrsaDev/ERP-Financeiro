@@ -87,7 +87,7 @@ router.post('/itens-conta', eAdmin, async (req, res) => {
         num_comprovante: false, data_entrega_mercad: false, mercadoria_entregue: false, comprovante_mercad: false, 
         sistema_1: false, num_sistema_1: false, sistema_2: false, num_sistema_2: false, sistema_3: false, 
         num_sistema_3: false, vinculado: false, numero_parcela: false, valor_parcela: false, vencimento_parcela: false, chave: false, 
-        uf_favorecida: false, numero_documento_origem: false, codigo_barras: false, cpf_cnpj: false
+        uf_favorecida: false, numero_documento_origem: false, codigo_barras: false, cpf_cnpj: false, responsavel: false
     }
 
     

@@ -19,31 +19,41 @@ router.get('/cadastrar', eAdmin, (req, res) => {
 
 router.post('/cadastrar', eAdmin, async (req, res) => {
     let { grupo, subgrupo, nome } = req.body
+    let { editar } = req.query
     let erros = []
-    if ( !grupo || typeof grupo == undefined || grupo == null ) erros.push({text: `Grupo inválido.`})
-    if ( !subgrupo || typeof subgrupo == undefined || subgrupo == null ) erros.push({text: `Subgrupo inválido.`})
-    if ( !nome || typeof nome == undefined || nome == null ) erros.push({text: `Categoria inválida.`})
+    if ( !grupo || typeof grupo == "undefined" || grupo == null ) erros.push({text: `Grupo inválido.`})
+    if ( !subgrupo || typeof subgrupo == "undefined" || subgrupo == null ) erros.push({text: `Subgrupo inválido.`})
+    if ( !nome || typeof nome == "undefined" || nome == null ) erros.push({text: `Categoria inválida.`})
 
-    let categoriaCompare = await categoria.findOne({where: {nome}})
-    if ( !categoriaCompare ) {
-        categoria.create({
-            nome,
-            subgrupo,
-            grupo
-        })
-        .then(() => {
-            req.flash(`success_msg`, `Categoria cadastrada com sucesso!`)
-            res.redirect(`/`)
-        })
-        .catch((erro) => {
-            let erros = [{text: erro.errors[0].message}]
-            res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}categoria${barraRoute}cadastrar`), {erros, dados: req.body})
-        })
+    if ( editar ) {
+        categoria.update({ grupo: req.body.grupo, subgrupo: req.body.subgrupo, nome: req.body.nome }, { where: { id: req.body.id } })
+            .then(() => {
+                res.json({ success: true })
+            })
+            .catch((erro) => {
+                res.json({ erro, success: false })
+            })
     }else {
-        erros.push({text: `Categoria já cadastrada.`})
-        res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}categoria${barraRoute}cadastrar`), {erros, dados: req.body})
+        let categoriaCompare = await categoria.findOne({where: {nome}})
+        if ( !categoriaCompare ) {
+            categoria.create({
+                nome,
+                subgrupo,
+                grupo
+            })
+            .then(() => {
+                req.flash(`success_msg`, `Categoria cadastrada com sucesso!`)
+                res.redirect(`/`)
+            })
+            .catch((erro) => {
+                let erros = [{text: erro.errors[0].message}]
+                res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}categoria${barraRoute}cadastrar`), {erros, dados: req.body})
+            })
+        }else {
+            erros.push({text: `Categoria já cadastrada.`})
+            res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}categoria${barraRoute}cadastrar`), {erros, dados: req.body})
+        }
     }
-
 })
 
 router.get('/listar', async (req, res) => {

@@ -5,6 +5,7 @@ const Conta = db.sequelize.define('contas', {
     id:              { type: db.Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
     numero_conta:    { type: db.Sequelize.STRING },
     historico:       { type: db.Sequelize.STRING },
+    responsavel:     { type: db.Sequelize.STRING },
     fornecedor:      { type: db.Sequelize.STRING },
     chave:           { type: db.Sequelize.STRING },
     via_pagamento:   { type: db.Sequelize.STRING },

@@ -15,7 +15,7 @@
 </div>
 <div class="card card-body shadow-lg h-pkflex-80">
     <div class="card-body overflow-auto scroll">
-        <form action="/configuracao/itens-conta" method="post">
+        <form action="/configuracao/itens-conta" method="post" id="form-itens-conta">
             <div class="col-12 p-2 bg-gray-1 shadow-sm">
                 <div class="col-12 col-md-6 mb-3">
                     <label for="tipo_situacao" class="col-form-label">Situação:</label>
@@ -31,7 +31,7 @@
                     <div class="col rem0888 mt-2">
                         <div class="form-check form-switch">
                             <label class="form-check-label">Marcar/Desmarcar todos</label>
-                            <input class="form-check-input" type="checkbox" id="marca_desmarca_todos" onclick="checkAll()">
+                            <input class="form-check-input" type="checkbox" id="marca_desmarca_todos" onclick="checkAllItensConta()">
                         </div>
                     </div>
                     
@@ -39,13 +39,23 @@
             </div>
             
             <div class="col-12 p-2 mt-2">
-                <div class="row rem0888">
+                {{!-- sessão do CONTA --}}
+                <div class="row rem0888 ps-1 mt-2 text-blue-pk">CONTA</div>
+                <div class="row rem0888 border border-1 p-2 rounded-3">
                     <div class="form-check form-switch col-12 col-md-6 col-lg-4">
                         <label class="form-check-label" for="historico">Histórico</label>
                         {{#if itensConta.historico}}
                         <input class="form-check-input" type="checkbox" id="historico" name="historico" checked>
                         {{else}}
                         <input class="form-check-input" type="checkbox" id="historico" name="historico">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="responsavel">Responsável</label>
+                        {{#if itensConta.responsavel}}
+                        <input class="form-check-input" type="checkbox" id="responsavel" name="responsavel" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="responsavel" name="responsavel">
                         {{/if}}
                     </div>
                     <div class="form-check form-switch col-12 col-md-6 col-lg-4">
@@ -70,70 +80,6 @@
                         <input class="form-check-input" type="checkbox" id="via_pagamento" name="via_pagamento" checked>
                         {{else}}
                         <input class="form-check-input" type="checkbox" id="via_pagamento" name="via_pagamento">
-                        {{/if}}
-                    </div>
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label" for="descricao">Descrição</label>
-                        {{#if itensConta.descricao}}
-                        <input class="form-check-input" type="checkbox" id="descricao" name="descricao" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="descricao" name="descricao">
-                        {{/if}}
-                    </div>
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label" for="departamento">Departamento</label>
-                        {{#if itensConta.departamento}}
-                        <input class="form-check-input" type="checkbox" id="departamento" name="departamento" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="departamento" name="departamento">
-                        {{/if}}
-                    </div>
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label">Valor DRE</label>
-                        {{#if itensConta.valor_dre}}
-                        <input class="form-check-input" type="checkbox" id="valor_dre" name="valor_dre" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="valor_dre" name="valor_dre">
-                        {{/if}}
-                    </div>
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label" for="rateio_dre">Rateio DRE</label>
-                        {{#if itensConta.rateio_dre}}
-                        <input class="form-check-input" type="checkbox" id="rateio_dre" name="rateio_dre" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="rateio_dre" name="rateio_dre">
-                        {{/if}}
-                    </div>
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label" for="vinculado_dre">Vinculado DRE</label>
-                        {{#if itensConta.vinculado_dre}}
-                        <input class="form-check-input" type="checkbox" id="vinculado_dre" name="vinculado_dre" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="vinculado_dre" name="vinculado_dre">
-                        {{/if}}
-                    </div>
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label" for="categoria">Categoria</label>
-                        {{#if itensConta.categoria}}
-                        <input class="form-check-input" type="checkbox" id="categoria" name="categoria" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="categoria" name="categoria">
-                        {{/if}}
-                    </div>
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label" for="grupo">Grupo</label>
-                        {{#if itensConta.grupo}}
-                        <input class="form-check-input" type="checkbox" id="grupo" name="grupo" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="grupo" name="grupo">
-                        {{/if}}
-                    </div>
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label" for="subgrupo">SubGrupo</label>
-                        {{#if itensConta.subgrupo}}
-                        <input class="form-check-input" type="checkbox" id="subgrupo" name="subgrupo" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="subgrupo" name="subgrupo">
                         {{/if}}
                     </div>
                     <div class="form-check form-switch col-12 col-md-6 col-lg-4">
@@ -370,6 +316,107 @@
                         {{/if}}
                     </div>
                     <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="uf_favorecida">UF favorecida</label>
+                        {{#if itensConta.uf_favorecida}}
+                        <input class="form-check-input" type="checkbox" id="uf_favorecida" name="uf_favorecida" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="uf_favorecida" name="uf_favorecida">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="cpf_cnpj">CPF/CNPJ</label>
+                        {{#if itensConta.cpf_cnpj}}
+                        <input class="form-check-input" type="checkbox" id="cpf_cnpj" name="cpf_cnpj" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="cpf_cnpj" name="cpf_cnpj">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="codigo_barras">Código Barras</label>
+                        {{#if itensConta.codigo_barras}}
+                        <input class="form-check-input" type="checkbox" id="codigo_barras" name="codigo_barras" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="codigo_barras" name="codigo_barras">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="numero_documento_origem">N° Doc Origem</label>
+                        {{#if itensConta.numero_documento_origem}}
+                        <input class="form-check-input" type="checkbox" id="numero_documento_origem" name="numero_documento_origem" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="numero_documento_origem" name="numero_documento_origem">
+                        {{/if}}
+                    </div>
+                </div>
+
+                {{!-- sessão do DRE --}}
+                <div class="row rem0888 ps-1 mt-2 text-blue-pk">DRE</div>
+                <div class="row rem0888 border border-1 p-2 rounded-3">
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="descricao">Descrição</label>
+                        {{#if itensConta.descricao}}
+                        <input class="form-check-input" type="checkbox" id="descricao" name="descricao" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="descricao" name="descricao">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="departamento">Departamento</label>
+                        {{#if itensConta.departamento}}
+                        <input class="form-check-input" type="checkbox" id="departamento" name="departamento" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="departamento" name="departamento">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label">Valor DRE</label>
+                        {{#if itensConta.valor_dre}}
+                        <input class="form-check-input" type="checkbox" id="valor_dre" name="valor_dre" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="valor_dre" name="valor_dre">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">{{!--  antigo [ Rateio DRE ]  --}}
+                        <label class="form-check-label" for="rateio_dre">Marcador</label> 
+                        {{#if itensConta.rateio_dre}}
+                        <input class="form-check-input" type="checkbox" id="rateio_dre" name="rateio_dre" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="rateio_dre" name="rateio_dre">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4"> {{!-- antigo [ Vinculado DRE ] --}}
+                        <label class="form-check-label" for="vinculado_dre">Distribuição</label>
+                        {{#if itensConta.vinculado_dre}}
+                        <input class="form-check-input" type="checkbox" id="vinculado_dre" name="vinculado_dre" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="vinculado_dre" name="vinculado_dre">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="categoria">Categoria</label>
+                        {{#if itensConta.categoria}}
+                        <input class="form-check-input" type="checkbox" id="categoria" name="categoria" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="categoria" name="categoria">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="grupo">Grupo</label>
+                        {{#if itensConta.grupo}}
+                        <input class="form-check-input" type="checkbox" id="grupo" name="grupo" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="grupo" name="grupo">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
+                        <label class="form-check-label" for="subgrupo">SubGrupo</label>
+                        {{#if itensConta.subgrupo}}
+                        <input class="form-check-input" type="checkbox" id="subgrupo" name="subgrupo" checked>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" id="subgrupo" name="subgrupo">
+                        {{/if}}
+                    </div>
+                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
                         <label class="form-check-label" for="num_sistema_1">Número sistema 1</label>
                         {{#if itensConta.num_sistema_1}}
                         <input class="form-check-input" type="checkbox" id="num_sistema_1" name="num_sistema_1" checked>
@@ -417,39 +464,6 @@
                         <input class="form-check-input" type="checkbox" id="sistema_3" name="sistema_3">
                         {{/if}}
                     </div>
-
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label" for="uf_favorecida">UF favorecida</label>
-                        {{#if itensConta.uf_favorecida}}
-                        <input class="form-check-input" type="checkbox" id="uf_favorecida" name="uf_favorecida" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="uf_favorecida" name="uf_favorecida">
-                        {{/if}}
-                    </div>
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label" for="cpf_cnpj">CPF/CNPJ</label>
-                        {{#if itensConta.cpf_cnpj}}
-                        <input class="form-check-input" type="checkbox" id="cpf_cnpj" name="cpf_cnpj" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="cpf_cnpj" name="cpf_cnpj">
-                        {{/if}}
-                    </div>
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label" for="codigo_barras">Código Barras</label>
-                        {{#if itensConta.codigo_barras}}
-                        <input class="form-check-input" type="checkbox" id="codigo_barras" name="codigo_barras" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="codigo_barras" name="codigo_barras">
-                        {{/if}}
-                    </div>
-                    <div class="form-check form-switch col-12 col-md-6 col-lg-4">
-                        <label class="form-check-label" for="numero_documento_origem">N° Doc Origem</label>
-                        {{#if itensConta.numero_documento_origem}}
-                        <input class="form-check-input" type="checkbox" id="numero_documento_origem" name="numero_documento_origem" checked>
-                        {{else}}
-                        <input class="form-check-input" type="checkbox" id="numero_documento_origem" name="numero_documento_origem">
-                        {{/if}}
-                    </div>
                 </div>
             </div>
             <div class="mt-4">
@@ -467,8 +481,9 @@
         linkSelectTipoSituacao.click()
     }
 
-    function checkAll() {
-        let inputs = document.getElementsByTagName('input')
+    function checkAllItensConta() {
+        let form = document.querySelector("#form-itens-conta")
+        let inputs = form.getElementsByTagName('input')
         let ischecked = inputs[0].checked
         for ( let input of inputs ) {
             if ( input.id != "marca_desmarca_todos" ) {

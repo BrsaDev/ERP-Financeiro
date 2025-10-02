@@ -69,7 +69,7 @@ const tamanhoColunasDefault = {
         observacao: '85px', rateio: '59px', reembolso: '81px', num_pedido_compra: '142px', data_compra: '92px', emissao_nf: '80px',
         num_comprovante: '113px', data_entrega_mercad: '164px', mercadoria_entregue: '140px', comprovante_mercad: '167px', sistema_1: '77px',
         num_sistema_1: '90px', sistema_2: '73px', num_sistema_2: '90px', sistema_3: '73px', num_sistema_3: '90px', vinculado: `101px`, 
-        chave: `90px`, uf_favorecida: `90px`, numero_documento_origem: `90px`, cpf_cnpj: `90px`, codigo_barra: `164px`
+        chave: `90px`, uf_favorecida: `90px`, numero_documento_origem: `90px`, cpf_cnpj: `90px`, codigo_barra: `164px`, responsavel: "80px"
 }
 const cabecalhoDefaultColunas = {
     id: 'Id', historico: `Histórico`, valor_conta: `Valor da Conta`, numero_conta: 'N° Conta', fornecedor: 'Fornecedor', 
@@ -90,7 +90,7 @@ const cabecalhoDefaultColunas = {
     sistema_3: 'Sistema 3', num_sistema_3: 'N° sistema 3', numero_parcela: `N° da parcela`, 
     valor_parcela: `Valor da parcela`, 
     vencimento_parcela: `Vencimento da parcela`, chave: `Chave`, uf_favorecida: `UF Favorecida`, 
-    numero_documento_origem: `N° Doc. Origem`, cpf_cnpj: `CPF/CNPJ`, codigo_barras: `Código Barras`
+    numero_documento_origem: `N° Doc. Origem`, cpf_cnpj: `CPF/CNPJ`, codigo_barras: `Código Barras`, responsavel: "Responsável"
 }
 const visibilidadeColunasDefault = {
     numero_conta: true,        historico: true,      valor_conta: true,     fornecedor: true,      via_pagamento: true, 
@@ -104,7 +104,7 @@ const visibilidadeColunasDefault = {
     comprovante_mercad: true,  sistema_1: false,     num_sistema_1: false,  sistema_2: false,      num_sistema_2: false,  
     sistema_3: false,          num_sistema_3: false, vinculado: true,       numero_parcela: false, vencimento_parcela: false,
     data_entrega_mercad: true, valor_parcela: false, chave: true,           uf_favorecida: true,   numero_documento_origem: true,
-    codigo_barras: true,       cpf_cnpj: true
+    codigo_barras: true,       cpf_cnpj: true,       responsavel: true
 }
 const posicaoDefaultColunas = {
     "1": "numero_conta",         "2":  "historico",           "3":  "valor_conta",         "4":  "fornecedor",          
@@ -121,7 +121,7 @@ const posicaoDefaultColunas = {
     "45": "categoria",           "46": "grupo",               "47": "subgrupo",            "48": "sistema_1",           
     "49": "num_sistema_1",       "50": "sistema_2",           "51": "num_sistema_2",       "52": "sistema_3",           
     "53": "num_sistema_3",       "54": "codigo_barras",       "55": "uf_favorecida",       "56": "numero_documento_origem", 
-    "57": "cpf_cnpj",            "58": "id"
+    "57": "cpf_cnpj",            "58": "responsavel",         "59": "id"
 }
 const posicaoDefaultColunasReverse = {
     "numero_conta": "1",          "historico": "2",             "valor_conta": "3",           "fornecedor": "4",          
@@ -138,7 +138,7 @@ const posicaoDefaultColunasReverse = {
     "categoria": "45",            "grupo": "46",                "subgrupo": "47",             "sistema_1": "48",           
     "num_sistema_1": "49",        "sistema_2": "50",            "num_sistema_2": "51",        "sistema_3": "52",           
     "num_sistema_3": "53",        "codigo_barra": "54",         "uf_favorecida": "55",        "numero_documento_origem": "56", 
-    "cpf_cnpj": "57",             "id": "58"
+    "cpf_cnpj": "57",             "responsavel": "58",          "id": "59"
 }
 const cabecalhoDefaultColunasReverse = {
     "Valor da Conta": "valor_conta", "Histórico": "historico", 'N° Conta': "numero_conta", 'Fornecedor': "fornecedor",
@@ -157,7 +157,7 @@ const cabecalhoDefaultColunasReverse = {
     'Sistema 1': "sistema_1", 'N° sistema 1': "num_sistema_1", 'Sistema 2': "sistema_2", 'N° sistema 2': "num_sistema_2",
     'Sistema 3': "sistema_3", 'N° sistema 3': "num_sistema_3", "Vinculado": "vinculado", "N° da parcela": "numero_parcela",
     "Valor da parcela": "valor_parcela", "Vencimento da parcela": "vencimento_parcela", "Chave": "chave", "UF Favorecida": "uf_favorecida",
-    "N° Doc. Origem": "numero_documento_origem", "CPF/CNPJ": "cpf_cnpj",  "Código Barras": "codigo_barra"
+    "N° Doc. Origem": "numero_documento_origem", "CPF/CNPJ": "cpf_cnpj",  "Código Barras": "codigo_barra", "Responsável": "responsavel"
 }
 
 
@@ -167,7 +167,7 @@ router.get(`/visibilidade-colunas/obter`, getVisibleColumns, (req, res) => {
 })
 router.post(`/visibilidade-colunas/cadastrar`, async (req, res) => {
     let itens = {
-        numero_conta: false, historico: false, valor_conta: false, fornecedor: false, via_pagamento: false, descricao: false, departamento: false, rateio_dre: false, vinculado_dre: false, valor_dre: false, categoria: false,
+        numero_conta: false, historico: false, responsavel: false, valor_conta: false, fornecedor: false, via_pagamento: false, descricao: false, departamento: false, rateio_dre: false, vinculado_dre: false, valor_dre: false, categoria: false,
         grupo: false, subgrupo: false, forma_pagamento: false, agendamento: false, pagamento: false, agencia: false, conta_corrente: false, num_cartao_cred: false,
         cheque_compens: false, situacao: false, banco: false, protocolo_banco: false, comprovante_pag: false, cadastramento: false, numero_parcelas: false, fixar_parcelas: false,
         doc_pagamento: false, vencimento: false, referencia: false, relacao: false, numero_dias: false, observacao: false, rateio: false, reembolso: false, num_pedido_compra: false,
@@ -334,12 +334,13 @@ router.get('/abrir-conta', eAdmin, async (req, res) => {
         // if ( ultimaConta.length && !contas.length ) {
         //     contas = ultimaConta
         // }
+        contas = novaContas
         
     }
-    contas = novaContas
-    qtdeDres = Object.values(dres)[0].length
+    
+    //qtdeDres = Object.values(dres)[0].length
     // var parcela_atual = contas.length == 0 ? `` : `${contas[0].numero_parcela}/${contas[0].numero_parcelas}`
-    console.log(parcela_atual)
+    // console.log(parcela_atual)
     return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { parcela_atual, itens, dados: contas[0], data_script: JSON.stringify(contas) })
 })
 
@@ -373,7 +374,7 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
     let posicaoColunas = await PosicaoColunaTabConta.findOne({ where: { usuario: nickname } })
     let tamanhoColunas = await TamanhoColunaTabConta.findOne({ where: { usuario: nickname } })
     let visibilidadeColunas = req.visibleColumns
-    let htmlHead = `<tr class='text-center text-nowrap text-light bg-blue-pk'>`
+    let htmlHead = `<tr class='text-center text-nowrap text-light bg-blue-pk'><th name='tab-icon'>-</th>`
     let htmlBody = ''
     let objHeadDuplicado = {}
     let primeiroItemConta = {}
@@ -422,8 +423,59 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
         .then((contas) => {
             if ( req.query.page && req.query.page == `page-dre` ) {
                 contas = contas.filter(item => {
+
+                    
+                    item.dataValues.historico = item.dataValues.historico?.toUpperCase()
+                    item.dataValues.responsavel = item.dataValues.responsavel?.toUpperCase() || ""
+                    item.dataValues.fornecedor = item.dataValues.fornecedor?.toUpperCase()
+                    item.dataValues.chave = item.dataValues.chave?.toUpperCase()
+                    item.dataValues.via_pagamento = item.dataValues.via_pagamento?.toUpperCase()
+                    item.dataValues.descricao = item.dataValues.descricao?.toUpperCase()
+                    item.dataValues.departamento = item.dataValues.departamento?.toUpperCase()
+                    item.dataValues.rateio_dre = item.dataValues.rateio_dre?.toUpperCase()
+                    item.dataValues.vinculado_dre = item.dataValues.vinculado_dre?.toUpperCase()
+                    item.dataValues.vinculado = item.dataValues.vinculado?.toUpperCase()
+                    item.dataValues.categoria = item.dataValues.categoria?.toUpperCase()
+                    item.dataValues.grupo = item.dataValues.grupo?.toUpperCase()
+                    item.dataValues.subgrupo = item.dataValues.subgrupo?.toUpperCase()
+                    item.dataValues.forma_pagamento = item.dataValues.forma_pagamento?.toUpperCase()
+                    item.dataValues.pagamento = item.dataValues.pagamento?.toUpperCase()
+                    item.dataValues.agencia = item.dataValues.agencia?.toUpperCase()
+                    item.dataValues.conta_corrente = item.dataValues.conta_corrente?.toUpperCase()
+                    item.dataValues.cheque_compens = item.dataValues.cheque_compens?.toUpperCase()
+                    item.dataValues.situacao = item.dataValues.situacao?.toUpperCase()
+                    item.dataValues.banco = item.dataValues.banco?.toUpperCase()
+                    item.dataValues.protocolo_banco = item.dataValues.protocolo_banco?.toUpperCase()
+                    item.dataValues.comprovante_pag = item.dataValues?.comprovante_pag?.toUpperCase()
+                    item.dataValues.doc_pagamento = item.dataValues.doc_pagamento?.toUpperCase()
+                    item.dataValues.referencia = item.dataValues.referencia?.toUpperCase()
+                    item.dataValues.relacao = item.dataValues.relacao?.toUpperCase()
+                    item.dataValues.fixar_parcelas = item.dataValues.fixar_parcelas?.toUpperCase()
+                    item.dataValues.observacao = item.dataValues.observacao?.toUpperCase()
+                    item.dataValues.rateio = item.dataValues.rateio?.toUpperCase()
+                    item.dataValues.reembolso = item.dataValues.reembolso?.toUpperCase()
+                    item.dataValues.num_pedido_compra = item.dataValues.num_pedido_compra?.toUpperCase()
+                    item.dataValues.emissao_nf = item.dataValues.emissao_nf?.toUpperCase()
+                    item.dataValues.num_comprovante = item.dataValues.num_comprovante?.toUpperCase()
+                    item.dataValues.mercadoria_entregue = item.dataValues.mercadoria_entregue?.toUpperCase()
+                    item.dataValues.comprovante_mercad = item.dataValues.comprovante_mercad?.toUpperCase()
+                    item.dataValues.sistema_1 = item.dataValues.sistema_1?.toUpperCase()
+                    item.dataValues.num_sistema_1 = item.dataValues.num_sistema_1?.toUpperCase()
+                    item.dataValues.sistema_2 = item.dataValues.sistema_2?.toUpperCase()
+                    item.dataValues.num_sistema_2 = item.dataValues.num_sistema_2?.toUpperCase()
+                    item.dataValues.sistema_3 = item.dataValues.sistema_3?.toUpperCase()
+                    item.dataValues.num_sistema_3 = item.dataValues.num_sistema_3?.toUpperCase()
+                    item.dataValues.uf_favorecida = item.dataValues.uf_favorecida?.toUpperCase()
+                    item.dataValues.cpf_cnpj = item.dataValues.cpf_cnpj?.toUpperCase()
+                    item.dataValues.codigo_barras = item.dataValues.codigo_barras?.toUpperCase()
+                    item.dataValues.file_name = item.dataValues.file_name?.toUpperCase()
+                    item.dataValues.numero_documento_origem = item.dataValues.numero_documento_origem?.toUpperCase()
+
+
+
                     item.dataValues.pagamento = item.dataValues.pagamento == `` ? `` : item.dataValues.pagamento.slice(8) + `/` + item.dataValues.pagamento.slice(5, 7) + `/` + item.dataValues.pagamento.slice(0, 4)
                     item.dataValues.valor_dre = item.dataValues.valor_dre == `` ? `0` : (item.dataValues.valor_dre).toString().indexOf('.') != -1 ? (item.dataValues.valor_dre).toString().replace('.', ',') : (item.dataValues.valor_dre).toString() + ',00'
+                    
                     
                     bodyPageDre += `
                         <tr class="text-nowrap">
@@ -462,6 +514,56 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                 let dres = {}
                 var indexBtnShowHide = 1
                 contas = contas.filter(item => {
+                    
+
+                    item.dataValues.historico = item.dataValues.historico?.toUpperCase()
+                    item.dataValues.responsavel = item.dataValues.responsavel?.toUpperCase() || ""
+                    item.dataValues.fornecedor = item.dataValues.fornecedor?.toUpperCase()
+                    item.dataValues.chave = item.dataValues.chave?.toUpperCase()
+                    item.dataValues.via_pagamento = item.dataValues.via_pagamento?.toUpperCase()
+                    item.dataValues.descricao = item.dataValues.descricao?.toUpperCase()
+                    item.dataValues.departamento = item.dataValues.departamento?.toUpperCase()
+                    item.dataValues.rateio_dre = item.dataValues.rateio_dre?.toUpperCase()
+                    item.dataValues.vinculado_dre = item.dataValues.vinculado_dre?.toUpperCase()
+                    item.dataValues.vinculado = item.dataValues.vinculado?.toUpperCase()
+                    item.dataValues.categoria = item.dataValues.categoria?.toUpperCase()
+                    item.dataValues.grupo = item.dataValues.grupo?.toUpperCase()
+                    item.dataValues.subgrupo = item.dataValues.subgrupo?.toUpperCase()
+                    item.dataValues.forma_pagamento = item.dataValues.forma_pagamento?.toUpperCase()
+                    item.dataValues.pagamento = item.dataValues.pagamento?.toUpperCase()
+                    item.dataValues.agencia = item.dataValues.agencia?.toUpperCase()
+                    item.dataValues.conta_corrente = item.dataValues.conta_corrente?.toUpperCase()
+                    item.dataValues.cheque_compens = item.dataValues.cheque_compens?.toUpperCase()
+                    item.dataValues.situacao = item.dataValues.situacao?.toUpperCase()
+                    item.dataValues.banco = item.dataValues.banco?.toUpperCase()
+                    item.dataValues.protocolo_banco = item.dataValues.protocolo_banco?.toUpperCase()
+                    item.dataValues.comprovante_pag = item.dataValues?.comprovante_pag?.toUpperCase()
+                    item.dataValues.doc_pagamento = item.dataValues.doc_pagamento?.toUpperCase()
+                    item.dataValues.referencia = item.dataValues.referencia?.toUpperCase()
+                    item.dataValues.relacao = item.dataValues.relacao?.toUpperCase()
+                    item.dataValues.fixar_parcelas = item.dataValues.fixar_parcelas?.toUpperCase()
+                    item.dataValues.observacao = item.dataValues.observacao?.toUpperCase()
+                    item.dataValues.rateio = item.dataValues.rateio?.toUpperCase()
+                    item.dataValues.reembolso = item.dataValues.reembolso?.toUpperCase()
+                    item.dataValues.num_pedido_compra = item.dataValues.num_pedido_compra?.toUpperCase()
+                    item.dataValues.emissao_nf = item.dataValues.emissao_nf?.toUpperCase()
+                    item.dataValues.num_comprovante = item.dataValues.num_comprovante?.toUpperCase()
+                    item.dataValues.mercadoria_entregue = item.dataValues.mercadoria_entregue?.toUpperCase()
+                    item.dataValues.comprovante_mercad = item.dataValues.comprovante_mercad?.toUpperCase()
+                    item.dataValues.sistema_1 = item.dataValues.sistema_1?.toUpperCase()
+                    item.dataValues.num_sistema_1 = item.dataValues.num_sistema_1?.toUpperCase()
+                    item.dataValues.sistema_2 = item.dataValues.sistema_2?.toUpperCase()
+                    item.dataValues.num_sistema_2 = item.dataValues.num_sistema_2?.toUpperCase()
+                    item.dataValues.sistema_3 = item.dataValues.sistema_3?.toUpperCase()
+                    item.dataValues.num_sistema_3 = item.dataValues.num_sistema_3?.toUpperCase()
+                    item.dataValues.uf_favorecida = item.dataValues.uf_favorecida?.toUpperCase()
+                    item.dataValues.cpf_cnpj = item.dataValues.cpf_cnpj?.toUpperCase()
+                    item.dataValues.codigo_barras = item.dataValues.codigo_barras?.toUpperCase()
+                    item.dataValues.file_name = item.dataValues.file_name?.toUpperCase()
+                    item.dataValues.numero_documento_origem = item.dataValues.numero_documento_origem?.toUpperCase()
+
+
+
                     item.dataValues.cadastramento = item.dataValues.cadastramento == `` ? `` : item.dataValues.cadastramento.slice(8) + `/` + item.dataValues.cadastramento.slice(5, 7) + `/` + item.dataValues.cadastramento.slice(0, 4)
                     item.dataValues.pagamento = item.dataValues.pagamento == `` ? `` : item.dataValues.pagamento.slice(8) + `/` + item.dataValues.pagamento.slice(5, 7) + `/` + item.dataValues.pagamento.slice(0, 4)
                     item.dataValues.data_compra = item.dataValues.data_compra == `` ? `` : item.dataValues.data_compra.slice(8) + `/` + item.dataValues.data_compra.slice(5, 7) + `/` + item.dataValues.data_compra.slice(0, 4)
@@ -527,13 +629,17 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                         if ( typeof itensDre[posColunas[index]] == 'undefined' && primeiraLinhaConta ) {
                             if ( index == 1 ) {
                                 htmlBodyPart += `
-                                    <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
-                                        <div class="position-relative d-flex gap-2" style="left: 2px; top: 2px;">
+                                    <td>
+                                        <div class="position-relative d-flex gap-2">
                                             <i class="fas fa-search cursor-pointer position-relative" onclick='abrirContaPeloDre("${item.dataValues.numero_conta.trim()}", "${(item.dataValues.situacao || "Aberto")}", false)'></i>
                                             <i id="btn-hide-dre${item.dataValues.numero_conta}" onclick='showHideDre("${item.dataValues.numero_conta.trim()}", "hide", ${indexBtnShowHide})' class="d-none bi bi-dash-square-fill cursor-pointer text-blue-pk"></i>
                                             <i id="btn-show-dre${item.dataValues.numero_conta}" onclick='showHideDre("${item.dataValues.numero_conta.trim()}", "show", ${indexBtnShowHide})' class="bi bi-plus-square-fill cursor-pointer text-blue-pk"></i>
-                                            <span>${item.dataValues[posColunas[index]]}</span>
                                         </div>
+                                    </td>
+                                `
+                                htmlBodyPart += `
+                                    <td scope="col" ${classVisibleColumn} name="tab-${posColunas[index]}" ${tipoText}>
+                                        <span>${item.dataValues[posColunas[index]]}</span>
                                     </td>
                                 `
                                 indexBtnShowHide++
@@ -906,7 +1012,7 @@ async function processamentoCriacaoContaMassa(req, body, pdf=false) {
                     var contaNova = await conta.create({
                         departamento: req.body[departamento_edit],
                         descricao: req.body[descricao_edit],
-                        valor_dre: req.body[valor_dre_edit],
+                        valor_dre: (pdf ? valor_conta : req.body[valor_dre_edit]),
                         rateio_dre: req.body[rateio_dre_edit],
                         vinculado_dre: req.body[vinculado_dre_edit],
                         numero_parcela: parcela.numero_parcela, 
