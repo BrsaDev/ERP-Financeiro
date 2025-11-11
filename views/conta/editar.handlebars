@@ -1,0 +1,2359 @@
+{{#each erros}}
+<div id="alert-{{@key}}" class="alert alert-danger shadow"><strong onclick="closeAlert({{@key}})"
+        class="cursor-pointer text-dark">X </strong><span>{{text}}</span></div>
+{{else}}
+
+{{/each}}
+
+<div class="d-flex direction-column">
+    <div>
+        <a href="/" class="nav-link align-start p-0 me-4">
+            <i class="fs-5 bi-house text-black"></i>
+        </a>
+    </div>
+    <div><h5>Editar Conta</h5> </div>
+    <div class="ms-2"><i id="scroll-bottom" class="bi bi-arrow-down-circle-fill rem1200 cursor-pointer"></i></div>
+    <div class="ms-2"><i id="scroll-top" class="bi bi-arrow-up-circle-fill rem1200 cursor-pointer"></i></div>
+    <div id="icone-download-pdf-conta" class="d-none ms-2 mt-1"><a href="/conta/download/{{dados.file_name}}"><i class="far fa-file-pdf fs-5 text-blue-pk cursor-pointer"></i></a></div>
+</div>
+<div class="card card-body shadow-lg h-pkflex-80">
+    <div id="card-conta" class="card-body scroll">
+        <form action="/conta/editar" method="post" enctype="multipart/form-data">
+            <div class="row rem0788 w-100">
+
+                {{!-- seção de controle e valor --}}
+                <div class="row mb-1 mt-2 p-3 bg-yellow-pk shadow-sm rem0788">
+                    <div class="col-12 col-md-6 col-lg-1">
+                        <label for="controle" class="col-form-label">N° Controle <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" autocomplete="off" class="form-control" name="numero_conta"
+                                value="{{dados.numero_conta}}{{itens.proximo_numero_conta}}" required readonly>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-pk">
+                        <label for="valor_conta" class="col-form-label">Valor da Conta</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" type="text" step="0.01" placeholder="0" class="form-control" name="valor_conta" value="{{dados.valor_conta}}"
+                                autofocus autocomplete="off"
+                            >
+                        </div>
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.rateio}}
+                        <label for="rateio" class="col-form-label">Rateio <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="rateio" onkeyup="filtro(this, 'contas', false, false, false)"
+                               placeholder="busca inteligente..." value="{{dados.rateio}}" required>
+                            <div id="popupFiltro-rateio"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{else}}
+                        <label for="rateio" class="col-form-label">Rateio</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="rateio" onkeyup="filtro(this, 'contas', false, false, false)"
+                               placeholder="busca inteligente..." value="{{dados.rateio}}">
+                            <div id="popupFiltro-rateio"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.vinculado}}
+                        <label for="vinculado" class="col-form-label">Vinculado <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="vinculado"
+                            placeholder="busca inteligente..." onkeyup="filtro(this, 'contas', false, false, true)" value="{{dados.vinculado}}" required>
+                            <div id="popupFiltro-vinculado"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{else}}
+                        <label for="vinculado" class="col-form-label">Vinculado</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="vinculado"
+                            placeholder="busca inteligente..." onkeyup="filtro(this, 'contas', false, false, true)" value="{{dados.vinculado}}">
+                            <div id="popupFiltro-vinculado"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-6 col-pk">
+                        {{#if itens.situacao}}
+                        <label for="situacao" class="col-form-label">Situação <span
+                            class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="situacao" required
+                                onchange="selectTipoSituacaoConta(this, true)">
+                                <option selected>{{dados.situacao}}{{itens.tipo_situacao}}</option>
+                                <option value="Aberto">Aberto</option>
+                                <option value="Pago">Pago</option>
+                                <option value="Em andamento">Em andamento</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        {{else}}
+                        <label for="situacao" class="col-form-label">Situação</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="situacao"
+                                onchange="selectTipoSituacaoConta(this, true)">
+                                <option selected>{{dados.situacao}}{{itens.tipo_situacao}}</option>
+                                <option value="Aberto">Aberto</option>
+                                <option value="Pago">Pago</option>
+                                <option value="Em andamento">Em andamento</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.via_pagamento}}
+                        <label for="via_pagamento" class="col-form-label">Via de pagamento <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="via_pagamento" value="{{dados.via_pagamento}}"
+                                required autocomplete="off">
+                        </div>
+                        {{else}}
+                        <label for="via_pagamento" class="col-form-label">Via de pagamento</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="via_pagamento" value="{{dados.via_pagamento}}"
+                                autocomplete="off">
+                        </div>
+                        {{/if}}
+                    </div>
+                    
+                </div>
+
+                {{!-- seção de NF --}}
+                <div class="row mb-1 mt-2 p-3 bg-yellow-pk shadow-sm">
+
+                    <div class="col-12 col-md-4">
+                        {{#if itens.pdfs}}
+                        <label for="pdfs" class="col-form-label">Comprovantes PDF´s <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="file" class="form-control" name="pdfs" accept=".pdf" multiple 
+                                value="{{dados.pdfs}}">
+                        </div>
+                        {{else}}
+                        <label for="pdfs" class="col-form-label">Comprovantes PDF´s</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="file" class="form-control" name="pdfs" accept=".pdf" multiple 
+                                value="{{dados.pdfs}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.numero_documento_origem}}
+                        <label for="numero_documento_origem" class="col-form-label">N° Doc. Origem <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="numero_documento_origem" value="{{dados.numero_documento_origem}}"
+                                required autocomplete="off">
+                        </div>
+                        {{else}}
+                        <label for="numero_documento_origem" class="col-form-label">N° Doc. Origem</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="numero_documento_origem" value="{{dados.numero_documento_origem}}"
+                                autocomplete="off">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.cpf_cnpj}}
+                        <label for="cpf_cnpj" class="col-form-label">CPF/CNPJ <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="cpf_cnpj" value="{{dados.cpf_cnpj}}"
+                                required autocomplete="off">
+                        </div>
+                        {{else}}
+                        <label for="cpf_cnpj" class="col-form-label">CPF/CNPJ</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="cpf_cnpj" value="{{dados.cpf_cnpj}}"
+                                autocomplete="off">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.uf_favorecida}}
+                        <label for="uf_favorecida" class="col-form-label">UF Favorecida <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="uf_favorecida" required>
+                                <option selected>{{dados.uf_favorecida}}{{itens.uf_favorecida}}</option>
+                                <option value="AC">AC</option>
+                                <option value="AL">AL</option>
+                                <option value="AP">AP</option>
+                                <option value="AM">AM</option>
+                                <option value="BA">BA</option>
+                                <option value="CE">CE</option>
+                                <option value="DF">DF</option>
+                                <option value="ES">ES</option>
+                                <option value="GO">GO</option>
+                                <option value="MA">MA</option>
+                                <option value="MT">MT</option>
+                                <option value="MS">MS</option>
+                                <option value="MG">MG</option>
+                                <option value="PA">PA</option>
+                                <option value="PB">PB</option>
+                                <option value="PR">PR</option>
+                                <option value="PE">PE</option>
+                                <option value="PI">PI</option>
+                                <option value="RJ">RJ</option>
+                                <option value="RN">RN</option>
+                                <option value="RS">RS</option>
+                                <option value="RO">RO</option>
+                                <option value="RR">RR</option>
+                                <option value="SC">SC</option>
+                                <option value="SP">SP</option>
+                                <option value="SE">SE</option>
+                                <option value="TO">TO</option>
+                            </select>
+                        </div>
+                        {{else}}
+                        <label for="uf_favorecida" class="col-form-label">UF Favorecida</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="uf_favorecida">
+                                <option selected>{{dados.uf_favorecida}}{{itens.uf_favorecida}}</option>
+                                <option value="AC">AC</option>
+                                <option value="AL">AL</option>
+                                <option value="AP">AP</option>
+                                <option value="AM">AM</option>
+                                <option value="BA">BA</option>
+                                <option value="CE">CE</option>
+                                <option value="DF">DF</option>
+                                <option value="ES">ES</option>
+                                <option value="GO">GO</option>
+                                <option value="MA">MA</option>
+                                <option value="MT">MT</option>
+                                <option value="MS">MS</option>
+                                <option value="MG">MG</option>
+                                <option value="PA">PA</option>
+                                <option value="PB">PB</option>
+                                <option value="PR">PR</option>
+                                <option value="PE">PE</option>
+                                <option value="PI">PI</option>
+                                <option value="RJ">RJ</option>
+                                <option value="RN">RN</option>
+                                <option value="RS">RS</option>
+                                <option value="RO">RO</option>
+                                <option value="RR">RR</option>
+                                <option value="SC">SC</option>
+                                <option value="SP">SP</option>
+                                <option value="SE">SE</option>
+                                <option value="TO">TO</option>
+                            </select>
+                        </div>
+                        {{/if}}
+                    </div>
+                    {{!-- <div class="col-12 col-pk">
+                        {{#if itens.total_recolher}}
+                        <label for="total_recolher" class="col-form-label">Total a recolher <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="total_recolher" value="{{dados.total_recolher}}"
+                                required autocomplete="off" step="0.01" placeholder="0"
+                                   onchange="formataValorInput(this)" onkeyup="validarCaracter(this)">
+                        </div>
+                        {{else}}
+                        <label for="total_recolher" class="col-form-label">Total a recolher</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="total_recolher" value="{{dados.total_recolher}}"
+                                autocomplete="off" step="0.01" placeholder="0"
+                                   onchange="formataValorInput(this)" onkeyup="validarCaracter(this)">
+                        </div>
+                        {{/if}}
+                    </div> --}}
+                    <div class="col-12 col-sm-4">
+                        {{#if itens.codigo_barras}}
+                        <label for="codigo_barras" class="col-form-label">Código de barras <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="codigo_barras" value="{{dados.codigo_barras}}"
+                                required autocomplete="off">
+                        </div>
+                        {{else}}
+                        <label for="codigo_barras" class="col-form-label">Código de barras</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="codigo_barras" value="{{dados.codigo_barras}}"
+                                autocomplete="off">
+                        </div>
+                        {{/if}}
+                    </div>
+
+                </div>
+
+                {{!-- seção de fornecedor --}}
+                <div class="row mb-1 mt-2 p-3 bg-yellow-pk shadow-sm">
+                    <div class="col-12 col-lg-3">
+                        {{#if itens.fornecedor}}
+                        <label for="fornecedor" class="col-form-label">Fornecedor <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" autocomplete="off" onkeyup="filtro(this, 'fornecedores')"
+                                placeholder="busca inteligente..." class="form-control" name="fornecedor"
+                                value="{{dados.fornecedor}}" required autofocus>
+                            <div id="popupFiltro-fornecedor"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{else}}
+                        <label for="fornecedor" class="col-form-label">Fornecedor</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" autocomplete="off" onkeyup="filtro(this, 'fornecedores')"
+                                placeholder="busca inteligente..." class="form-control" name="fornecedor"
+                                value="{{dados.fornecedor}}" autofocus>
+                            <div id="popupFiltro-fornecedor"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.chave}}
+                        <label for="chave" class="col-form-label">chave <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="chave" required>
+                                {{{optionsChavePix}}}
+                            </select>
+                        </div>
+                        {{else}}
+                        <label for="chave" class="col-form-label">chave</label>
+                        <div class="input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="chave" required>
+                                {{{optionsChavePix}}}
+                            </select>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4">
+                        {{#if itens.historico}}
+                        <label for="historico" class="col-form-label">Histórico <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="historico" value="{{dados.historico}}"
+                                required autocomplete="off">
+                        </div>
+                        {{else}}
+                        <label for="historico" class="col-form-label">Histórico</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="historico" value="{{dados.historico}}"
+                                autocomplete="off">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-2">
+                        {{#if itens.responsavel}}
+                        <label for="responsavel" class="col-form-label">Responsável <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="responsavel" value="{{dados.responsavel}}"
+                                required autocomplete="off">
+                        </div>
+                        {{else}}
+                        <label for="responsavel" class="col-form-label">Responsável</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="responsavel" value="{{dados.responsavel}}"
+                                autocomplete="off">
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+
+                {{!-- seção de DRE --}}
+                <div class="row d-flex justify-content-center mb-1 mt-2 ms-4 p-3 bg-blue-1 shadow-sm w-pkflex-97" id="secao-dre">
+                    <span class="fw-bold fs-5 mb-1 border border-top-0 border-end-0 border-start-0 text-blue-pk">DRE</span>
+                    <div id="dre-1" class="row p-0">
+                        <div class="col-12 col-sm-6 col-lg-4">
+                            {{#if itens.descricao}}
+                            <label for="descricao" class="col-form-label">Descrição <span
+                                    class="text-danger fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input type="text" autocomplete="off" onkeyup="filtro(this, 'descricoes')"
+                                    placeholder="busca inteligente..." class="form-control" name="descricao"
+                                    value="{{dados.descricao}}" required>
+                                <div id="popupFiltro-descricao"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{else}}
+                            <label for="descricao" class="col-form-label">Descrição</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input type="text" autocomplete="off" onkeyup="filtro(this, 'descricoes')"
+                                    placeholder="busca inteligente..." class="form-control" name="descricao"
+                                    value="{{dados.descricao}}">
+                                <div id="popupFiltro-descricao"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="col-12 col-sm-6 col-pk">
+                            {{#if itens.departamento}}
+                            <label for="departamento" class="col-form-label">Departamento <span
+                                    class="text-danger fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" required type="text" onkeyup="filtro(this, 'departamentos')"
+                                    placeholder="busca inteligente..." class="form-control" name="departamento"
+                                    value="{{dados.departamento}}">
+                                <div id="popupFiltro-departamento"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{else}}
+                            <label for="departamento" class="col-form-label">Departamento</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="text" onkeyup="filtro(this, 'departamentos')"
+                                    placeholder="busca inteligente..." class="form-control" name="departamento"
+                                    value="{{dados.departamento}}">
+                                <div id="popupFiltro-departamento"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="col-12 col-sm-6 col-pk">{{!-- marcador 1 é o mesmo que rateio  --}}
+                            {{#if itens.rateio_dre}}
+                            <label for="rateio_dre" class="col-form-label">Marcador 1 <span
+                                    class="text-danger fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" required type="text" onkeyup="filtro(this, 'dres')"
+                                    placeholder="busca inteligente..." autocomplete="off" class="form-control" name="rateio_dre" value="{{dados.rateio_dre}}">
+                                <div id="popupFiltro-rateio_dre"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{else}}
+                            <label for="rateio_dre" class="col-form-label">Marcador 1</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="text"  autocomplete="off" onkeyup="filtro(this, 'dres')"
+                                    placeholder="busca inteligente..." class="form-control" name="rateio_dre" value="{{dados.rateio_dre}}">
+                                <div id="popupFiltro-rateio_dre"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="col-12 col-sm-6 col-pk">
+                            {{#if itens.categoria}}
+                            <label for="categoria" class="col-form-label">Categoria <span
+                                    class="text-danger  fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" required type="text" onkeyup="filtro(this, 'categorias')"
+                                    placeholder="busca inteligente..." class="form-control" name="categoria"
+                                    value="{{dados.categoria}}">
+                                <div id="popupFiltro-categoria"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{else}}
+                            <label for="categoria" class="col-form-label">Categoria</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="text" onkeyup="filtro(this, 'categorias')"
+                                    placeholder="busca inteligente..." class="form-control" name="categoria"
+                                    value="{{dados.categoria}}">
+                                <div id="popupFiltro-categoria"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="col-12 col-sm-6 col-pk">
+                            {{#if itens.valor_dre}}
+                            <label for="valor_dre" class="col-form-label">Valor <span
+                                    class="text-danger fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input required type="text" step="0.01" placeholder="0"
+                                   onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" autocomplete="off" class="form-control" name="valor_dre" value="{{dados.valor_dre}}">
+                            </div>
+                            {{else}}
+                            <label for="valor_dre" class="col-form-label">Valor</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input type="text" step="0.01" placeholder="0" autocomplete="off"
+                                   onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" class="form-control" name="valor_dre" value="{{dados.valor_dre}}">
+                            </div> {{!-- onchange="compareValor()" --}}
+                            {{/if}}
+                        </div>
+                        <div class="col-12 col-sm-6 col-pk">{{!--  Distribuição é o mesmo que vinculado --}}
+                            {{#if itens.vinculado_dre}}
+                            <label for="vinculado_dre" class="col-form-label">Distribuição <span
+                                    class="text-danger fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" required type="text" autocomplete="off" onkeyup="filtro(this, 'dres', false, '', true)"
+                                   placeholder="busca inteligente..." class="form-control" name="vinculado_dre" value="{{dados.vinculado_dre}}">
+                                <div id="popupFiltro-vinculado_dre"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{else}}
+                            <label for="vinculado_dre" class="col-form-label">Distribuição</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="text" autocomplete="off" onkeyup="filtro(this, 'dres', false, '', true)"
+                                   placeholder="busca inteligente..." class="form-control" name="vinculado_dre" value="{{dados.vinculado_dre}}">
+                                <div id="popupFiltro-vinculado_dre"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="d-none col-12 col-sm-6 col-pk">
+                            <label for="grupo" class="col-form-label">Grupo</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="text" class="form-control" name="grupo"
+                                    value="{{dados.grupo}}">
+                            </div>
+                        </div>
+                        <div class="d-none col-12 col-sm-6 col-pk">
+                            <label for="subgrupo" class="col-form-label">Sub Grupo</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="text" class="form-control" name="subgrupo"
+                                    value="{{dados.subgrupo}}">
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-pk">
+                            {{#if itens.num_sistema_1}}
+                            <label for="num_sistema_1" class="col-form-label">Número sistema 1 <span
+                                    class="text-danger fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" required type="number" class="form-control" name="num_sistema_1"
+                                    value="{{dados.num_sistema_1}}">
+                            </div>
+                            {{else}}
+                            <label for="num_sistema_1" class="col-form-label">Número sistema 1</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="number" class="form-control" name="num_sistema_1"
+                                    value="{{dados.num_sistema_1}}">
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="col-12 col-pk">
+                            {{#if itens.sistema_1}}
+                            <label for="sistema_1" class="col-form-label">Sistema 1 <span
+                                    class="text-danger fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
+                                    placeholder="busca inteligente..." class="form-control" name="sistema_1"
+                                    value="{{dados.sistema_1}}">
+                                <div id="popupFiltro-sistema_1"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{else}}
+                            <label for="sistema_1" class="col-form-label">Sistema 1</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                                    placeholder="busca inteligente..." class="form-control" name="sistema_1"
+                                    value="{{dados.sistema_1}}">
+                                <div id="popupFiltro-sistema_1"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="col-12 col-pk">
+                            {{#if itens.num_sistema_2}}
+                            <label for="num_sistema_2" class="col-form-label">Número sistema 2 <span
+                                    class="text-danger fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" required type="number" class="form-control" name="num_sistema_2"
+                                    value="{{dados.num_sistema_2}}">
+                            </div>
+                            {{else}}
+                            <label for="num_sistema_2" class="col-form-label">Número sistema 2</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="number" class="form-control" name="num_sistema_2"
+                                    value="{{dados.num_sistema_2}}">
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="col-12 col-pk">
+                            {{#if itens.sistema_2}}
+                            <label for="sistema_2" class="col-form-label">Sistema 2 <span
+                                    class="text-danger fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
+                                    placeholder="busca inteligente..." class="form-control" name="sistema_2"
+                                    value="{{dados.sistema_2}}">
+                                <div id="popupFiltro-sistema_2"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{else}}
+                            <label for="sistema_2" class="col-form-label">Sistema 2</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                                    placeholder="busca inteligente..." class="form-control" name="sistema_2"
+                                    value="{{dados.sistema_2}}">
+                                <div id="popupFiltro-sistema_2"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="col-12 col-pk">
+                            {{#if itens.num_sistema_3}}
+                            <label for="num_sistema_3" class="col-form-label">Número sistema 3 <span
+                                    class="text-danger fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" required type="number" class="form-control" name="num_sistema_3"
+                                    value="{{dados.num_sistema_3}}">
+                            </div>
+                            {{else}}
+                            <label for="num_sistema_3" class="col-form-label">Número sistema 3</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="number" class="form-control" name="num_sistema_3"
+                                    value="{{dados.num_sistema_3}}">
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="col-12 col-pk">
+                            {{#if itens.sistema_3}}
+                            <label for="sistema_3" class="col-form-label">Sistema 3 <span
+                                    class="text-danger fw-bolder">*</span></label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
+                                    placeholder="busca inteligente..." class="form-control" name="sistema_3"
+                                    value="{{dados.sistema_3}}">
+                                <div id="popupFiltro-sistema_3"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{else}}
+                            <label for="sistema_3" class="col-form-label">Sistema 3</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                                    placeholder="busca inteligente..." class="form-control" name="sistema_3"
+                                    value="{{dados.sistema_3}}">
+                                <div id="popupFiltro-sistema_3"
+                                    class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                            </div>
+                            {{/if}}
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-pk">
+                            <label class="col-form-label">Cadastramento</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input type="date" class="form-control" name="cadastramento_dre"
+                                    value="{{dados.cadastramento}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-pk">
+                            <label for="vencimento" class="col-form-label">Vencimento</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input type="date" class="form-control" name="vencimento_dre" value="{{dados.vencimento}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-pk">
+                            <label for="relacao" class="col-form-label">Relação</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                                <input type="text" class="form-control" name="relacao_dre" value="{{dados.relacao}}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-2 mt-01 ms-4">
+                    <i id="btn-remove-dre" class="bi bi-dash-square-fill cursor-pointer text-blue-pk"></i>
+                    <i id="btn-add-dre" class="bi bi-plus-square-fill cursor-pointer text-blue-pk"></i>
+                </div>
+
+                {{!-- seção de observação e parcelas --}}
+                <div class="row mb-1 mt-2 p-3 bg-yellow-pk shadow-sm">
+                    <div class="col-12 col-sm-6 col-pk">
+                        {{#if itens.cadastramento}}
+                        <label for="cadastramento" class="col-form-label">Cadastramento <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="date" class="form-control" name="cadastramento"
+                                value="{{dados.cadastramento}}" onchange="carregaSemelhanteNoDre(this)">
+                        </div>
+                        {{else}}
+                        <label for="cadastramento" class="col-form-label">Cadastramento</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="date" class="form-control" name="cadastramento"
+                                value="{{dados.cadastramento}}" onchange="carregaSemelhanteNoDre(this)">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-sm-6 col-pk">
+                        {{#if itens.parcela_atual}}
+                        <label for="parcela_atual" class="col-form-label">Parcela <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="parcela_atual"
+                                value="{{parcela_atual}}" disabled>
+                        </div>
+                        {{else}}
+                        <label for="parcela_atual" class="col-form-label">Parcela</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="parcela_atual"
+                                value="{{parcela_atual}}" disabled>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-sm-6 col-pk">
+                        {{#if itens.doc_pagamento}}
+                        <label for="doc_pagamento" class="col-form-label">Doc pagamento <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="text" class="form-control" name="doc_pagamento"
+                                value="{{dados.doc_pagamento}}">
+                        </div>
+                        {{else}}
+                        <label for="doc_pagamento" class="col-form-label">Doc pagamento</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="doc_pagamento"
+                                value="{{dados.doc_pagamento}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-sm-6 col-pk">
+                        {{#if itens.vencimento}}
+                        <label for="vencimento" class="col-form-label">Vencimento <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="date" class="form-control" name="vencimento"
+                                value="{{dados.vencimento}}" onchange="carregaSemelhanteNoDre(this)">
+                        </div>
+                        {{else}}
+                        <label for="vencimento" class="col-form-label">Vencimento</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="date" class="form-control" name="vencimento" value="{{dados.vencimento}}" onchange="carregaSemelhanteNoDre(this)">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-sm-6 col-pk">
+                        {{#if itens.referencia}}
+                        <label for="referencia" class="col-form-label">Referência <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="text" class="form-control" name="referencia"
+                                value="{{dados.referencia}}">
+                        </div>
+                        {{else}}
+                        <label for="referencia" class="col-form-label">Referência</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="referencia" value="{{dados.referencia}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-sm-6 col-pk">
+                        {{#if itens.relacao}}
+                        <label for="relacao" class="col-form-label">Relação <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="text" class="form-control" name="relacao" value="{{dados.relacao}}" onchange="carregaSemelhanteNoDre(this)">
+                        </div>
+                        {{else}}
+                        <label for="relacao" class="col-form-label">Relação</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="relacao" value="{{dados.relacao}}" onchange="carregaSemelhanteNoDre(this)">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4">
+                        {{#if itens.observacao}}
+                        <label for="observacao" class="col-form-label">Observação <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="observacao" value="{{dados.observacao}}"
+                                required>
+                        </div>
+                        {{else}}
+                        <label for="observacao" class="col-form-label">Observação</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="observacao" value="{{dados.observacao}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+
+                {{!-- seção de bancos --}}
+                <div class="row mb-1 mt-2 p-3 bg-yellow-pk shadow-sm">
+                    <div class="col-12 col-pk">
+                        {{#if itens.forma_pagamento}}
+                        <label for="forma_pagamento" class="col-form-label">Forma de pagamento <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="text" onkeyup="filtro(this, 'formasPagamento')"
+                                placeholder="busca inteligente..." class="form-control" name="forma_pagamento"
+                                value="{{dados.forma_pagamento}}">
+                            <div id="popupFiltro-forma_pagamento"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{else}}
+                        <label for="forma_pagamento" class="col-form-label">Forma de pagamento</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" onkeyup="filtro(this, 'formasPagamento')"
+                                placeholder="busca inteligente..." class="form-control" name="forma_pagamento"
+                                value="{{dados.forma_pagamento}}">
+                            <div id="popupFiltro-forma_pagamento"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.num_cartao_cred}}
+                        <label for="num_cartao_cred" class="col-form-label">N° cartão de crédito <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="text" class="form-control" name="num_cartao_cred"
+                                value="{{dados.num_cartao_cred}}">
+                        </div>
+                        {{else}}
+                        <label for="num_cartao_cred" class="col-form-label">N° cartão de crédito</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="num_cartao_cred"
+                                value="{{dados.num_cartao_cred}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.agendamento}}
+                        <label for="agendamento" class="col-form-label">Agendamento <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="text" class="form-control" name="agendamento"
+                                value="{{dados.agendamento}}">
+                        </div>
+                        {{else}}
+                        <label for="agendamento" class="col-form-label">Agendamento</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="agendamento" value="{{dados.agendamento}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.cheque_compens}}
+                        <label for="cheque_compens" class="col-form-label">Cheque compensado <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="text" class="form-control" name="cheque_compens"
+                                value="{{dados.cheque_compens}}">
+                        </div>
+                        {{else}}
+                        <label for="cheque_compens" class="col-form-label">Cheque compensado</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="cheque_compens"
+                                value="{{dados.cheque_compens}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.pagamento}}
+                        <label for="pagamento" class="col-form-label">Pagamento <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="date" class="form-control" name="pagamento"
+                                value="{{dados.pagamento}}">
+                        </div>
+                        {{else}}
+                        <label for="pagamento" class="col-form-label">Pagamento</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="date" class="form-control" name="pagamento" value="{{dados.pagamento}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.agencia}}
+                        <label for="agencia" class="col-form-label">Agência <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="text" class="form-control" name="agencia"
+                                value="{{dados.agencia}}">
+                        </div>
+                        {{else}}
+                        <label for="agencia" class="col-form-label">Agência</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="agencia"
+                                value="{{dados.agencia}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.banco}}
+                        <label for="banco" class="col-form-label">Banco <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="text" autocomplete="off" onkeyup="filtro(this, 'bancos')"
+                                placeholder="busca inteligente..." class="form-control" name="banco"
+                                value="{{dados.banco}}">
+                            <div id="popupFiltro-banco" class="d-none card card-body mt-5 shadow-sm popupFiltro scroll">
+                            </div>
+                        </div>
+                        {{else}}
+                        <label for="banco" class="col-form-label">Banco</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" autocomplete="off" onkeyup="filtro(this, 'bancos')"
+                                placeholder="busca inteligente..." class="form-control" name="banco"
+                                value="{{dados.banco}}">
+                            <div id="popupFiltro-banco" class="d-none card card-body mt-5 shadow-sm popupFiltro scroll">
+                            </div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.conta_corrente}}
+                        <label for="conta_corrente" class="col-form-label">Conta corrente <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="text" class="form-control" name="conta_corrente"
+                                value="{{dados.conta_corrente}}">
+                        </div>
+                        {{else}}
+                        <label for="conta_corrente" class="col-form-label">Conta corrente</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="conta_corrente"
+                                value="{{dados.conta_corrente}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.protocolo_banco}}
+                        <label for="protocolo_banco" class="col-form-label">Protocolo banco <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="text" class="form-control" name="protocolo_banco"
+                                value="{{dados.protocolo_banco}}">
+                        </div>
+                        {{else}}
+                        <label for="protocolo_banco" class="col-form-label">Protocolo banco</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="protocolo_banco"
+                                value="{{dados.protocolo_banco}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-3">
+                        {{#if itens.comprovante_pag}}
+                        <label for="comprovante_pag" class="col-form-label">Comp. de pagamento <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="file" class="form-control" name="comprovante_pag"
+                                value="{{dados.comprovante_pag}}">
+                        </div>
+                        {{else}}
+                        <label for="comprovante_pag" class="col-form-label">Comp. de pagamento</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="file" class="form-control" name="comprovante_pag"
+                                value="{{dados.comprovante_pag}}">
+                        </div>
+                        {{/if}}
+                    </div>
+
+                </div>
+
+                {{!-- secão de compra --}}
+                <div class="row mb-1 mt-2 p-3 bg-yellow-pk shadow-sm">
+                    <div class="col-12 col-pk">
+                        {{#if itens.num_pedido_compra}}
+                        <label for="num_pedido_compra" class="col-form-label">Número pedido <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="number" class="form-control"
+                                name="num_pedido_compra" value="{{dados.num_pedido_compra}}">
+                        </div>
+                        {{else}}
+                        <label for="num_pedido_compra" class="col-form-label">Número pedido</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="number" class="form-control" name="num_pedido_compra"
+                                value="{{dados.num_pedido_compra}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.data_compra}}
+                        <label for="data_compra" class="col-form-label">Data compra <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="date" class="form-control" name="data_compra"
+                                value="{{dados.data_compra}}">
+                        </div>
+                        {{else}}
+                        <label for="data_compra" class="col-form-label">Data compra</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="date" class="form-control" name="data_compra" value="{{dados.data_compra}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.emissao_nf}}
+                        <label for="emissao_nf" class="col-form-label">Emissão NF <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="Date" class="form-control" name="emissao_nf"
+                                value="{{dados.emissao_nf}}">
+                        </div>
+                        {{else}}
+                        <label for="emissao_nf" class="col-form-label">Emissão NF</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="Date" class="form-control" name="emissao_nf" value="{{dados.emissao_nf}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.num_comprovante}}
+                        <label for="num_comprovante" class="col-form-label">Número comprovante <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="text" class="form-control" name="num_comprovante"
+                                value="{{dados.num_comprovante}}">
+                        </div>
+                        {{else}}
+                        <label for="num_comprovante" class="col-form-label">Número comprovante</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="num_comprovante"
+                                value="{{dados.num_comprovante}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.data_entrega_mercad}}
+                        <label for="data_entrega_mercad" class="col-form-label">Dt entrega mercad.<span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="Date" class="form-control" name="data_entrega_mercad"
+                                value="{{dados.data_entrega_mercad}}">
+                        </div>
+                        {{else}}
+                        <label for="data_entrega_mercad" class="col-form-label">Dt entrega mercad.</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="Date" class="form-control" name="data_entrega_mercad"
+                                value="{{dados.data_entrega_mercad}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.mercadoria_entregue}}
+                        <label for="mercadoria_entregue" class="col-form-label">Mercadoria entregue <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="text" class="form-control" name="mercadoria_entregue"
+                                value="{{dados.mercadoria_entregue}}">
+                        </div>
+                        {{else}}
+                        <label for="mercadoria_entregue" class="col-form-label">Mercadoria entregue</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="mercadoria_entregue"
+                                value="{{dados.mercadoria_entregue}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.comprovante_mercad}}
+                        <label for="comprovante_mercad" class="col-form-label">Comp. de mercadoria <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="text" class="form-control" name="comprovante_mercad"
+                                value="{{dados.comprovante_mercad}}">
+                        </div>
+                        {{else}}
+                        <label for="comprovante_mercad" class="col-form-label">Comp. de mercadoria</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" class="form-control" name="comprovante_mercad"
+                                value="{{dados.comprovante_mercad}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-pk">
+                        {{#if itens.reembolso}}
+                        <label for="reembolso" class="col-form-label">Reembolso <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" step="0.01" placeholder="12,50" class="form-control" name="reembolso"
+                                onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" value="{{dados.reembolso}}" required>
+                        </div>
+                        {{else}}
+                        <label for="reembolso" class="col-form-label">Reembolso</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="text" step="0.01" placeholder="12,50" class="form-control" name="reembolso"
+                               onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" value="{{dados.reembolso}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+
+                {{!-- seção de rateio --}}
+                {{!--<div class="row mb-1 mt-2 p-3 bg-yellow-pk shadow-sm">
+                     <div class="col-12 col-md-6">
+                        {{#if itens.rateio}}
+                        <label for="rateio" class="col-form-label">Rateio <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="rateio" onkeyup="filtro(this, 'contas', false, false, false)"
+                               placeholder="busca inteligente..." value="{{dados.rateio}}" required>
+                            <div id="popupFiltro-rateio"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{else}}
+                        <label for="rateio" class="col-form-label">Rateio</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="rateio" onkeyup="filtro(this, 'contas', false, false, false)"
+                               placeholder="busca inteligente..." value="{{dados.rateio}}">
+                            <div id="popupFiltro-rateio"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        {{#if itens.vinculado}}
+                        <label for="vinculado" class="col-form-label">Vinculado <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="vinculado"
+                               placeholder="busca inteligente..." onkeyup="filtro(this, 'contas', false, false, true)" value="{{dados.vinculado}}" required>
+                            <div id="popupFiltro-vinculado"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{else}}
+                        <label for="vinculado" class="col-form-label">Vinculado</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" class="form-control" name="vinculado"
+                               placeholder="busca inteligente..." onkeyup="filtro(this, 'contas', false, false, true)" value="{{dados.vinculado}}">
+                            <div id="popupFiltro-vinculado"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{/if}}
+                    </div> --}}
+                    {{!-- <div class="col-12 col-md-6">
+                        {{#if itens.reembolso}}
+                        <label for="reembolso" class="col-form-label">Reembolso <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="number" step="0.01" placeholder="12,50" class="form-control" name="reembolso"
+                                value="{{dados.reembolso}}" required>
+                        </div>
+                        {{else}}
+                        <label for="reembolso" class="col-form-label">Reembolso</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="number" step="0.01" placeholder="12,50" class="form-control" name="reembolso"
+                                value="{{dados.reembolso}}">
+                        </div>
+                        {{/if}}
+                    </div> 
+                </div>--}}
+
+                {{!-- seção de sistemas --}}
+                {{!-- <div class="row mb-1 mt-2 p-3 bg-yellow-pk shadow-sm">
+                    <div class="col-12 col-md-6">
+                        {{#if itens.num_sistema_1}}
+                        <label for="num_sistema_1" class="col-form-label">Número sistema 1 <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="number" class="form-control" name="num_sistema_1"
+                                value="{{dados.num_sistema_1}}">
+                        </div>
+                        {{else}}
+                        <label for="num_sistema_1" class="col-form-label">Número sistema 1</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="number" class="form-control" name="num_sistema_1"
+                                value="{{dados.num_sistema_1}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        {{#if itens.sistema_1}}
+                        <label for="sistema_1" class="col-form-label">Sistema 1 <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
+                                placeholder="busca inteligente..." class="form-control" name="sistema_1"
+                                value="{{dados.sistema_1}}">
+                            <div id="popupFiltro-sistema_1"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{else}}
+                        <label for="sistema_1" class="col-form-label">Sistema 1</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                                placeholder="busca inteligente..." class="form-control" name="sistema_1"
+                                value="{{dados.sistema_1}}">
+                            <div id="popupFiltro-sistema_1"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        {{#if itens.num_sistema_2}}
+                        <label for="num_sistema_2" class="col-form-label">Número sistema 2 <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="number" class="form-control" name="num_sistema_2"
+                                value="{{dados.num_sistema_2}}">
+                        </div>
+                        {{else}}
+                        <label for="num_sistema_2" class="col-form-label">Número sistema 2</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="number" class="form-control" name="num_sistema_2"
+                                value="{{dados.num_sistema_2}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        {{#if itens.sistema_2}}
+                        <label for="sistema_2" class="col-form-label">Sistema 2 <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
+                                placeholder="busca inteligente..." class="form-control" name="sistema_2"
+                                value="{{dados.sistema_2}}">
+                            <div id="popupFiltro-sistema_2"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{else}}
+                        <label for="sistema_2" class="col-form-label">Sistema 2</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                                placeholder="busca inteligente..." class="form-control" name="sistema_2"
+                                value="{{dados.sistema_2}}">
+                            <div id="popupFiltro-sistema_2"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        {{#if itens.num_sistema_3}}
+                        <label for="num_sistema_3" class="col-form-label">Número sistema 3 <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="number" class="form-control" name="num_sistema_3"
+                                value="{{dados.num_sistema_3}}">
+                        </div>
+                        {{else}}
+                        <label for="num_sistema_3" class="col-form-label">Número sistema 3</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="number" class="form-control" name="num_sistema_3"
+                                value="{{dados.num_sistema_3}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        {{#if itens.sistema_3}}
+                        <label for="sistema_3" class="col-form-label">Sistema 3 <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
+                                placeholder="busca inteligente..." class="form-control" name="sistema_3"
+                                value="{{dados.sistema_3}}">
+                            <div id="popupFiltro-sistema_3"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{else}}
+                        <label for="sistema_3" class="col-form-label">Sistema 3</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                                placeholder="busca inteligente..." class="form-control" name="sistema_3"
+                                value="{{dados.sistema_3}}">
+                            <div id="popupFiltro-sistema_3"
+                                class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div> --}}
+
+                {{!-- seção de parcelas --}}
+                <div class="row mb-1 mt-2 p-3 bg-yellow-pk shadow-sm">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        {{#if itens.parcela}}
+                        <label for="numero_parcelas" class="col-form-label">Número de Parcelas <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input required type="number" class="form-control" name="numero_parcelas" value="{{dados.numero_parcelas}}">
+                        </div>
+                        {{else}}
+                        <label for="numero_parcelas" class="col-form-label">Número de Parcelas</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <input type="number" class="form-control" name="numero_parcelas" value="{{dados.numero_parcelas}}">
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        {{#if itens.numero_dias}}
+                        <label for="numero_dias" class="col-form-label">Número de Dias <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="numero_dias" required>
+                                {{#if dados.numero_dias}}
+                                <option selected value="{{dados.numero_dias}}">{{dados.numero_dias}}</option>
+                                {{else}}
+                                <option selected value="Desabilitado">Desabilitado</option>
+                                {{/if}}
+                                <option value="1 dia">1 dia</option>
+                                <option value="2 dias">2 dias</option>
+                                <option value="3 dias">3 dias</option>
+                                <option value="4 dias">4 dias</option>
+                                <option value="5 dias">5 dias</option>
+                                <option value="6 dias">6 dias</option>
+                                <option value="7 dias">7 dias</option>
+                                <option value="8 dias">8 dias</option>
+                                <option value="9 dias">9 dias</option>
+                                <option value="10 dias">10 dias</option>
+                                <option value="11 dias">11 dias</option>
+                                <option value="12 dias">12 dias</option>
+                                <option value="13 dias">13 dias</option>
+                                <option value="14 dias">14 dias</option>
+                                <option value="15 dias">15 dias</option>
+                                <option value="16 dias">16 dias</option>
+                                <option value="17 dias">17 dias</option>
+                                <option value="18 dias">18 dias</option>
+                                <option value="19 dias">19 dias</option>
+                                <option value="20 dias">20 dias</option>
+                                <option value="21 dias">21 dias</option>
+                                <option value="22 dias">22 dias</option>
+                                <option value="23 dias">23 dias</option>
+                                <option value="24 dias">24 dias</option>
+                                <option value="25 dias">25 dias</option>
+                                <option value="26 dias">26 dias</option>
+                                <option value="27 dias">27 dias</option>
+                                <option value="28 dias">28 dias</option>
+                                <option value="29 dias">29 dias</option>
+                                <option value="30 dias">30 dias</option>
+                            </select>
+                        </div>
+                        {{else}}
+                        <label for="numero_dias" class="col-form-label">Número de Dias</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            <select class="form-select form-select-sm" name="numero_dias">
+                                {{#if dados.numero_dias}}
+                                <option selected value="{{dados.numero_dias}}">{{dados.numero_dias}}</option>
+                                {{else}}
+                                <option selected value="Desabilitado">Desabilitado</option>
+                                {{/if}}
+                                <option value="1 dia">1 dia</option>
+                                <option value="2 dias">2 dias</option>
+                                <option value="3 dias">3 dias</option>
+                                <option value="4 dias">4 dias</option>
+                                <option value="5 dias">5 dias</option>
+                                <option value="6 dias">6 dias</option>
+                                <option value="7 dias">7 dias</option>
+                                <option value="8 dias">8 dias</option>
+                                <option value="9 dias">9 dias</option>
+                                <option value="10 dias">10 dias</option>
+                                <option value="11 dias">11 dias</option>
+                                <option value="12 dias">12 dias</option>
+                                <option value="13 dias">13 dias</option>
+                                <option value="14 dias">14 dias</option>
+                                <option value="15 dias">15 dias</option>
+                                <option value="16 dias">16 dias</option>
+                                <option value="17 dias">17 dias</option>
+                                <option value="18 dias">18 dias</option>
+                                <option value="19 dias">19 dias</option>
+                                <option value="20 dias">20 dias</option>
+                                <option value="21 dias">21 dias</option>
+                                <option value="22 dias">22 dias</option>
+                                <option value="23 dias">23 dias</option>
+                                <option value="24 dias">24 dias</option>
+                                <option value="25 dias">25 dias</option>
+                                <option value="26 dias">26 dias</option>
+                                <option value="27 dias">27 dias</option>
+                                <option value="28 dias">28 dias</option>
+                                <option value="29 dias">29 dias</option>
+                                <option value="30 dias">30 dias</option>
+                            </select>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        {{#if itens.fixar_parcelas}}
+                        <label for="fixar_parcelas" class="col-form-label">Fixar Parcelas <span
+                                class="text-danger fw-bolder">*</span></label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            {{!-- <input required type="number" class="form-control" name="num_meses"
+                                value="{{dados.num_meses}}"> --}}
+                            <select class="form-select form-select-sm" name="fixar_parcelas" required>
+                                {{#if dados.fixar_parcelas}}
+                                <option selected value="{{dados.fixar_parcelas}}">{{dados.fixar_parcelas}}</option>
+                                {{else}}
+                                <option selected value="Desabilitado">Desabilitado</option>
+                                {{/if}}
+                                <option value="dia 1">dia 1</option>
+                                <option value="dia 2">dia 2</option>
+                                <option value="dia 3">dia 3</option>
+                                <option value="dia 4">dia 4</option>
+                                <option value="dia 5">dia 5</option>
+                                <option value="dia 6">dia 6</option>
+                                <option value="dia 7">dia 7</option>
+                                <option value="dia 8">dia 8</option>
+                                <option value="dia 9">dia 9</option>
+                                <option value="dia 10">dia 10</option>
+                                <option value="dia 11">dia 11</option>
+                                <option value="dia 12">dia 12</option>
+                                <option value="dia 13">dia 13</option>
+                                <option value="dia 14">dia 14</option>
+                                <option value="dia 15">dia 15</option>
+                                <option value="dia 16">dia 16</option>
+                                <option value="dia 17">dia 17</option>
+                                <option value="dia 18">dia 18</option>
+                                <option value="dia 19">dia 19</option>
+                                <option value="dia 20">dia 20</option>
+                                <option value="dia 21">dia 21</option>
+                                <option value="dia 22">dia 22</option>
+                                <option value="dia 23">dia 23</option>
+                                <option value="dia 24">dia 24</option>
+                                <option value="dia 25">dia 25</option>
+                                <option value="dia 26">dia 26</option>
+                                <option value="dia 27">dia 27</option>
+                                <option value="dia 28">dia 28</option>
+                                <option value="dia 29">dia 29</option>
+                                <option value="dia 30">dia 30</option>
+                            </select>
+                        </div>
+                        {{else}}
+                        <label for="fixar_parcelas" class="col-form-label">Fixar Parcelas</label>
+                        <div class="col-sm-12 input-group input-group-sm">
+                            {{!-- <input type="number" class="form-control" name="num_meses" value="{{dados.num_meses}}"> --}}
+                            <select class="form-select form-select-sm" name="fixar_parcelas">
+                                {{#if dados.fixar_parcelas}}
+                                <option selected value="{{dados.fixar_parcelas}}">{{dados.fixar_parcelas}}</option>
+                                {{else}}
+                                <option selected value="Desabilitado">Desabilitado</option>
+                                {{/if}}
+                                <option value="dia 1">dia 1</option>
+                                <option value="dia 2">dia 2</option>
+                                <option value="dia 3">dia 3</option>
+                                <option value="dia 4">dia 4</option>
+                                <option value="dia 5">dia 5</option>
+                                <option value="dia 6">dia 6</option>
+                                <option value="dia 7">dia 7</option>
+                                <option value="dia 8">dia 8</option>
+                                <option value="dia 9">dia 9</option>
+                                <option value="dia 10">dia 10</option>
+                                <option value="dia 11">dia 11</option>
+                                <option value="dia 12">dia 12</option>
+                                <option value="dia 13">dia 13</option>
+                                <option value="dia 14">dia 14</option>
+                                <option value="dia 15">dia 15</option>
+                                <option value="dia 16">dia 16</option>
+                                <option value="dia 17">dia 17</option>
+                                <option value="dia 18">dia 18</option>
+                                <option value="dia 19">dia 19</option>
+                                <option value="dia 20">dia 20</option>
+                                <option value="dia 21">dia 21</option>
+                                <option value="dia 22">dia 22</option>
+                                <option value="dia 23">dia 23</option>
+                                <option value="dia 24">dia 24</option>
+                                <option value="dia 25">dia 25</option>
+                                <option value="dia 26">dia 26</option>
+                                <option value="dia 27">dia 27</option>
+                                <option value="dia 28">dia 28</option>
+                                <option value="dia 29">dia 29</option>
+                                <option value="dia 30">dia 30</option>
+                            </select>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+
+                {{!-- seção de botões --}}
+                <div class="row mb-1 mt-4 p-3">
+                    <div class="col-sm-12 col-md-6 col-lg-6 mb-2 d-flex justify-content-center">
+                        <a id="btn-gerar-parcelas" class="btn btn-danger fw-bold w-100 rem0788">Gerar parcelas</a>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6 mb-2 d-flex justify-content-center">
+                        <button id="btn-editar" type="submit" class="btn btn-warning fw-bold w-100 rem0788">Editar Conta</button>
+                    </div>
+                    <button class="d-none" id="btn-editar-oculto" type="submit"></button>
+                </div>
+            </div>
+
+            
+        </form>
+    </div>
+</div>
+<div class="d-none" id="sistemas"></div>
+<div class="d-none" id="departamentos"></div>
+<div class="d-none" id="bancos"></div>
+<div class="d-none" id="fornecedores"></div>
+<div class="d-none" id="categorias"></div>
+<div class="d-none" id="descricoes"></div>
+<div class="d-none" id="formasPagamento"></div>
+<div class="d-none" id="contas"></div>
+<div class="d-none" id="dres"></div>
+<a href="" id="select-tipo-situacao-conta"></a>
+<a href="" id="redirect-itens-conta"></a>
+<div class="d-none position-absolute card card-body shadow-sm" id="popup-gerar-parcelas"></div>
+<div id="popup-cadastrar-fornecedor" class="d-none card card-body position-absolute shadow-sm">
+    <strong for="fornecedor" class="col-form-label">Cadastrar Fornecedor</strong>
+    <div class="col-sm-12 input-group input-group-sm">
+        <input type="text" autocomplete="off" class="form-control" id="input-cadastrar-fornecedor" 
+            placeholder="Inserir fornecedor" autofocus>
+    </div>
+    <div class="col-sm-12 input-group input-group-sm mt-2">
+        <input type="text" autocomplete="off" class="form-control" id="input-via-pagamento" 
+            placeholder="Inserir via de pagamento">
+    </div>
+    <div class="mt-3">
+        <a class="btn btn-warning btn-sm" onclick="popupCadastraFornecedor()">Cancelar</a>
+        <a class="btn btn-primary btn-sm" onclick="cadastrarFornecedor()">Cadastrar</a>  
+    </div>
+    
+</div>
+
+<script>
+    var dataScript = false
+    try {
+        dataScript = {{{data_script}}}
+        dataScript = JSON.parse(dataScript)
+    }catch(e){console.log('dentro de views editar =1 ', e)}
+        
+    var objParcelasGeradas = []
+    var mostrarDreParcelas = 1
+    var qtdeDre = 0
+    const baseUrl = "http://localhost:8089"
+
+
+    if ( document.getElementsByName("codigo_barras")[0].value != "" ) {
+        document.querySelector("#icone-download-pdf-conta").classList.remove('d-none')
+        document.getElementsByName("pdfs")[0].disabled = true
+    }else {
+        document.querySelector("#icone-download-pdf-conta").classList.add('d-none')
+        document.getElementsByName("pdfs")[0].disabled = false
+    }
+
+    if ( document.getElementsByName('cadastramento')[0].value == "" ) {
+        const hoje = new Date()
+
+        // Formata a data para o formato AAAA-MM-DD
+        const ano = hoje.getFullYear()
+        const mes = String(hoje.getMonth() + 1).padStart(2, '0')
+        const dia = String(hoje.getDate()).padStart(2, '0')
+        document.getElementsByName('cadastramento')[0].value = `${ano}-${mes}-${dia}`
+        for ( let element of document.getElementsByName('cadastramento_dre') ) { element.value = `${ano}-${mes}-${dia}` }
+    }
+
+
+    async function listDadosParaConta(tipoUri, tipo) {
+        let resultado = await fetch(`${ baseUrl }/${tipoUri}/obter`)
+        resultado = await resultado.json()
+        let mainDiv = document.querySelector('#' + tipo)
+        for (let dados of resultado[tipo]) {
+            if (tipoUri == 'sistema' || tipoUri == 'departamento' || tipoUri == 'descricao' || tipoUri == 'forma-pagamento') {
+                let div = document.createElement('div')
+                div.innerHTML = `<span>${dados.id}</span> <span>${dados.nome}</span>`
+                mainDiv.appendChild(div)
+            } else if (tipoUri == 'banco') {
+                let div = document.createElement('div')
+                div.innerHTML = `<span>${dados.id}</span> <span>${dados.nome}</span> <span data-name="agencia">${dados.agencia}</span> <span data-name="conta_corrente">${dados.conta_corrente}</span>`
+                mainDiv.appendChild(div)
+            } else if (tipoUri == 'fornecedor') {
+                let div = document.createElement('div')
+                div.innerHTML = `<span>${dados.id}</span> <span>${dados.nome}</span> <span data-name="via_pagamento">${dados.via_pagamento}</span> <span data-name="chave">${dados.chave}</span>`
+                mainDiv.appendChild(div)
+            } else if (tipoUri == 'categoria') {
+                let div = document.createElement('div')
+                div.innerHTML = `<span>${dados.id}</span> <span>${dados.nome}</span> <span data-name="grupo">${dados.grupo}</span> <span data-name="subgrupo">${dados.subgrupo}</span>`
+                mainDiv.appendChild(div)
+            }
+
+        }
+    }
+    listDadosParaConta('sistema', 'sistemas')
+    listDadosParaConta('departamento', 'departamentos')
+    listDadosParaConta('banco', 'bancos')
+    listDadosParaConta('fornecedor', 'fornecedores')
+    listDadosParaConta('categoria', 'categorias')
+    listDadosParaConta('descricao', 'descricoes')
+    listDadosParaConta('forma-pagamento', 'formasPagamento')
+
+    function selectTipoSituacaoConta(e, manual=false) {
+        if ( !manual ) { return true }
+        let situacaoAtual = localStorage.getItem('situacao') || "Aberto"
+        let linkSelectTipoSituacao = document.querySelector('#select-tipo-situacao-conta')
+        linkSelectTipoSituacao.href = `/conta/cadastrar?situacao=${e.value}`
+        var confirme = confirm("OBS: Se mudar para outra situação os dados preenchidos nesta situação serão perdidos!\n\nDeseja realmente mudar de situação?");
+        if (confirme == true) {
+            esquecerConta(false)
+            return linkSelectTipoSituacao.click()
+        }
+        document.getElementsByName("situacao")[0].value = situacaoAtual
+    }
+
+    document.querySelector('#btn-add-dre').addEventListener('click', function () {
+        let secaoDre = document.querySelector('#secao-dre')
+        let qtdeDre = secaoDre.querySelectorAll('#secao-dre > div.row').length
+        let hr = document.createElement('hr')
+        hr.classList.add("mt-4")
+        hr.id = `hrdre-${ qtdeDre + 1 }`
+        secaoDre.appendChild(hr)
+        let cadastramento = document.getElementsByName('cadastramento')[0].value
+        let vencimento = document.getElementsByName('vencimento')[0].value
+        let relacao = document.getElementsByName('relacao')[0].value
+        console.log(cadastramento, vencimento, relacao)
+        let novoDre = `
+            <div class="col-12 col-sm-6 col-md-4">
+                {{#if itens.descricao}}
+                <label for="descricao" class="col-form-label">Descrição <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="text" autocomplete="off" onkeyup="filtro(this, 'descricoes')"
+                        placeholder="busca inteligente..." class="form-control" name="descricao_${ qtdeDre + 1 }"
+                            value="{{dados.["descricao_${ qtdeDre + 1 }"]}}" required>
+                    <div id="popupFiltro-descricao_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{else}}
+                <label for="descricao" class="col-form-label">Descrição</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="text" autocomplete="off" onkeyup="filtro(this, 'descricoes')"
+                        placeholder="busca inteligente..." class="form-control" name="descricao_${ qtdeDre + 1 }"
+                            value="{{dados.["descricao_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-descricao_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{/if}}
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                {{#if itens.departamento}}
+                <label for="departamento" class="col-form-label">Departamento <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" required type="text" onkeyup="filtro(this, 'departamentos')"
+                        placeholder="busca inteligente..." class="form-control" name="departamento_${ qtdeDre + 1 }"
+                        value="{{dados.["departamento_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-departamento_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{else}}
+                <label for="departamento" class="col-form-label">Departamento</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'departamentos')"
+                        placeholder="busca inteligente..." class="form-control" name="departamento_${ qtdeDre + 1 }"
+                        value="{{dados.["departamento_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-departamento_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{/if}}
+            </div>
+
+            <div class="col-12 col-sm-6 col-pk">
+                {{#if itens.rateio_dre}}
+                <label for="rateio_dre" class="col-form-label">Marcador 1 <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" required type="text" onkeyup="filtro(this, 'dres', false,  '_${ qtdeDre + 1 }')"
+                        autocomplete="off" class="form-control" name="rateio_dre_${ qtdeDre + 1 }" value="{{dados.["rateio_dre_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-rateio_dre_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{else}}
+                <label for="rateio_dre" class="col-form-label">Marcador 1</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" autocomplete="off" onkeyup="filtro(this, 'dres', false, '_${ qtdeDre + 1 }')"
+                        class="form-control" name="rateio_dre_${ qtdeDre + 1 }" value="{{dados.["rateio_dre_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-rateio_dre_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{/if}}
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                {{#if itens.categoria}}
+                <label for="categoria" class="col-form-label">Categoria <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" required type="text" onkeyup="filtro(this, 'categorias')"
+                        placeholder="busca inteligente..." class="form-control" name="categoria_${ qtdeDre + 1 }"
+                        value="{{dados.["categoria_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-categoria_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{else}}
+                <label for="categoria" class="col-form-label">Categoria</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'categorias')"
+                        placeholder="busca inteligente..." class="form-control" name="categoria_${ qtdeDre + 1 }"
+                        value="{{dados.["categoria_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-categoria_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{/if}}
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                {{#if itens.valor}}
+                <label class="col-form-label">Valor <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" required type="text" step="0.01" placeholder="0"
+                         onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" autocomplete="off" class="form-control" 
+                           name="valor_dre_${ qtdeDre + 1 }" value="{{dados.["valor_dre_${ qtdeDre + 1 }"]}}">
+                </div>
+                {{else}}
+                <label class="col-form-label">Valor</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" step="0.01" placeholder="0" autocomplete="off"
+                         onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" class="form-control" name="valor_dre_${ qtdeDre + 1 }" 
+                           value="{{dados.["valor_dre_${ qtdeDre + 1 }"]}}">
+                </div>
+                {{/if}}
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                {{#if itens.vinculado_dre}}
+                <label for="vinculado_dre" class="col-form-label">Distribuição <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" required type="text" autocomplete="off"  onkeyup="filtro(this, 'dres', false, '_${ qtdeDre + 1 }', true)"
+                       placeholder="busca inteligente..." class="form-control" name="vinculado_dre_${ qtdeDre + 1 }" value="{{dados.["vinculado_dre_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-vinculado_dre_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{else}}
+                <label for="vinculado_dre" class="col-form-label">Distribuição</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" autocomplete="off" onkeyup="filtro(this, 'dres', false, '_${ qtdeDre + 1 }', true)"
+                       placeholder="busca inteligente..." class="form-control" name="vinculado_dre_${ qtdeDre + 1 }" value="{{dados.["vinculado_dre_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-vinculado_dre_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{/if}}
+            </div>
+            <div class="d-none col-12 col-sm-6 col-pk">
+                <label class="col-form-label">Grupo</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" class="form-control" name="grupo_${ qtdeDre + 1 }"
+                        value="{{dados.["grupo_${ qtdeDre + 1 }"]}}">
+                </div>
+            </div>
+            <div class="d-none col-12 col-sm-6 col-pk">
+                <label for="subgrupo" class="col-form-label">Sub Grupo</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" class="form-control" name="subgrupo_${ qtdeDre + 1 }"
+                        value="{{dados.["subgrupo_${ qtdeDre + 1 }"]}}">
+                </div>
+            </div>
+
+            <div class="col-12 col-pk">
+                {{#if itens.num_sistema_1}}
+                <label for="num_sistema_1_${ qtdeDre + 1 }" class="col-form-label">Número sistema 1 <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" required type="number" class="form-control" name="num_sistema_1_${ qtdeDre + 1 }"
+                        value="{{dados.["num_sistema_1_${ qtdeDre + 1 }"]}}">
+                </div>
+                {{else}}
+                <label for="num_sistema_1_${ qtdeDre + 1 }" class="col-form-label">Número sistema 1</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="number" class="form-control" name="num_sistema_1_${ qtdeDre + 1 }"
+                        value="{{dados.["num_sistema_1_${ qtdeDre + 1 }"]}}">
+                </div>
+                {{/if}}
+            </div>
+            <div class="col-12 col-pk">
+                {{#if itens.sistema_1}}
+                <label for="sistema_1_${ qtdeDre + 1 }" class="col-form-label">Sistema 1 <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
+                        placeholder="busca inteligente..." class="form-control" name="sistema_1_${ qtdeDre + 1 }"
+                        value="{{dados.["sistema_1_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-sistema_1_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{else}}
+                <label for="sistema_1_${ qtdeDre + 1 }" class="col-form-label">Sistema 1</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                        placeholder="busca inteligente..." class="form-control" name="sistema_1_${ qtdeDre + 1 }"
+                        value="{{dados.["sistema_1_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-sistema_1_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{/if}}
+            </div>
+            <div class="col-12 col-pk">
+                {{#if itens.num_sistema_2}}
+                <label for="num_sistema_2_${ qtdeDre + 1 }" class="col-form-label">Número sistema 2 <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" required type="number" class="form-control" name="num_sistema_2_${ qtdeDre + 1 }"
+                        value="{{dados.["num_sistema_2_${ qtdeDre + 1 }"]}}">
+                </div>
+                {{else}}
+                <label for="num_sistema_2_${ qtdeDre + 1 }" class="col-form-label">Número sistema 2</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="number" class="form-control" name="num_sistema_2_${ qtdeDre + 1 }"
+                        value="{{dados.["num_sistema_2_${ qtdeDre + 1 }"]}}">
+                </div>
+                {{/if}}
+            </div>
+            <div class="col-12 col-pk">
+                {{#if itens.sistema_2}}
+                <label for="sistema_2_${ qtdeDre + 1 }" class="col-form-label">Sistema 2 <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
+                        placeholder="busca inteligente..." class="form-control" name="sistema_2_${ qtdeDre + 1 }"
+                        value="{{dados.["sistema_2_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-sistema_2_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{else}}
+                <label for="sistema_2_${ qtdeDre + 1 }" class="col-form-label">Sistema 2</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                        placeholder="busca inteligente..." class="form-control" name="sistema_2_${ qtdeDre + 1 }"
+                        value="{{dados.["sistema_2_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-sistema_2_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{/if}}
+            </div>
+            <div class="col-12 col-pk">
+                {{#if itens.num_sistema_3}}
+                <label for="num_sistema_3_${ qtdeDre + 1 }" class="col-form-label">Número sistema 3 <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" required type="number" class="form-control" name="num_sistema_3_${ qtdeDre + 1 }"
+                        value="{{dados.["num_sistema_3_${ qtdeDre + 1 }"]}}">
+                </div>
+                {{else}}
+                <label for="num_sistema_3_${ qtdeDre + 1 }" class="col-form-label">Número sistema 3</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="number" class="form-control" name="num_sistema_3_${ qtdeDre + 1 }"
+                        value="{{dados.["num_sistema_3_${ qtdeDre + 1 }"]}}">
+                </div>
+                {{/if}}
+            </div>
+            <div class="col-12 col-pk">
+                {{#if itens.sistema_3}}
+                <label for="sistema_3_${ qtdeDre + 1 }" class="col-form-label">Sistema 3 <span
+                        class="text-danger fw-bolder">*</span></label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
+                        placeholder="busca inteligente..." class="form-control" name="sistema_3_${ qtdeDre + 1 }"
+                        value="{{dados.["sistema_3_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-sistema_3_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{else}}
+                <label for="sistema_3_${ qtdeDre + 1 }" class="col-form-label">Sistema 3</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                        placeholder="busca inteligente..." class="form-control" name="sistema_3_${ qtdeDre + 1 }"
+                        value="{{dados.["sistema_3_${ qtdeDre + 1 }"]}}">
+                    <div id="popupFiltro-sistema_3_${ qtdeDre + 1 }"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+                {{/if}}
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                <label class="col-form-label">Cadastramento</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="date" class="form-control" name="cadastramento_dre"
+                        value="{{dados.cadastramento}}${cadastramento}" readonly>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                <label for="vencimento" class="col-form-label">Vencimento</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="date" class="form-control" name="vencimento_dre" 
+                      value="{{dados.vencimento}}${vencimento}" readonly>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                <label for="relacao" class="col-form-label">Relação</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="text" class="form-control" name="relacao_dre" 
+                      value="{{dados.relacao}}${relacao}" readonly>
+                </div>
+            </div>
+        `
+        let div = document.createElement('div')
+        div.classList.add("row")
+        div.classList.add("p-0")
+        div.id = `dre-${ qtdeDre + 1 }`
+        div.innerHTML = novoDre
+        secaoDre.appendChild(div)
+    })
+    function removeDre() { // lembrar de verificar quando for salvar a conta
+        let secaoDre = document.querySelector('#secao-dre')
+        let qtdeDre = secaoDre.querySelectorAll('#secao-dre > div.row').length
+        if ( qtdeDre > 1 ) {
+            document.querySelector(`#hrdre-${qtdeDre}`).remove()
+            document.querySelector(`#dre-${qtdeDre}`).remove()
+        }
+    }
+
+    document.querySelector('#btn-remove-dre').addEventListener('click', removeDre, false)
+
+    function compareValor() {
+        let secaoDre = document.querySelector('#secao-dre')
+        let qtdeDre = secaoDre.querySelectorAll('#secao-dre > div.row').length
+        let valorConta = parseFloat(document.getElementsByName("valor_conta")[0].value.replace("R$ ", "").replace("R$", "").replace(",", ".")).toFixed(2)
+        if ( !valorConta || valorConta == "" ) return alert("Preencha o campo Valor da Conta corretamente.")
+        let valorAcumulado = 0
+        for ( let num=1;num<=qtdeDre;num++ ) {
+            if ( num == 1 ) { var valor = parseFloat(document.getElementsByName('valor_dre')[0].value.replace("R$ ", "").replace("R$", "").replace(",", ".") || 0).toFixed(2) }
+            else { var valor = parseFloat(document.getElementsByName('valor_dre_' + num)[0].value.replace("R$ ", "").replace("R$", "").replace(",", ".") || 0).toFixed(2) }
+            valorAcumulado += parseFloat(valor)
+        }
+        if ( valorAcumulado > parseFloat(valorConta) ) { 
+            alert("O valor da soma do DRE ultrapassou o valor total da conta.\n\nA soma do DRE está em = R$ " + formatarValor(valorAcumulado) + '\nO valor da conta é = R$ ' + formatarValor(parseFloat(valorConta)) ) 
+            return false
+        }
+        return true
+    }
+    function formatarValor(valor) {
+        return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    }
+    function calcularDiferencaEmDias(data1, data2) {
+        // Converte as datas para milissegundos
+        const milissegundosPorDia = 1000 * 60 * 60 * 24;
+        
+        // Calcula a diferença em milissegundos
+        const diferençaEmMilissegundos = Math.abs(data2 - data1);
+        
+        // Converte a diferença para dias
+        const diferençaEmDias = Math.floor(diferençaEmMilissegundos / milissegundosPorDia);
+        
+        return diferençaEmDias+1;
+    }
+    document.querySelector('#btn-gerar-parcelas').addEventListener('click', function() {
+        let vencimento = document.getElementsByName("vencimento")[0]
+        if ( vencimento.value == "" ) {
+            alert('Preencha o vencimento')
+            vencimento.classList.add('border-danger')
+            vencimento.classList.add('border-3')
+            setTimeout(function(){
+                vencimento.classList.remove('border-danger')
+                vencimento.classList.remove('border-3')
+            }, 4000)
+            let cardConta = document.querySelector('#card-conta')
+            cardConta.scrollTo({
+                top: 500,
+                behavior: "smooth",
+            })
+            return true
+        }
+        let secaoDre = document.querySelector('#secao-dre')
+        qtdeDre = secaoDre.querySelectorAll('#secao-dre > div.row').length
+        mostrarDreParcelas = 1
+        var formulario = document.getElementsByTagName('form')[1]
+        var formData = new FormData(formulario)
+        objForm = Object.fromEntries(formData)
+
+        let popupGerarParcelas = document.querySelector('#popup-gerar-parcelas')
+        popupGerarParcelas.innerHTML = ""
+        let numeroDias = document.getElementsByName('numero_dias')[0].value
+        let qtdeParcelas = document.getElementsByName('numero_parcelas')[0].value
+        let valorConta = document.getElementsByName("valor_conta")[0].value.replace("R$ ", "")
+        let fixarParcelas = document.getElementsByName("fixar_parcelas")[0].value
+        let arquivosPdfs = document.getElementsByName("pdfs")[0].value
+
+        let somaDres = 0
+        for ( item of formData.entries() ) {
+            if ( item[0].includes("valor_dre") ) {
+                objForm[item[0]] = parseFloat(item[1].replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
+                somaDres += parseFloat(parseFloat(item[1].replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2)) || 0
+            }
+            if( item[0].includes('valor_conta') ) {
+                objForm[item[0]] = parseFloat(item[1].replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
+            }
+        }
+        let erros = []
+        if ( valorConta == "" && arquivosPdfs == "" ) { erros.push({erro: 'O campo "Valor da Conta" precisa ser preenchido.'})}
+        if ( qtdeParcelas == "" ) { erros.push({erro: 'O campo "Número de Parcelas" precisa ser preenchido.'})}
+        if ( numeroDias == "Desabilitado" && fixarParcelas == "Desabilitado" && qtdeParcelas > 1 ) { 
+            erros.push({erro: 'O campo "Número de Dias" ou o campo "Fixar Parcelas" precisa ser setado.'})
+        }
+        if ( valorConta > somaDres ) {
+            erros.push({erro: 'O valor da conta é maior que a soma do(s) Dre(s).'})
+        }
+        if ( valorConta < somaDres ) {
+            erros.push({erro: 'A soma do(s) Dre(s) é maior que o valor da conta.'})
+        }
+        if ( erros.length > 0 ) { return alert(erros[0].erro) }
+        for ( let dre=1;dre<=qtdeDre;dre++ ) {
+            objParcelasGeradas = []
+            if ( dre == 1 ) {
+                var valorDre = parseFloat(document.getElementsByName("valor_dre")[0].value.replace(/[R$\s.]/g, '').replace(',', '.')  || 0).toFixed(2) || 0
+            }
+            else {
+                var valorDre = parseFloat(document.getElementsByName("valor_dre_"+dre)[0].value.replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2) || 0
+            }
+            let parcelas = `
+                <div id="parcelas-dre-${dre}">
+                <div class="p-3 mb-2 bg-blue-pk sticky-top text-center">
+                    <span class="text-white w-100">Plano de parcelas para o valor da conta: <strong>R$ ${parseFloat(valorConta).toFixed(2).toString().replace('.',',')}</strong></span>
+                    <div>
+                        <span class="text-white">Valor Dre: <strong> R$${parseFloat(valorDre).toFixed(2).toString().replace('.',',')}</strong></span>
+                    </div>
+                    <hr class="text-white">
+                    <div class="w-100 text-white pe-3 ps-3 d-flex justify-content-between">
+                        <i class="fas fa-arrow-left fs-4 fw-bold cursor-pointer" onclick="arrowLeftDre()"> </i>
+                        <span class="fw-bold">${dre}° DRE</span>
+                        <i class="fas fa-arrow-right fs-4 fw-bold cursor-pointer" onclick="arrowRightDre()"> </i>
+                    </div>
+                </div>
+            `
+            let valorAcumulado = 0
+            let valor = parseFloat(valorDre)//parseFloat((valorDre / qtdeParcelas).toFixed(2))
+            let dia = new Date(vencimento.value) 
+            let diaFixarParcelas = Number(fixarParcelas.split(" ")[1])
+            for ( let i=1;i<=Number(qtdeParcelas);i++ ) {
+                if ( i == 1 ) {
+                    var vencimentoSplit = vencimento.value.split("-")
+                    dia.setFullYear(vencimentoSplit[0])
+                    var mesEscrever = vencimentoSplit[1]
+                    var diaEscrever = vencimentoSplit[2]
+                    
+                }else {
+                    var ultimoDia = new Date(dia.getFullYear(), dia.getMonth() + 1, 0);
+                    if ( fixarParcelas != "Desabilitado" ) {
+                        if ( dia.getDate() < diaFixarParcelas ) {  
+                            if ( i > 1 ) {
+                                dia.setDate(dia.getDate()+31)  
+                            }                    
+                            var mesEscrever = ( dia.getMonth() + 1 ).toString().padStart(2, '0')
+                        }
+                        else { 
+                            dia.setDate(dia.getDate()+31)
+                            var mesEscrever = ( dia.getMonth() + 1 ).toString().padStart(2, '0') 
+                        }
+                        if ( diaFixarParcelas == 30 && ultimoDia.getDate() < diaFixarParcelas || diaFixarParcelas == 29 && ultimoDia.getDate() < diaFixarParcelas ) {
+                            var diaEscrever = ultimoDia.getDate()
+                        }else {
+                            var diaEscrever = diaFixarParcelas.toString().padStart(2, '0')
+                        }
+                        
+                        
+                    } else {
+                        dia.setDate(dia.getDate() + Number(numeroDias.split(' ')[0]))
+                        var diaEscrever = dia.getDate().toString().padStart(2, '0')
+                        var mesEscrever = ( dia.getMonth() + 1 ).toString().padStart(2, '0')
+                    }  
+                }
+                let diaParcela = diaEscrever + "/" + mesEscrever + "/" + dia.getFullYear()
+                
+                if ( i == qtdeParcelas && (valorAcumulado + valor) <  valorDre ) {
+                    valor = (parseFloat(valorDre) - valorAcumulado).toFixed(2)
+                }else if ( i == qtdeParcelas && (valorAcumulado + valor) >  valorDre ) {
+                    let valorTemp = valor - valorDre//(valorAcumulado + valor) - valorDre
+                    valor = (valor - valorTemp).toFixed(2)
+                }
+                valorAcumulado += valor
+                let valorString = valor.toString().includes('.') ? valor.toString().split('.')[0] + "," + valor.toString().split('.')[1].padEnd(2, '0') : valor + ',00'
+                if ( qtdeParcelas == 1 ) {
+                    var numero_dias = calcularDiferencaEmDias(new Date(), new Date(vencimento.value))
+                }else {
+                    var numero_dias = null
+                }
+                objParcelasGeradas.push({numero_dias, numero_parcela: i, valor_parcela: valorString, vencimento_parcela: diaParcela})
+                parcelas += `
+                    <div class="p-2 bg-yellow-pk mb-1">
+                        <strong class="rem0888">${i}° parcela de R$ ${valorString} vencimento em ${diaParcela}</strong>
+                    </div>
+                `
+            }
+            parcelas += `
+                <div class="p-2 w-100">
+                    <div class="col-12 mt-2">
+                        <button onclick="fecharPopupParcelas()" class="btn btn-primary bg-blue-pk w-100 fw-bolder">Fechar</button>
+                    </div>
+                </div>
+                </div>
+            `
+            let div = document.createElement('div')
+            div.classList.add('scroll')
+            div.innerHTML = parcelas
+            popupGerarParcelas.appendChild(div)
+            if ( !document.URL.toString().includes('editar') ) {
+                popupGerarParcelas.classList.remove('d-none')
+            }
+        }
+        showDreParcelas()
+    })
+    function showDreParcelas() {
+        for ( let i=1;i<=qtdeDre;i++ ) {
+            document.querySelector("#parcelas-dre-"+i).classList.add("d-none")
+        }
+        document.querySelector("#parcelas-dre-"+mostrarDreParcelas).classList.remove("d-none")
+    }
+    function arrowRightDre() {
+        if ( mostrarDreParcelas < qtdeDre ) {
+            mostrarDreParcelas++
+            showDreParcelas()
+        }
+    }
+    function arrowLeftDre() {
+        if ( mostrarDreParcelas > 1 ) {
+            mostrarDreParcelas--
+            showDreParcelas()
+        }
+    }
+
+    function fecharPopupParcelas() {
+        document.querySelector('#popup-gerar-parcelas').classList.add('d-none')
+    }
+    document.getElementsByName('fixar_parcelas')[0].addEventListener('change', function(e) {
+        if( e.target.value != "Desabilitado" ) {
+            document.getElementsByName('numero_dias')[0].value = "Desabilitado"
+        }
+    })
+    document.getElementsByName('numero_dias')[0].addEventListener('change', function(e) {
+        if( e.target.value != "Desabilitado" ) {
+            document.getElementsByName('fixar_parcelas')[0].value = "Desabilitado"
+        }
+    })
+    document.querySelector('#btn-editar').addEventListener('click', async function(e) {
+        e.preventDefault()
+        
+        const formulario = document.getElementsByTagName('form')[1]
+        const formData = new FormData(formulario); // Contém arquivo + campos
+
+        // Processa os campos numéricos sem transformar em JSON
+        let somaDres = 0;
+        for (let [key, value] of formData.entries()) {
+            if (key.includes("valor_dre")) {
+            const val = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2);
+            console.log(key, value, val, 'valor_dre')
+            formData.set(key, val);
+            somaDres += parseFloat(val);
+            }
+            if (key.includes("valor_conta")) {
+            const val = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2);
+            console.log(key, value, val, 'valor_conta')
+            formData.set(key, val);
+            }
+        }
+
+        const valorConta = parseFloat(formData.get("valor_conta"));
+        if (valorConta > somaDres) return alert('O valor da conta é maior que a soma do(s) Dre(s).');
+        if (valorConta < somaDres) return alert('A soma do(s) Dre(s) é maior que o valor da conta.');
+
+        // Verifica se há parcelas
+        const parcelas = typeof objParcelasGeradas !== "undefined" ? objParcelasGeradas : [];
+        if (!formData.get("numero_parcelas") || formData.get("numero_parcelas") < 1 || parcelas.length === 0) {
+            if (document.URL.includes('editar')) {
+            document.querySelector('#btn-gerar-parcelas').click();
+            } else {
+            return alert("As parcelas não foram geradas, clique no botão gerar parcelas antes de salvar a conta.");
+            }
+        }
+
+        // Adiciona array de parcelas como string JSON
+        formData.append("parcelas_geradas", JSON.stringify(parcelas));
+
+        // Conta os campos tipo DRE
+        let qtdeDre = 0;
+        for (let [key] of formData.entries()) {
+            if (key.includes("valor_dre")) qtdeDre++;
+        }
+
+        let cadastro = await fetch(`${baseUrl}/conta/editar?qtdeDre=${qtdeDre}`, {
+            method: 'POST',
+            body: formData,
+        });
+        cadastro = await cadastro.json()
+        
+        if ( cadastro.erro && cadastro.erro == "campos não preenchidos" ) {
+            return document.querySelector('#btn-editar-oculto').click()
+        }
+        if ( cadastro.erro && cadastro.erro == "situação não cadastrada" ) {
+            var confirme = confirm("È necessário configurar os itens obrigatórios de cada situação.\n\nDeseja configurar agora para a situação [ "+ objForm.situacao +" ]?\nSe sim você será redirecionado para a página de configuração.");
+            if (confirme == true) {
+                let redirectItensConta = document.querySelector('#redirect-itens-conta')
+                redirectItensConta.href = "/configuracao/itens-conta?situacao=" + objForm.situacao
+                return redirectItensConta.click()  
+            }else{
+                alert("Você desistiu de excluir o item " + itemSelecionado + " da lista!");
+            }
+            
+        }
+        if ( cadastro.erro ) { return alert("Algo deu errado ao editar a conta!") }
+        let cardConta = document.querySelector('#card-conta')
+        cardConta.scrollTo({ top: 0, behavior: 'smooth' })
+        alert("Conta foi salva com sucesso\n\nEste é o número da nova conta: "+ cadastro.numero_conta)
+        esquecerConta(true)
+        formulario.reset()
+        document.getElementsByName('numero_conta')[0].value = cadastro.numero_conta
+
+    })
+    document.querySelector('#scroll-top').addEventListener('click', function() {
+        let cardConta = document.querySelector('#card-conta')
+        cardConta.scrollTo({ top: 0, behavior: 'smooth' })
+    })
+    document.querySelector('#scroll-bottom').addEventListener('click', function() {
+        let cardConta = document.querySelector('#card-conta')
+        cardConta.scrollTo({ top: 100000, behavior: 'smooth' })
+    })
+    window.onunload = function(e) {
+        if ( window.location.href.toString().includes("conta/editar") ) {
+            var formulario = document.getElementsByTagName('form')[1]
+            var formData = new FormData(formulario)
+            for (var pair of formData.entries()) {
+                if ( pair[0] != "numero_conta" ) {
+                    localStorage.setItem(pair[0], pair[1])
+                }
+                if ( pair[0].includes('valor_dre') ) {
+                    countDre++
+                }
+            }
+            resetDreLocalStorage(countDre)
+        }
+        if ( window.location.href.toString().includes("conta/editar") ) {
+            esquecerConta(false)
+        }
+    }
+    window.onbeforeunload = function() {
+        if ( window.location.href.toString().includes("conta/editar") ) {
+            var formulario = document.getElementsByTagName('form')[1]
+            var formData = new FormData(formulario)
+            let countDre = 1
+            for (var pair of formData.entries()) {
+                if ( pair[0] != "numero_conta" ) {
+                    localStorage.setItem(pair[0], pair[1])
+                }                
+                if ( pair[0].includes('valor_dre') ) {
+                    countDre++
+                }
+            }
+            resetDreLocalStorage(countDre)
+        }
+        if ( window.location.href.toString().includes("conta/editar") ) {
+            esquecerConta(false)
+        }
+    }
+    function resetDreLocalStorage(start) {
+        localStorage.removeItem("cadastramento_dre")
+        localStorage.removeItem("vencimento_dre")
+        localStorage.removeItem("relacao_dre")
+        for ( let i=start;i<50;i++ ) {
+            localStorage.removeItem("valor_dre_"+i)
+            localStorage.removeItem("departamento_"+i)
+            localStorage.removeItem("grupo_"+i)
+            localStorage.removeItem("subgrupo_"+i)
+            localStorage.removeItem("categoria_"+i)
+            localStorage.removeItem("rateio_dre_"+i)
+            localStorage.removeItem("vinculado_dre_"+i)
+            localStorage.removeItem("descricao_"+i)
+        }
+    }
+    function loadDataScriptLocalstorage() {
+        let itensDre = {
+            valor_dre: true, departamento: true, grupo: true, subgrupo: true, categoria: true, rateio_dre: true,
+            vinculado_dre: true, descricao: true, cadastramento_dre: true, vencimento_dre: true, relacao_dre: true
+        }
+        if ( dataScript ) {
+            resetDreLocalStorage(2)
+            let count = 1
+            for ( let item of dataScript ) {
+                for ( let element of Object.entries(item) ) {
+                    if ( count > 1 ) {
+                        if ( typeof itensDre[element[0]] != 'undefined' ) {
+                            localStorage[element[0]+'_'+count] = element[1]
+                        }
+                    }else{
+                        localStorage[element[0]] = element[1]
+                    }
+                }
+                count++
+            }
+        }
+    }
+    loadDataScriptLocalstorage()
+    function loadDadosCadastroConta() {
+        //if ( document.URL.includes('editar') ) { return true } // para quando abrir nessa url não recarregue os dados como em cadastro
+        let btnAddDre = document.querySelector('#btn-add-dre')
+        let qtdeDre = Object.entries(localStorage).filter(function(item){
+            if ( item[0].includes("categoria") ) {return item}
+        })
+        for ( x of qtdeDre.slice(1) ) { btnAddDre.click() }
+        for ( item of Object.entries(localStorage) ) {
+            if (item[0] != "numero_conta" &&  item[0] != "cabecalhoFixoStorage" && item[0] != "id" && item[0] != "numero_parcela" && item[0] != "valor_parcela" && item[0] != "vencimento_parcela" ) { 
+                document.getElementsByName(item[0])[0].value = item[1]
+
+                // se tiver com erro de itens não identificado no localstorage
+                //try{
+                //    document.getElementsByName(item[0])[0].value = item[1]
+                //}catch(e){
+                //    console.log(item[0], item[1])
+                //    delete localStorage[item[0]]
+                //}
+                
+            }            
+        }
+        if ( document.getElementsByName('cadastramento')[0].value == "" ) {
+            document.getElementsByName('cadastramento')[0].value = new Date().toLocaleString('pt-BR').split(',')[0].split('/').reverse().join('-')
+            
+        }
+        for ( let elemento of document.getElementsByName('cadastramento_dre') ) {
+            elemento.value = document.getElementsByName('cadastramento')[0].value
+        }
+        for ( let element of document.getElementsByName('vencimento_dre') ) {
+            element.value = document.getElementsByName('vencimento')[0].value
+        }
+        for ( let item of document.getElementsByName('relacao_dre') ) {
+            item.value = document.getElementsByName('relacao')[0].value
+        }
+    }
+    loadDadosCadastroConta()
+    
+    function popupCadastraFornecedor() {
+        let popupCadastrarFornecedor = document.querySelector("#popup-cadastrar-fornecedor")
+        if ( popupCadastrarFornecedor.classList.toString().includes('d-none') ) {
+            popupCadastrarFornecedor.classList.remove('d-none')
+            
+            document.querySelector('#input-cadastrar-fornecedor').value = document.getElementsByName("fornecedor")[0].value
+            document.querySelector('#input-via-pagamento').value = document.getElementsByName("via_pagamento")[0].value
+            document.querySelector('#input-cadastrar-fornecedor').focus()
+        }else {
+            popupCadastrarFornecedor.classList.add('d-none')
+        }
+    }
+    function carregaSemelhanteNoDre(e) {
+        for ( let element of document.getElementsByName(e.name + '_dre') ) { element.value = e.value }
+    }
+    async function cadastrarFornecedor() {
+        let inputCadastrarFornecedor = document.querySelector('#input-cadastrar-fornecedor')
+        let inputViaPagamento = document.querySelector('#input-via-pagamento')
+        if ( inputCadastrarFornecedor.value == "" || !inputCadastrarFornecedor.value ) {
+            return alert("É necessário inserir um fornecedor para cadastrar!")
+        }
+        if ( inputViaPagamento.value == "" || !inputViaPagamento.value ) {
+            return alert("É necessário inserir uma via de pagamento para o fornecedor!")
+        }
+        let dados = {nome: inputCadastrarFornecedor.value, via_pagamento: inputViaPagamento.value}
+        const options = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) }
+        let cadastro = await fetch(`${ baseUrl }/fornecedor/cadastrar?popup=sim`, options)
+        cadastro = await cadastro.json()
+        if ( cadastro.erro == "fornecedor já cadastrado." ) {
+            return alert("O fornecedor já existe na base de dados.")
+        }
+        if ( cadastro.erro ) {
+            return alert("Ocorreu um erro ao cadastrar o fornecedor.")
+        }
+        inputCadastrarFornecedor.value = ""
+        inputViaPagamento.value = ""
+        document.querySelector("#popup-cadastrar-fornecedor").classList.add("d-none")
+        document.getElementsByName("fornecedor")[0].value = dados.nome
+        document.getElementsByName("via_pagamento")[0].value = dados.via_pagamento
+        alert("Forncedor cadastrado com sucesso!")
+    }
+    async function getTodasContas(tipo) {
+        let resultado = await fetch(`${ baseUrl }/conta/obter`)
+        resultado = await resultado.json()
+        let mainDiv = document.querySelector('#'+tipo)
+        let objDres = {}
+        let objConta = {}
+        for ( let conta of resultado.contas ) {
+            if ( tipo == 'dres' ) {
+                if ( typeof objDres[conta.rateio_dre] == 'undefined' ) {
+                    let div = document.createElement('div')
+                    div.innerHTML = `
+                        <span>${conta.descricao}</span> <span>${conta.departamento}</span>
+                        <span>${conta.rateio_dre}</span> <span>${conta.vinculado_dre}</span>
+                        <span>${conta.valor_dre}</span> <span>${conta.categoria}</span>
+                        <span>${conta.grupo}</span> <span>${conta.subgrupo}</span>
+                    `
+                    mainDiv.appendChild(div) 
+                    objDres[conta.rateio_dre] = true
+                }
+            }
+            if ( tipo == 'contas' ) {
+                if ( typeof objConta[conta.numero_conta+conta.descricao] == 'undefined' ) {
+                    let div = document.createElement('div')
+                    for ( let item of Object.entries(conta) ) {
+                        div.innerHTML += `<span name="${item[0]}-list">${item[1]}</span>`
+                    }
+                    mainDiv.appendChild(div) 
+                    objConta[conta.numero_conta+conta.descricao] = true
+                }
+            }   
+        }
+    }
+    getTodasContas('contas')
+    getTodasContas('dres')
+
+
+
+    /*
+        loadDadosCadastroConta => faz o carregamento dos dados no formulário
+    */
+</script>
+

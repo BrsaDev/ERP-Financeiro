@@ -10,6 +10,7 @@
         </a>
     </div>
     <div><h5>Cadastrar Plano de Contas</h5></div>
+    <div id="btn-lista-plano-de-contas" class="ms-2"><i class="bi bi-card-list rem1200 cursor-pointer"></i></div>
 </div>
 <div class="card shadow-lg">
     <div class="card-body">
@@ -38,3 +39,66 @@
         </form>
     </div>
 </div>
+
+{{!-- listagem de plano de contas abaixo --}}
+<div id="lista-plano-de-contas" class="mt-2 d-none">
+    <div class="row">
+        <div class="col-auto">
+            <div class="card">
+                <div class="card-body overflow-auto scroll">
+                    <table class="table table-sm table-hover table-bordered rem0788">
+                        <thead>
+                            <tr class="text-center text-nowrap text-light bg-blue-pk">
+                                <th scope="col">Id</th>
+                                <th scope="col">Categoria</th>
+                                <th scope="col">Subgrupo</th>
+                                <th scope="col">Grupo</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        {{#each categorias}}
+                        <tbody>
+                            <tr id="{{id}}" class="text-nowrap">
+                                <td class="text-center" scope="col">{{id}}</td>
+                                <td scope="col">{{nome}}</td>
+                                <td scope="col">{{subgrupo}}</td>
+                                <td scope="col">{{grupo}}</td>
+                                <td scope="col" class="col-vazia"></td>
+                                <td scope="col" class="col-vazia"></td>
+                                <td scope="col" class="col-vazia"></td>
+                                <td scope="col" class="col-vazia"></td>
+                                <td scope="col" class="col-vazia"></td>
+                                <td scope="col" class="col-vazia"></td>
+                                <td scope="col" class="col-vazia"></td>
+                                <td scope="col" class="col-vazia"></td>
+                            </tr>
+                        </tbody>
+                        {{else}}
+                        <h3>Não há Plano de Contas para listar</h3>
+                        {{/each}}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelector("#btn-lista-plano-de-contas").addEventListener("click", function(e) {
+        let containerListaFornecedores = document.querySelector("#lista-plano-de-contas")
+        if ( containerListaFornecedores.classList.value.includes("d-none") ) {
+            containerListaFornecedores.classList.remove("d-none")
+            e.target.classList.add("text-blue-pk")
+        }else {
+            containerListaFornecedores.classList.add("d-none")
+            e.target.classList.remove("text-blue-pk")
+        }
+    })
+</script>

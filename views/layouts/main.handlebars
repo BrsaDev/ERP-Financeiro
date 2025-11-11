@@ -22,24 +22,25 @@
 </head>
 
 <body>
+    <!-- Modal editar conta -->
     <div class="modal fade" id="exampleModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
        aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Abrir Pagamento</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Edição de Pagamento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="/conta/abrir-conta">
+                    <form method="post" action="/conta/editar">
                         <div>
                             <label class="col-form-label">Número Conta:</label>
-                            <input type="number" class="form-control form-control-sm" id="numero-conta-abrir-conta">
+                            <input type="number" class="form-control form-control-sm" id="numero-conta-editar-conta">
                         </div>
                         <div class="mb-3">
                             <label class="col-form-label">Situação:</label>
                             <div class="col-sm-12 input-group input-group-sm">
-                            <select class="form-select form-select-sm" id="situacao-abrir-conta" required>
+                            <select class="form-select form-select-sm" id="situacao-editar-conta" required>
                                 <option value="Aberto">Aberto</option>
                                 <option value="Pago">Pago</option>
                                 <option value="Em andamento">Em andamento</option>
@@ -50,11 +51,50 @@
                        
                     </form> 
                     <div class="modal-footer">
-                        <button id="btn-close-popup-abrir-conta" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <a id="btn-abrir-conta" type="button" target="_blank" href="#" class="btn btn-primary" >Abrir</a>
+                        <button id="btn-close-popup-editar-conta" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <a id="btn-editar-conta" target="_blank" type="button" class="btn btn-primary" >Abrir</a>
                     </div>
                 </div>
-                
+            </div>
+        </div>
+    </div>
+     <!-- Modal atualizar situação de contas -->
+    <div class="modal fade" id="atualizaSituacaoContas" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+       aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Situação de Contas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{!-- <form method="post" action="/conta/editar-situacao-contas"> --}}
+                        <div>
+                            <label class="col-form-label">Data:</label>
+                            <input type="date" class="form-control form-control-sm" id="data-editar-situacao-conta">
+                        </div>
+                        <div>
+                            <label class="col-form-label">Banco:</label>
+                            <input type="text" class="form-control form-control-sm" id="banco-editar-situacao-conta">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Situação:</label>
+                            <div class="col-sm-12 input-group input-group-sm">
+                            <select class="form-select form-select-sm" id="situacao-editar-situacao-conta" required>
+                                <option value="Aberto">Aberto</option>
+                                <option value="Pago">Pago</option>
+                                <option value="Em andamento">Em andamento</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        </div>
+                       
+                    {{!-- </form>  --}}
+                    <div class="modal-footer">
+                        <button id="btn-close-atualizacao-situacao-contas" type="button" class="btn btn-warning" data-bs-dismiss="modal">Cancelar</button>
+                        <button id="btn-atualizar-situacao-contas" type="button" class="btn btn-success" data-bs-dismiss="modal">Atualizar</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -425,13 +465,22 @@
     //        console.log(r)
     //    }
     //}
-
-    document.querySelector("#btn-abrir-conta").addEventListener('click', function(e) {
-        let numeroConta = document.querySelector("#numero-conta-abrir-conta").value
-        let situacao = document.querySelector("#situacao-abrir-conta").value
+    
+    document.querySelector("#btn-editar-conta").addEventListener('click', async function(e) {
+        
+        let numeroConta = document.querySelector("#numero-conta-editar-conta").value
+        let situacao = document.querySelector("#situacao-editar-conta").value
         //abrirContaPopup(false, numeroConta, situacao)
-        e.target.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}`
-        return document.querySelector("#btn-close-popup-abrir-conta").click()
+
+        if ( typeof objContasPorSituacao[numeroConta] == "undefined" ) {
+            e.target.removeAttribute('href')
+            return alert("Essa conta não existe, com esta situação!")
+        }
+
+        e.target.href = `/conta/editar?numero_conta=${numeroConta}&situacao=${situacao}`
+        document.querySelector("#btn-close-popup-editar-conta").click()
+        
+        //e.target.removeAttribute('href')
     })
     function validarCaracter(e) {
         timeDigitValor = new Date()

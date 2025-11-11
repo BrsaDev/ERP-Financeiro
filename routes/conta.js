@@ -260,7 +260,7 @@ router.post('/posicao-colunas/cadastrar', async (req, res) => {
             })
     }
 })
-router.get('/abrir-conta', eAdmin, async (req, res) => {
+router.get('/editar', eAdmin, async (req, res) => {
     let {numero_conta, situacao, dre} = req.query
     let contas = await conta.findAll({ where: { [Op.and]: {numero_conta, situacao} } })
     contas = JSON.parse(JSON.stringify(contas, null, 2))
@@ -341,7 +341,7 @@ router.get('/abrir-conta', eAdmin, async (req, res) => {
     //qtdeDres = Object.values(dres)[0].length
     // var parcela_atual = contas.length == 0 ? `` : `${contas[0].numero_parcela}/${contas[0].numero_parcelas}`
     // console.log(parcela_atual)
-    return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { parcela_atual, itens, dados: contas[0], data_script: JSON.stringify(contas) })
+    return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}editar`), { parcela_atual, itens, dados: contas[0], data_script: JSON.stringify(contas) })
 })
 
 router.get('/cadastrar', eAdmin, async (req, res) => {
@@ -349,7 +349,7 @@ router.get('/cadastrar', eAdmin, async (req, res) => {
     tipoChavePix = JSON.parse(JSON.stringify(tipoChavePix, null, 2))
 
     let item = await ItensConta.findOne({ where: { tipo_situacao: (req.query.situacao || `Aberto`) } })
-    let contas = await conta.findAll({ where: { situacao: (req.query.situacao || `Aberto`) } })
+    let contas = await conta.findAll()//{ where: { situacao: (req.query.situacao || `Aberto`) } }
     contas = JSON.parse(JSON.stringify(contas, null, 2))
     item = JSON.parse(JSON.stringify(item, null, 2))
     let itens = { ...item, tipo_situacao: (req.query.situacao || `Aberto`) }
@@ -634,7 +634,11 @@ router.get('/listar', getVisibleColumns, async (req, res) => {
                                             <i class="fas fa-search cursor-pointer position-relative" onclick='abrirContaPeloDre("${item.dataValues.numero_conta.trim()}", "${(item.dataValues.situacao || "Aberto")}", false)'></i>
                                             <i id="btn-hide-dre${item.dataValues.numero_conta}" onclick='showHideDre("${item.dataValues.numero_conta.trim()}", "hide", ${indexBtnShowHide})' class="d-none bi bi-dash-square-fill cursor-pointer text-blue-pk"></i>
                                             <i id="btn-show-dre${item.dataValues.numero_conta}" onclick='showHideDre("${item.dataValues.numero_conta.trim()}", "show", ${indexBtnShowHide})' class="bi bi-plus-square-fill cursor-pointer text-blue-pk"></i>
+                                            <div class="form-check ms-1">
+                                                <input name="checkbox-${item.dataValues.numero_conta}" class="form-check-input" type="checkbox" onclick='mudaSituacaoConta("${item.dataValues.numero_conta.trim()}")'>
+                                            </div>
                                         </div>
+                                        
                                     </td>
                                 `
                                 htmlBodyPart += `
@@ -692,6 +696,15 @@ router.get('/obter', async (req, res) => {
     if ( !contas ) return res.json({erro: `Não há contas.`})
     contas = JSON.parse(JSON.stringify(contas, null, 2))
     return res.json({contas})
+})
+
+router.get('/buscar/:situacao', async (req, res) => {
+    const situacaoConta = req.params.situacao
+    let contaBusca = await conta.findAll({ where: { situacao: situacaoConta } })
+    //console.log(conta)
+    if ( !contaBusca ) return res.json({erro: `Não há conta.`})
+    contaBusca = JSON.parse(JSON.stringify(contaBusca, null, 2))
+    return res.json({conta: contaBusca})
 })
 
 router.get("/download/:file", (req, res) => {
@@ -897,6 +910,247 @@ router.post('/cadastrar', eAdmin, multiUpload, async (req, res) => { //single('c
                 contaNova = JSON.parse(JSON.stringify(contaNova, null, 2))
                 if (cadastrarDuplicar == `sim` || qtdeDre) {
                     res.json({ numero_conta: (Number(contaNova.numero_conta) + 1) })
+                } else {
+                    req.flash(`success_msg`, `Conta cadastrada com sucesso!`)
+                    res.redirect(`/`)
+                }
+            } else {
+                if (cadastrarDuplicar == `sim` || qtdeDre) {
+                    res.json({ erro: `OK` })
+                } else {
+                    let erros = [{ text: `Erro ao cadastrar conta, se persistir informar o desenvolvedor.` }]
+                    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })
+                }
+            }
+        } else {
+            if (cadastrarDuplicar == `sim` || qtdeDre) {
+                res.json({ erro: `campos não preenchidos` })
+            } else {
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })
+            }
+        }
+    } catch (e) {
+        console.log(e)
+        res.json({ erro: `OK` })
+    }
+})
+
+router.post("/editar/situacao", async (req, res) => {
+    try {
+        let { situacao, banco, data, numeros_conta } = req.body
+
+        if ( !situacao || !banco || !data || !numeros_conta.length ) return res.json({erro: true, resultado: "Precisa preencher os dados corretamente, não mande vazio."})
+        
+        let resultados = []
+        for ( let numero_conta of numeros_conta ) {
+            let resultado = await conta.update({situacao, banco, pagamento: data}, {where: { numero_conta }})
+
+            if ( resultado.erro ) {
+                resultados.push({numero_conta, erro: true})
+            }else {
+                resultados.push({numero_conta, erro: false})
+            }
+        }
+        return res.json({erro: false, resultado: resultados})
+        
+    }catch(erro) {
+        return res.json({erro: true, resultado: erro})
+    }
+    
+})
+
+router.post('/editar', eAdmin, multiUpload, async (req, res) => { //single('comprovante_pag')
+
+    
+    let { cadastrarDuplicar, qtdeDre } = req.query
+    let { numero_conta, historico, valor_conta, fornecedor, via_pagamento, descricao, departamento, 
+        valor_dre, rateio_dre, vinculado_dre, categoria, grupo, subgrupo, forma_pagamento,
+        agendamento, pagamento, agencia, conta_corrente, num_cartao_cred, cheque_compens, situacao, banco,
+        protocolo_banco, comprovante_pag, cadastramento, doc_pagamento, vencimento, referencia,
+        relacao, numero_dias, fixar_parcelas, numero_parcelas, observacao, rateio, reembolso, 
+        num_pedido_compra, data_compra, emissao_nf, num_comprovante, data_entrega_mercad, 
+        mercadoria_entregue, comprovante_mercad, sistema_1, num_sistema_1, sistema_2, num_sistema_2, 
+        sistema_3, num_sistema_3, vinculado, parcelas_geradas, chave, numero_documento_origem,
+        uf_favorecida, cpf_cnpj, codigo_barras
+    } = req.body
+
+    if (req.files["pdfs"]) {
+
+        // let contasGet = await conta.findAll({ where: { situacao } })
+        // contasGet = JSON.parse(JSON.stringify(contasGet, null, 2))
+        // var proximo_numero_conta = 1
+        // if (contasGet.length > 0) {
+        //     proximo_numero_conta = (contasGet ? Number(contasGet[contasGet.length - 1].numero_conta) : 0) + 1
+        // }
+
+        let respostaProcessamento = null
+        for (const file of req.files["pdfs"]) {
+            // const pdfBuffer = fs.readFileSync(file.path);
+
+            //chama sua função de parse
+            const dadosParseados = await pdfParser(file.path)
+
+            valor_conta = parseFloat(dadosParseados.total_recolher?.replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
+            numero_documento_origem = dadosParseados.numero_documento_origem
+            cpf_cnpj = dadosParseados.cpf_cnpj_destinatario
+            codigo_barras = dadosParseados.codigo_barras
+            uf_favorecida = dadosParseados.uf_favorecida
+            vencimento = dadosParseados.data_vencimento //?.split("/").reverse().join("-")
+
+
+
+            // recria o arquivo convertido
+            const fileName = file.filename.replace(/\.pdf$/i, `_NC-${numero_conta}.pdf`);
+            const newFilePath = path.join(uploadDir, fileName);
+
+
+            fs.renameSync(file.path, newFilePath);
+            
+            let body = { numero_conta, historico, valor_conta, fornecedor, via_pagamento, descricao, departamento, 
+                valor_dre, rateio_dre, vinculado_dre, categoria, grupo, subgrupo, forma_pagamento,
+                agendamento, pagamento, agencia, conta_corrente, num_cartao_cred, cheque_compens, situacao, banco,
+                protocolo_banco, comprovante_pag, cadastramento, doc_pagamento, vencimento, referencia,
+                relacao, numero_dias, fixar_parcelas, numero_parcelas, observacao, rateio, reembolso, 
+                num_pedido_compra, data_compra, emissao_nf, num_comprovante, data_entrega_mercad, 
+                mercadoria_entregue, comprovante_mercad, sistema_1, num_sistema_1, sistema_2, num_sistema_2, 
+                sistema_3, num_sistema_3, vinculado, parcelas_geradas, chave, numero_documento_origem,
+                uf_favorecida, cpf_cnpj, codigo_barras, fileName
+            }
+
+            respostaProcessamento = await processamentoCriacaoContaMassa(req, body, true)
+            if ( !respostaProcessamento.erro ) {
+                numero_conta = respostaProcessamento.numero_conta
+            }
+        } 
+        const retornos = {
+            "1": function(erros){return res.json({ erro: `campos não preenchidos` })},
+            "2": function(erros){return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })},
+            "3": function(erros){return res.json({ erro: `situação não cadastrada` })},
+            "4": function(erros){return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}itens-conta?situacao=` + situacao))},
+            "5": function(erros, numero_conta){return res.json({ numero_conta: numero_conta })},
+            "6": function(erros){return res.redirect(`/`)},
+            "7": function(erros){return res.json({ erro: `OK` })},
+            "8": function(erros){return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })},
+            "9": function(erros){return res.json({ erro: `campos não preenchidos` })},
+            "10": function(erros){return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })},
+            "11": function(erros){return res.json({ erro: `OK` })}
+        }
+
+        return retornos[respostaProcessamento.codigo](respostaProcessamento.erros, respostaProcessamento?.numero_conta)
+    }
+    
+    //   //////if ( req.file.filename ) comprovante_pag = uploadDir + `${barraRoute}` + req.file.filename // forma antiga
+    if (req.files["comprovante_pag"]) {
+        for (const file of req.files["comprovante_pag"]) {
+            comprovante_pag = path.join(uploadDir, file.filename)
+        } 
+    }
+    let fileName = "" // aqui é porque não teremos arquivos pdfs para enviar o nome dos arquivos
+
+    try {
+        let erros = []
+        let situacoes = { "Aberto": true, "Pago": true, "Em andamento": true, "Cancelado": true }
+        if (typeof situacoes[situacao] == 'undefined') {
+            let erros = [{ text: 'O campo `Situação` deve ser preenchido corretamente.' }]
+            if (cadastrarDuplicar == `sim` || qtdeDre) {
+                return res.json({ erro: `campos não preenchidos` })
+            } else {
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })
+            }
+        }
+        let item = await ItensConta.findOne({ where: { tipo_situacao: situacao } })
+        if (!item) {
+            if (cadastrarDuplicar == `sim` || qtdeDre) {
+                return res.json({ erro: `situação não cadastrada` })
+            } else {
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}itens-conta?situacao=` + situacao))
+            }
+        }
+        item = JSON.parse(JSON.stringify(item, null, 2))
+
+        for (let entreis of Object.entries(req.body)) {
+            let key = entreis[0]
+            let value = entreis[1]
+            if (item[key] && (!value || typeof value == undefined || value == null)) {
+                erros.push({ text: key.replaceAll('_', ' ').replace('num', 'número').replace('doc', 'documento').replace('mercad', 'mercadoria') + ` inválido.` })
+            }
+        }
+        if (erros.length == 0) {
+            let num_parc = 0
+            // console.log(typeof parcelas_geradas)
+            for ( let parcela of JSON.parse(parcelas_geradas) ) {
+                numero_conta = Number(numero_conta) + num_parc
+                if ( num_parc == 0 ) { num_parc = 1 }
+                for ( let num_dre = 1; num_dre <= qtdeDre; num_dre++ ) {
+                    // console.log(numero_conta, parcela)
+                    if (num_dre == 1) {
+                        var departamento_edit = `departamento`
+                        var descricao_edit = `descricao`
+                        var valor_dre_edit = `valor_dre`
+                        var rateio_dre_edit = `rateio_dre`
+                        var vinculado_dre_edit = `vinculado_dre`
+                        var categoria_edit = `categoria`
+                        var grupo_edit = `grupo`
+                        var subgrupo_edit = `subgrupo`
+                        var sistema_1_edit = `sistema_1`
+                        var num_sistema_1_edit = `num_sistema_1`
+                        var sistema_2_edit = `sistema_2`
+                        var num_sistema_2_edit = `num_sistema_2`
+                        var sistema_3_edit = `sistema_3`
+                        var num_sistema_3_edit = `num_sistema_3`
+                    } else {
+                        var departamento_edit = `departamento_` + num_dre
+                        var descricao_edit = `descricao_` + num_dre
+                        var valor_dre_edit = `valor_dre_` + num_dre
+                        var rateio_dre_edit = `rateio_dre_` + num_dre
+                        var vinculado_dre_edit = `vinculado_dre_` + num_dre
+                        var categoria_edit = `categoria_` + num_dre
+                        var grupo_edit = `grupo_` + num_dre
+                        var subgrupo_edit = `subgrupo_` + num_dre
+                        var sistema_1_edit = `sistema_1_` + num_dre
+                        var num_sistema_1_edit = `num_sistema_1_` + num_dre
+                        var sistema_2_edit = `sistema_2_` + num_dre
+                        var num_sistema_2_edit = `num_sistema_2_` + num_dre
+                        var sistema_3_edit = `sistema_3_` + num_dre
+                        var num_sistema_3_edit = `num_sistema_3_` + num_dre
+                    }
+                    // console.log('\n\n', parcela, 'num-dre', num_dre)
+                    var new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (parseInt(numero_dias.replace(' dias', '')) * num_dre) 
+                    //console.log('\n\n', new_numero_dias, '--', numero_dias, '---', parcela.numero_dias, '\n\n')
+                    var contaNova = await conta.update({
+                        departamento: req.body[departamento_edit],
+                        descricao: req.body[descricao_edit],
+                        valor_dre: req.body[valor_dre_edit],
+                        rateio_dre: req.body[rateio_dre_edit],
+                        vinculado_dre: req.body[vinculado_dre_edit],
+                        numero_parcela: parcela.numero_parcela, 
+                        valor_parcela: parcela.valor_parcela, 
+                        vencimento_parcela: parcela.vencimento_parcela,
+                        vencimento: parcela.vencimento_parcela,
+                        uf_favorecida,
+                        categoria: req.body[categoria_edit],
+                        grupo: req.body[grupo_edit],
+                        subgrupo: req.body[subgrupo_edit],
+                        sistema_1: req.body[sistema_1_edit],
+                        num_sistema_1: req.body[num_sistema_1_edit], 
+                        sistema_2: req.body[sistema_2_edit], 
+                        num_sistema_2: req.body[num_sistema_2_edit], 
+                        sistema_3: req.body[sistema_3_edit], 
+                        num_sistema_3: req.body[num_sistema_3_edit],
+                        numero_dias: new_numero_dias,
+                        numero_conta, historico, valor_conta, fornecedor, via_pagamento, forma_pagamento,
+                        agendamento, pagamento, agencia, conta_corrente, num_cartao_cred, cheque_compens, situacao, banco,
+                        protocolo_banco, comprovante_pag, cadastramento, doc_pagamento, referencia,
+                        relacao, numero_parcelas, fixar_parcelas, observacao, rateio, reembolso,
+                        num_pedido_compra, data_compra, emissao_nf, vinculado, chave,
+                        num_comprovante, data_entrega_mercad, mercadoria_entregue, comprovante_mercad
+                    }, {where: { numero_conta }})
+                }
+            }
+            if (contaNova) {
+                contaNova = JSON.parse(JSON.stringify(contaNova, null, 2))
+                if (cadastrarDuplicar == `sim` || qtdeDre) {
+                    res.json({ numero_conta: (Number(contaNova.numero_conta)) })
                 } else {
                     req.flash(`success_msg`, `Conta cadastrada com sucesso!`)
                     res.redirect(`/`)

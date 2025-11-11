@@ -13,8 +13,15 @@ router.get('/obter', async (req, res)=> {
     res.json({categorias})
 })
 
-router.get('/cadastrar', eAdmin, (req, res) => {
-    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}categoria${barraRoute}cadastrar`))
+router.get('/cadastrar', eAdmin, async (req, res) => {
+    let categorias = await categoria.findAll()
+    categorias = JSON.parse(JSON.stringify(categorias, null, 2))
+
+    if ( categorias.length == 0 ) {
+        res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}categoria${barraRoute}cadastrar`))
+    }else {
+        res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}categoria${barraRoute}cadastrar`), {categorias})
+    }
 })
 
 router.post('/cadastrar', eAdmin, async (req, res) => {

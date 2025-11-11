@@ -47,6 +47,12 @@ th, td {
 .bg-red-pk {
     background-color: rgb(223, 6, 6) !important;
 }
+.bg-gray-2 {
+    background-color: #d8d6d6 !important;
+}
+.bg-yellow-pk {
+    background-color: #fff2de !important;
+}
 .bg-blue-pk {
     background-color: #1490CA !important;
 }
@@ -65,6 +71,12 @@ th, td {
 }
 .text-red-pk {
     color: rgb(223, 6, 6) !important;
+}
+.text-green-pk {
+    color: rgb(6, 182, 53) !important;
+}
+.text-yellow-pk {
+    color: rgb(205, 205, 8) !important;
 }
 .cursor-pointer{
     cursor: pointer !important;
@@ -261,6 +273,9 @@ input {
 }
 .animation-brilhante {
     animation: brilho 1s infinite;
+}
+.animation-brilhante-4seg {
+    animation: brilho 4s infinite;
 }
 .animation-bounce {
     position: absolute;

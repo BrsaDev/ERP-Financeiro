@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12 mb-2">
-        <a data-bs-toggle="modal" data-bs-target="#exampleModal"
+        <a data-bs-toggle="modal" data-bs-target="#exampleModal" id="btn-link-abrir-pagamento"
             class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Abrir pagamento</a>
         {{!-- abaixo tinha um onclick="abrirContaPopup(true) para abrir a conta num popup, foi tirado" --}}
         <a  href="/conta/cadastrar" target="_blank" class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Cadastrar pagamento</a>
@@ -8,8 +8,8 @@
             class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Consulta</a>
         <a target="_blank" href="#"
             class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Relatório</a>
-        <a target="_blank" href="#" class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Arquivar
-            pagamento</a>
+        <a data-bs-toggle="modal" data-bs-target="#exampleModal" id="btn-link-arquivar-pagamento"
+        class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Arquivar pagamento</a>
         <a target="_blank" href="#" class="a-conta btn btn-sm mb-2 border border-primary text-primary rem0788">Compras a
             chegar</a>
     </div>
@@ -89,6 +89,8 @@
             <i class="far fa-file-pdf ms-1 fs-5 text-blue-pk cursor-pointer" onclick="exportTableToPdf()"></i>
             <i class="d-none fas fa-mask ms-4 fs-5 text-red-pk cursor-pointer animation-brilhante" 
                 onclick="excluiFiltroDatas()" id="btn-exclui-filtro-datas"></i>
+            
+            <button id="btn-abrir-modal-atualizar-situacao" class="d-none btn btn-sm btn-outline-success ms-4 mb-2 animation-brilhante-4seg" data-bs-toggle="modal" data-bs-target="#atualizaSituacaoContas"><i class="bi bi-arrow-repeat fw-bold text-success"></i> Atualizar</button>
         </div>
     </div>
     
@@ -879,6 +881,7 @@
 
 
 <script>
+    let objContasPorSituacao = {}
     let objDres = {{{dres}}}
     const baseUrl = "http://localhost:8089" //bruno.local
     var mudancaPosicaoColunas = false
@@ -891,6 +894,48 @@
     let depositoSituacao = document.querySelector('#deposito-situacao')
     let situacaoSelected = document.querySelector('#situacao_select_' + depositoSituacao.innerText.toLowerCase().replace(' ', '_'))
     situacaoSelected.classList.add("border-b-blue")
+
+    if ( !document.URL.includes("?") || document.URL.includes("Aberto") || document.URL.includes("Em%20andamento") || document.URL.includes("Cancelado") ) {
+        document.querySelector("#btn-link-abrir-pagamento").setAttribute("data-bs-target", "")
+        document.querySelector("#btn-link-abrir-pagamento").classList.add("bg-gray-2")
+    }
+    if ( document.URL.includes("?") && !document.URL.includes("Aberto") ) {
+        document.querySelector("#btn-link-arquivar-pagamento").setAttribute("data-bs-target", "")
+        document.querySelector("#btn-link-arquivar-pagamento").classList.add("bg-gray-2")
+    }
+
+    // var newOption = new Option(text, value, defaultSelected, selected);
+    document.querySelector("#btn-link-abrir-pagamento").addEventListener('click', () => {
+        selecionaOptionDeAcordoComSituacao("Pago")
+    })
+    document.querySelector("#btn-link-arquivar-pagamento").addEventListener('click', () => {
+        selecionaOptionDeAcordoComSituacao("Aberto")
+    })
+
+    function selecionaOptionDeAcordoComSituacao(situacao) {
+        let select = document.querySelector("#situacao-editar-conta")
+        const options = select.options
+        select.remove(0)
+        select.remove(0)
+        select.remove(0)
+        select.remove(0)
+
+        let newOption = new Option(situacao, situacao, true, true)
+        select.appendChild(newOption)
+    }
+    async function buscarContasPorSituacao() {
+        let url = document.URL
+        var situacao = url.split("=")[1] //.replace("%20", " ")
+        if ( !situacao ) {
+            var situacao = "Aberto"
+        }
+        let resultadoConta = await fetch(`${baseUrl}/conta/buscar/${situacao}`)
+        resultadoConta = await resultadoConta.json()
+        for ( let conta of resultadoConta.conta ) {
+            objContasPorSituacao[conta.numero_conta] = true
+        }
+    }
+    buscarContasPorSituacao()
 
     function abrirContaPopup(contaNova, numeroConta, situacao) {// estava abrindo a conta pela tela de listagem em um popup, por enquanto sem uso para conta
         // Definindo tamanho do popup
@@ -1577,10 +1622,10 @@
     function abrirContaPeloDre(numeroConta, situacao, dre) {
         let linkAbrirContaPorDre = document.querySelector("#btn-abrir-conta-por-dre")
         if ( !dre ) {
-            linkAbrirContaPorDre.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}`
+            linkAbrirContaPorDre.href = `/conta/editar?numero_conta=${numeroConta}&situacao=${situacao}`
         }
         else {
-            linkAbrirContaPorDre.href = `/conta/abrir-conta?numero_conta=${numeroConta}&situacao=${situacao}&dre=${dre}`  
+            linkAbrirContaPorDre.href = `/conta/editar?numero_conta=${numeroConta}&situacao=${situacao}&dre=${dre}`  
         }
         
         linkAbrirContaPorDre.click()
@@ -1626,7 +1671,68 @@
         return new Date(parts[2], parts[1] - 1, parts[0]); // (ano, mês, dia)
     }
 
+    function mudaSituacaoConta(numeroConta) {
+        let btnAbrirModalAtualizarSituacao = document.querySelector("#btn-abrir-modal-atualizar-situacao")
+        btnAbrirModalAtualizarSituacao.classList.remove("d-none") 
+        let resultChecksMudarSituacaoContas = checksMudarSituacaoContas()
+        if ( !resultChecksMudarSituacaoContas.length ) {
+            btnAbrirModalAtualizarSituacao.classList.add("d-none") 
+        }
+        return true
+    }
 
+    function checksMudarSituacaoContas(reset=false) {
+        let trsTable = document.querySelectorAll("#table-conta tbody tr")
+        let contasChecked = []
+        trsTable.forEach( (tr) => {
+            // se mudar a posição do checkbox de mudança de situação em lote, mudar aqui tbm
+            let checkContas = tr.querySelector(`td:nth-child(1) > div > div > input`)//[name="checkbox-${(index+1)}"]
+            if ( checkContas.checked ) {
+                if ( reset ) {
+                    checkContas.checked = false
+                }else {
+                    contasChecked.push(checkContas.getAttribute('name').replace("checkbox-", ""))
+                }
+            }
+        })
+        return contasChecked
+    }
+
+    // botão está no arquivo main.handlebars no modal de atualizar situação de contas
+    document.querySelector("#btn-close-atualizacao-situacao-contas").addEventListener("click", function() {
+        document.querySelector("#btn-abrir-modal-atualizar-situacao").classList.add("d-none")
+        checksMudarSituacaoContas(true)
+        return true
+    })
+    
+    // botão está no arquivo main.handlebars no modal de atualizar situação de contas
+    document.querySelector("#btn-atualizar-situacao-contas").addEventListener("click", async function() {
+        let dataEditarSituacaoConta = document.querySelector("#data-editar-situacao-conta")
+        let bancoEditarSituacaoConta = document.querySelector("#banco-editar-situacao-conta")
+        let situacaoEditarSituacaoConta = document.querySelector("#situacao-editar-situacao-conta")
+        let resultChecksMudarSituacaoContas = checksMudarSituacaoContas()
+        if ( !dataEditarSituacaoConta.value || !bancoEditarSituacaoConta.value || !situacaoEditarSituacaoConta.value || !resultChecksMudarSituacaoContas.length ) {
+            alert("Envie os dados de forma correta para atualização da situação em lote!")
+        }
+
+        let dados = {
+            situacao: situacaoEditarSituacaoConta.value,
+            data: dataEditarSituacaoConta.value,
+            banco: bancoEditarSituacaoConta.value,
+            numeros_conta: resultChecksMudarSituacaoContas
+        }
+        console.log(dados)
+        let resultadoEdicao = await fetch(`${baseUrl}/conta/editar/situacao`, {
+            method: 'POST',
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(dados),
+        });
+        resultadoEdicao = await resultadoEdicao.json()
+        if ( !resultadoEdicao.erro ) {
+            selectTipoSituacaoConta(situacaoEditarSituacaoConta.value)
+        }
+        return true
+    })
 
 
 

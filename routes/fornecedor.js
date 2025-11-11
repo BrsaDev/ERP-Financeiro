@@ -25,6 +25,11 @@ router.get('/cadastrar', eAdmin, async (re, res) => {
         var proximo_numero_fornecedor = Number(fornecedores[fornecedores.length - 1].id)
     }else {
         var proximo_numero_fornecedor = 1
+        fornecedores.forEach(item=>{
+            if( item.data_cadastro ) { 
+                item.data_cadastro = item.data_cadastro == `` ? `` : item.data_cadastro.slice(8) + `/` + item.data_cadastro.slice(5, 7) + `/` + item.data_cadastro.slice(0, 4)
+            }
+        })
     }
     let itens = {proximo_numero_fornecedor}
     let optionsChavePix = ``
@@ -34,7 +39,7 @@ router.get('/cadastrar', eAdmin, async (re, res) => {
         `
     }
     
-    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}fornecedor${barraRoute}cadastrar`), {itens, optionsChavePix})
+    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}fornecedor${barraRoute}cadastrar`), {itens, optionsChavePix, fornecedores})
 })
 
 router.post('/cadastrar', eAdmin, async (req, res) => {
