@@ -5,7 +5,7 @@ const { Op, literal, fn, col, where } = require('sequelize')
 
 module.exports = function(passport) {
     passport.use(new localStrategy({usernameField: "email", passwordField: "senha"}, async (email, senha, done) => {
-        // let senhaHash = await bcrypt.hash('master2024', 10)
+        // let senhaHash = await bcrypt.hash('', 10)
         // await usuario.create({nome: "master",
         //     sexo: "M",
         //     nascimento: new Date(),
