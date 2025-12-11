@@ -1479,14 +1479,21 @@
 <script>
     var dataScript = false
     try {
+        // data_script já vem como JSON string, então precisamos fazer parse apenas uma vez
+        {{#if data_script}}
         dataScript = {{{data_script}}}
-        dataScript = JSON.parse(dataScript)
-    }catch(e){console.log('dentro de views editar =1 ', e)}
+        {{else}}
+        dataScript = null
+        {{/if}}
+    }catch(e){
+        console.error('Erro ao carregar dataScript:', e)
+        dataScript = null
+    }
         
     var objParcelasGeradas = []
     var mostrarDreParcelas = 1
     var qtdeDre = 0
-    const baseUrl = "http://localhost:8089"
+    const baseUrl = window.location.origin //"http://localhost:8089"
 
 
     if ( document.getElementsByName("codigo_barras")[0].value != "" ) {
@@ -1544,15 +1551,19 @@
 
     function selectTipoSituacaoConta(e, manual=false) {
         if ( !manual ) { return true }
-        let situacaoAtual = localStorage.getItem('situacao') || "Aberto"
-        let linkSelectTipoSituacao = document.querySelector('#select-tipo-situacao-conta')
-        linkSelectTipoSituacao.href = `/conta/cadastrar?situacao=${e.value}`
-        var confirme = confirm("OBS: Se mudar para outra situação os dados preenchidos nesta situação serão perdidos!\n\nDeseja realmente mudar de situação?");
-        if (confirme == true) {
-            esquecerConta(false)
-            return linkSelectTipoSituacao.click()
+        // Na edição, permitir mudar a situação sem alerta e sem redirecionamento
+        // Apenas atualizar o valor do campo situação
+        let situacaoAtual = document.getElementsByName("situacao")[0].value || "Aberto"
+        let novaSituacao = e.value
+        
+        // Se a situação mudou, apenas atualizar o campo
+        if (situacaoAtual !== novaSituacao) {
+            document.getElementsByName("situacao")[0].value = novaSituacao
+            // Atualizar no localStorage também
+            localStorage.setItem('situacao', novaSituacao)
         }
-        document.getElementsByName("situacao")[0].value = situacaoAtual
+        
+        return true
     }
 
     document.querySelector('#btn-add-dre').addEventListener('click', function () {
@@ -2125,27 +2136,41 @@
             if (key.includes("valor_dre")) qtdeDre++;
         }
 
-        let cadastro = await fetch(`${baseUrl}/conta/editar?qtdeDre=${qtdeDre}`, {
-            method: 'POST',
-            body: formData,
-        });
-        cadastro = await cadastro.json()
+        // Obter a situação original da URL (quando a página foi aberta)
+        const urlParams = new URLSearchParams(window.location.search)
+        const situacaoOriginal = urlParams.get('situacao') || document.getElementsByName("situacao")[0].value
+        
+        let cadastro
+        try {
+            const response = await fetch(`${baseUrl}/conta/editar?qtdeDre=${qtdeDre}&situacao_original=${encodeURIComponent(situacaoOriginal)}`, {
+                method: 'POST',
+                body: formData,
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+            
+            cadastro = await response.json()
+        } catch (error) {
+            console.error('Erro ao salvar conta:', error)
+            return alert("Erro ao salvar a conta: " + error.message)
+        }
         
         if ( cadastro.erro && cadastro.erro == "campos não preenchidos" ) {
             return document.querySelector('#btn-editar-oculto').click()
         }
+        // Na edição, não mostrar popup de situação não cadastrada
+        // A edição permite mudar a situação mesmo sem itens configurados
         if ( cadastro.erro && cadastro.erro == "situação não cadastrada" ) {
-            var confirme = confirm("È necessário configurar os itens obrigatórios de cada situação.\n\nDeseja configurar agora para a situação [ "+ objForm.situacao +" ]?\nSe sim você será redirecionado para a página de configuração.");
-            if (confirme == true) {
-                let redirectItensConta = document.querySelector('#redirect-itens-conta')
-                redirectItensConta.href = "/configuracao/itens-conta?situacao=" + objForm.situacao
-                return redirectItensConta.click()  
-            }else{
-                alert("Você desistiu de excluir o item " + itemSelecionado + " da lista!");
-            }
-            
+            // Este erro não deve mais ocorrer na edição, mas mantemos o tratamento caso ocorra
+            return alert("Erro ao salvar: situação não encontrada. Tente novamente.")
         }
-        if ( cadastro.erro ) { return alert("Algo deu errado ao editar a conta!") }
+        if ( cadastro.erro ) { 
+            console.error('Erro retornado pelo servidor:', cadastro)
+            const mensagemErro = cadastro.erro || cadastro.mensagem || "Erro desconhecido"
+            return alert("Erro ao editar a conta: " + mensagemErro) 
+        }
         let cardConta = document.querySelector('#card-conta')
         cardConta.scrollTo({ top: 0, behavior: 'smooth' })
         alert("Conta foi salva com sucesso\n\nEste é o número da nova conta: "+ cadastro.numero_conta)
@@ -2212,24 +2237,54 @@
             localStorage.removeItem("rateio_dre_"+i)
             localStorage.removeItem("vinculado_dre_"+i)
             localStorage.removeItem("descricao_"+i)
+            localStorage.removeItem("sistema_1_"+i)
+            localStorage.removeItem("num_sistema_1_"+i)
+            localStorage.removeItem("sistema_2_"+i)
+            localStorage.removeItem("num_sistema_2_"+i)
+            localStorage.removeItem("sistema_3_"+i)
+            localStorage.removeItem("num_sistema_3_"+i)
         }
     }
     function loadDataScriptLocalstorage() {
         let itensDre = {
             valor_dre: true, departamento: true, grupo: true, subgrupo: true, categoria: true, rateio_dre: true,
-            vinculado_dre: true, descricao: true, cadastramento_dre: true, vencimento_dre: true, relacao_dre: true
+            vinculado_dre: true, descricao: true, cadastramento_dre: true, vencimento_dre: true, relacao_dre: true,
+            sistema_1: true, num_sistema_1: true, sistema_2: true, num_sistema_2: true, sistema_3: true, num_sistema_3: true
         }
         if ( dataScript ) {
             resetDreLocalStorage(2)
             let count = 1
             for ( let item of dataScript ) {
                 for ( let element of Object.entries(item) ) {
+                    // Ignorar campos que não são do DRE (campos principais da conta)
+                    if ( element[0] === 'id' || element[0] === 'numero_conta' || element[0] === 'historico' || 
+                         element[0] === 'valor_conta' || element[0] === 'fornecedor' || element[0] === 'via_pagamento' ||
+                         element[0] === 'forma_pagamento' || element[0] === 'agendamento' || element[0] === 'pagamento' ||
+                         element[0] === 'agencia' || element[0] === 'conta_corrente' || element[0] === 'num_cartao_cred' ||
+                         element[0] === 'cheque_compens' || element[0] === 'situacao' || element[0] === 'banco' ||
+                         element[0] === 'protocolo_banco' || element[0] === 'comprovante_pag' || element[0] === 'cadastramento' ||
+                         element[0] === 'doc_pagamento' || element[0] === 'vencimento' || element[0] === 'referencia' ||
+                         element[0] === 'relacao' || element[0] === 'numero_dias' || element[0] === 'fixar_parcelas' ||
+                         element[0] === 'numero_parcelas' || element[0] === 'observacao' || element[0] === 'rateio' ||
+                         element[0] === 'reembolso' || element[0] === 'num_pedido_compra' || element[0] === 'data_compra' ||
+                         element[0] === 'emissao_nf' || element[0] === 'num_comprovante' || element[0] === 'data_entrega_mercad' ||
+                         element[0] === 'mercadoria_entregue' || element[0] === 'comprovante_mercad' || element[0] === 'vinculado' ||
+                         element[0] === 'numero_parcela' || element[0] === 'valor_parcela' || element[0] === 'vencimento_parcela' ||
+                         element[0] === 'chave' || element[0] === 'numero_documento_origem' || element[0] === 'uf_favorecida' ||
+                         element[0] === 'cpf_cnpj' || element[0] === 'codigo_barras' || element[0] === 'file_name' ) {
+                        // Campos principais da conta - apenas no primeiro item
+                        if ( count === 1 ) {
+                            localStorage[element[0]] = element[1] != null ? String(element[1]) : ''
+                        }
+                        continue
+                    }
+                    
                     if ( count > 1 ) {
                         if ( typeof itensDre[element[0]] != 'undefined' ) {
-                            localStorage[element[0]+'_'+count] = element[1]
+                            localStorage[element[0]+'_'+count] = element[1] != null ? String(element[1]) : ''
                         }
                     }else{
-                        localStorage[element[0]] = element[1]
+                        localStorage[element[0]] = element[1] != null ? String(element[1]) : ''
                     }
                 }
                 count++
@@ -2245,31 +2300,80 @@
         })
         for ( x of qtdeDre.slice(1) ) { btnAddDre.click() }
         for ( item of Object.entries(localStorage) ) {
-            if (item[0] != "numero_conta" &&  item[0] != "cabecalhoFixoStorage" && item[0] != "id" && item[0] != "numero_parcela" && item[0] != "valor_parcela" && item[0] != "vencimento_parcela" ) { 
-                document.getElementsByName(item[0])[0].value = item[1]
-
-                // se tiver com erro de itens não identificado no localstorage
-                //try{
-                //    document.getElementsByName(item[0])[0].value = item[1]
-                //}catch(e){
-                //    console.log(item[0], item[1])
-                //    delete localStorage[item[0]]
-                //}
-                
+            // Ignorar campos específicos e campos de arquivo
+            if (item[0] != "numero_conta" &&  
+                item[0] != "cabecalhoFixoStorage" && 
+                item[0] != "id" && 
+                item[0] != "numero_parcela" && 
+                item[0] != "valor_parcela" && 
+                item[0] != "vencimento_parcela" &&
+                item[0] != "pdfs" && // Ignorar campo de arquivo
+                !item[0].includes("comprovante_pag") && // Ignorar campos de arquivo
+                !item[0].includes("comprovante_mercad") ) { 
+                try {
+                    const elements = document.getElementsByName(item[0])
+                    if (elements && elements.length > 0) {
+                        // Verificar se é um input de arquivo - não pode setar valor
+                        if (elements[0].type === 'file') {
+                            continue
+                        }
+                        
+                        let value = item[1]
+                        
+                        // Converter valores numéricos de ponto para vírgula se necessário
+                        if ((item[0].includes('valor') || item[0].includes('valor_dre') || item[0].includes('valor_conta')) && 
+                            value && typeof value === 'string' && value.includes('.') && !value.includes(',')) {
+                            value = value.replace('.', ',')
+                        }
+                        
+                        // Evitar concatenar datas - verificar se o campo já tem valor
+                        if ((item[0].includes('cadastramento_dre') || item[0].includes('vencimento_dre')) && 
+                            elements[0].value && elements[0].value !== '') {
+                            // Se já tem valor, não sobrescrever (será preenchido depois se vazio)
+                            continue
+                        }
+                        
+                        elements[0].value = value
+                    }
+                } catch(e) {
+                    console.warn('Erro ao carregar campo do localStorage:', item[0], e)
+                }
             }            
         }
         if ( document.getElementsByName('cadastramento')[0].value == "" ) {
             document.getElementsByName('cadastramento')[0].value = new Date().toLocaleString('pt-BR').split(',')[0].split('/').reverse().join('-')
-            
         }
-        for ( let elemento of document.getElementsByName('cadastramento_dre') ) {
-            elemento.value = document.getElementsByName('cadastramento')[0].value
+        
+        // Preencher campos DRE apenas se estiverem vazios (não sobrescrever valores carregados)
+        const cadastramentoElements = document.getElementsByName('cadastramento')
+        const vencimentoElements = document.getElementsByName('vencimento')
+        const relacaoElements = document.getElementsByName('relacao')
+        
+        if (cadastramentoElements && cadastramentoElements.length > 0) {
+            const cadastramentoValue = cadastramentoElements[0].value
+            for ( let elemento of document.getElementsByName('cadastramento_dre') ) {
+                if (!elemento.value || elemento.value === '' || elemento.value.length < 10) {
+                    elemento.value = cadastramentoValue
+                }
+            }
         }
-        for ( let element of document.getElementsByName('vencimento_dre') ) {
-            element.value = document.getElementsByName('vencimento')[0].value
+        
+        if (vencimentoElements && vencimentoElements.length > 0) {
+            const vencimentoValue = vencimentoElements[0].value
+            for ( let element of document.getElementsByName('vencimento_dre') ) {
+                if (!element.value || element.value === '' || element.value.length < 10) {
+                    element.value = vencimentoValue
+                }
+            }
         }
-        for ( let item of document.getElementsByName('relacao_dre') ) {
-            item.value = document.getElementsByName('relacao')[0].value
+        
+        if (relacaoElements && relacaoElements.length > 0) {
+            const relacaoValue = relacaoElements[0].value
+            for ( let item of document.getElementsByName('relacao_dre') ) {
+                if (!item.value || item.value === '') {
+                    item.value = relacaoValue
+                }
+            }
         }
     }
     loadDadosCadastroConta()

@@ -279,15 +279,27 @@ router.get('/editar', eAdmin, async (req, res) => {
     let dres = {}
     if ( !dre ) {
         var umRegistro = false
-        // var ultimaConta = [contas[contas.length-1]]
         var novaContas = []
         var parcela_atual = ``
-        contas = contas.filter((item, index)=>{
+        
+        // Processar todas as contas e agrupar DREs
+        contas.forEach((item, index) => {
             if ( typeof dres[item.numero_conta] == 'undefined' ) {
                 dres[item.numero_conta] = []
             }
-            item.vencimento = item.vencimento.split('/').reverse().join('-')
-            item.vencimento_parcela = item.vencimento_parcela.split('/').reverse().join('-')
+            
+            // Formatar datas (se estiverem no formato DD/MM/YYYY, converter para YYYY-MM-DD)
+            if (item.vencimento && typeof item.vencimento === 'string' && item.vencimento.includes('/')) {
+                item.vencimento = item.vencimento.split('/').reverse().join('-')
+            }
+            if (item.vencimento_parcela && typeof item.vencimento_parcela === 'string' && item.vencimento_parcela.includes('/')) {
+                item.vencimento_parcela = item.vencimento_parcela.split('/').reverse().join('-')
+            }
+            if (item.cadastramento && typeof item.cadastramento === 'string' && item.cadastramento.includes('/')) {
+                item.cadastramento = item.cadastramento.split('/').reverse().join('-')
+            }
+            
+            // Adicionar DRE ao array de DREs
             dres[item.numero_conta].push({ 
                 departamento: item.departamento,
                 descricao: item.descricao,
@@ -302,46 +314,131 @@ router.get('/editar', eAdmin, async (req, res) => {
                 sistema_2: item.sistema_2, 
                 num_sistema_2: item.num_sistema_2, 
                 sistema_3: item.sistema_3, 
-                num_sistema_3: item.num_sistema_3
+                num_sistema_3: item.num_sistema_3,
+                cadastramento_dre: item.cadastramento,
+                vencimento_dre: item.vencimento,
+                relacao_dre: item.relacao
             })
-            if ( index == 0 ) {
-                novaContas[0] = item
-            }
-            if ( index > 0 ) {
-               novaContas[0]['departamento_'+(index+1)] = item.departamento,
-               novaContas[0]['descricao_'+(index+1)] = item.descricao,
-               novaContas[0]['valor_dre_'+(index+1)] = item.valor_dre,
-               novaContas[0]['rateio_dre_'+(index+1)] = item.rateio_dre,
-               novaContas[0]['vinculado_dre_'+(index+1)] = item.vinculado_dre,
-               novaContas[0]['categoria_'+(index+1)] = item.categoria,
-               novaContas[0]['grupo_'+(index+1)] = item.grupo,
-               novaContas[0]['subgrupo_'+(index+1)] = item.subgrupo,
-               novaContas[0]['sistema_1_'+(index+1)] = item.sistema_1,
-               novaContas[0]['num_sistema_1_'+(index+1)] = item.num_sistema_1, 
-               novaContas[0]['sistema_2_'+(index+1)] = item.sistema_2, 
-               novaContas[0]['num_sistema_2_'+(index+1)] = item.num_sistema_2, 
-               novaContas[0]['sistema_3_'+(index+1)] = item.sistema_3, 
-               novaContas[0]['num_sistema_3_'+(index+1)] = item.num_sistema_3
-            }
-            parcela_atual = `${item.numero_parcela}/${item.numero_parcelas}`
+            
+            // Determinar parcela atual (primeira parcela com vencimento futuro)
             if ( new Date(item.vencimento_parcela) > new Date() && !umRegistro ) {
                 umRegistro = true
                 parcela_atual = `${item.numero_parcela}/${item.numero_parcelas}`
-                return item
+            }
+        })
+        
+        // Função auxiliar para converter valores numéricos de ponto para vírgula
+        const formatarValorParaFormulario = (valor) => {
+            if (!valor || valor === '' || valor === null || valor === undefined) return ''
+            // Se já estiver formatado com vírgula, retornar como está
+            if (String(valor).includes(',')) return String(valor)
+            // Converter ponto para vírgula
+            return String(valor).replace('.', ',')
+        }
+        
+        // Função auxiliar para formatar data (garantir formato YYYY-MM-DD)
+        const formatarData = (data) => {
+            if (!data || data === '' || data === null || data === undefined) return ''
+            const dataStr = String(data)
+            // Se já estiver no formato YYYY-MM-DD, retornar
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dataStr)) return dataStr
+            // Se estiver no formato DD/MM/YYYY, converter
+            if (dataStr.includes('/')) {
+                const partes = dataStr.split('/')
+                if (partes.length === 3) {
+                    return `${partes[2]}-${partes[1]}-${partes[0]}`
+                }
+            }
+            return dataStr
+        }
+        
+        // Criar array de objetos para data_script
+        // Primeiro objeto: dados principais da conta + primeiro DRE
+        if (contas.length > 0) {
+            const primeiraConta = { ...contas[0] }
+            
+            // Converter valores numéricos para formato com vírgula
+            if (primeiraConta.valor_conta) {
+                primeiraConta.valor_conta = formatarValorParaFormulario(primeiraConta.valor_conta)
             }
             
-        })
-        // if ( ultimaConta.length && !contas.length ) {
-        //     contas = ultimaConta
-        // }
+            // Adicionar campos do primeiro DRE sem sufixo
+            if (dres[primeiraConta.numero_conta] && dres[primeiraConta.numero_conta].length > 0) {
+                const primeiroDre = dres[primeiraConta.numero_conta][0]
+                primeiraConta.departamento = primeiroDre.departamento || ''
+                primeiraConta.descricao = primeiroDre.descricao || ''
+                primeiraConta.valor_dre = formatarValorParaFormulario(primeiroDre.valor_dre)
+                primeiraConta.rateio_dre = primeiroDre.rateio_dre || ''
+                primeiraConta.vinculado_dre = primeiroDre.vinculado_dre || ''
+                primeiraConta.categoria = primeiroDre.categoria || ''
+                primeiraConta.grupo = primeiroDre.grupo || ''
+                primeiraConta.subgrupo = primeiroDre.subgrupo || ''
+                primeiraConta.sistema_1 = primeiroDre.sistema_1 || ''
+                primeiraConta.num_sistema_1 = primeiroDre.num_sistema_1 || ''
+                primeiraConta.sistema_2 = primeiroDre.sistema_2 || ''
+                primeiraConta.num_sistema_2 = primeiroDre.num_sistema_2 || ''
+                primeiraConta.sistema_3 = primeiroDre.sistema_3 || ''
+                primeiraConta.num_sistema_3 = primeiroDre.num_sistema_3 || ''
+                primeiraConta.cadastramento_dre = formatarData(primeiroDre.cadastramento_dre)
+                primeiraConta.vencimento_dre = formatarData(primeiroDre.vencimento_dre)
+                primeiraConta.relacao_dre = primeiroDre.relacao_dre || ''
+            }
+            novaContas.push(primeiraConta)
+            
+            // Objetos subsequentes: apenas campos do DRE com sufixos
+            if (dres[primeiraConta.numero_conta] && dres[primeiraConta.numero_conta].length > 1) {
+                for (let i = 1; i < dres[primeiraConta.numero_conta].length; i++) {
+                    const dre = dres[primeiraConta.numero_conta][i]
+                    const dreObj = {
+                        departamento: dre.departamento || '',
+                        descricao: dre.descricao || '',
+                        valor_dre: formatarValorParaFormulario(dre.valor_dre),
+                        rateio_dre: dre.rateio_dre || '',
+                        vinculado_dre: dre.vinculado_dre || '',
+                        categoria: dre.categoria || '',
+                        grupo: dre.grupo || '',
+                        subgrupo: dre.subgrupo || '',
+                        sistema_1: dre.sistema_1 || '',
+                        num_sistema_1: dre.num_sistema_1 || '',
+                        sistema_2: dre.sistema_2 || '',
+                        num_sistema_2: dre.num_sistema_2 || '',
+                        sistema_3: dre.sistema_3 || '',
+                        num_sistema_3: dre.num_sistema_3 || '',
+                        cadastramento_dre: formatarData(dre.cadastramento_dre),
+                        vencimento_dre: formatarData(dre.vencimento_dre),
+                        relacao_dre: dre.relacao_dre || ''
+                    }
+                    novaContas.push(dreObj)
+                }
+            }
+        }
+        
         contas = novaContas
         
     }
     
-    //qtdeDres = Object.values(dres)[0].length
-    // var parcela_atual = contas.length == 0 ? `` : `${contas[0].numero_parcela}/${contas[0].numero_parcelas}`
-    // console.log(parcela_atual)
-    return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}editar`), { parcela_atual, itens, dados: contas[0], data_script: JSON.stringify(contas) })
+    // Garantir que parcela_atual tenha um valor válido
+    if (!parcela_atual && contas.length > 0 && contas[0].numero_parcela && contas[0].numero_parcelas) {
+        parcela_atual = `${contas[0].numero_parcela}/${contas[0].numero_parcelas}`
+    }
+    
+    // Preparar objeto dados com valores formatados
+    const dadosFormatados = contas.length > 0 ? { ...contas[0] } : {}
+    
+    // Garantir que valores numéricos estejam formatados com vírgula
+    if (dadosFormatados.valor_conta) {
+        dadosFormatados.valor_conta = String(dadosFormatados.valor_conta).replace('.', ',')
+    }
+    if (dadosFormatados.valor_dre) {
+        dadosFormatados.valor_dre = String(dadosFormatados.valor_dre).replace('.', ',')
+    }
+    
+    return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}editar`), { 
+        parcela_atual, 
+        itens, 
+        dados: dadosFormatados, 
+        data_script: JSON.stringify(contas) 
+    })
 })
 
 router.get('/cadastrar', eAdmin, async (req, res) => {
@@ -873,9 +970,15 @@ router.post('/cadastrar', eAdmin, multiUpload, async (req, res) => { //single('c
                         var sistema_3_edit = `sistema_3_` + num_dre
                         var num_sistema_3_edit = `num_sistema_3_` + num_dre
                     }
-                    // console.log('\n\n', parcela, 'num-dre', num_dre)
-                    var new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (parseInt(numero_dias.replace(' dias', '')) * num_dre) 
-                    //console.log('\n\n', new_numero_dias, '--', numero_dias, '---', parcela.numero_dias, '\n\n')
+                    
+                    if ( fixar_parcelas == "Desabilitado" ) {
+                        console.log('\n\n', parcela, 'num-dre', num_dre)
+                        var new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (parseInt(numero_dias.replace(' dias', '')) * num_dre) 
+                        console.log('\n\n', new_numero_dias, '--', numero_dias, '---', parcela.numero_dias, '\n\n')
+                    } else {
+                        var new_numero_dias = "Desabilitado"
+                    }
+                 
                     var contaNova = await conta.create({
                         departamento: req.body[departamento_edit],
                         descricao: req.body[descricao_edit],
@@ -959,9 +1062,7 @@ router.post("/editar/situacao", async (req, res) => {
     
 })
 
-router.post('/editar', eAdmin, multiUpload, async (req, res) => { //single('comprovante_pag')
-
-    
+router.post('/editar', eAdmin, multiUpload, async (req, res) => {
     let { cadastrarDuplicar, qtdeDre } = req.query
     let { numero_conta, historico, valor_conta, fornecedor, via_pagamento, descricao, departamento, 
         valor_dre, rateio_dre, vinculado_dre, categoria, grupo, subgrupo, forma_pagamento,
@@ -973,206 +1074,266 @@ router.post('/editar', eAdmin, multiUpload, async (req, res) => { //single('comp
         sistema_3, num_sistema_3, vinculado, parcelas_geradas, chave, numero_documento_origem,
         uf_favorecida, cpf_cnpj, codigo_barras
     } = req.body
-
-    if (req.files["pdfs"]) {
-
-        // let contasGet = await conta.findAll({ where: { situacao } })
-        // contasGet = JSON.parse(JSON.stringify(contasGet, null, 2))
-        // var proximo_numero_conta = 1
-        // if (contasGet.length > 0) {
-        //     proximo_numero_conta = (contasGet ? Number(contasGet[contasGet.length - 1].numero_conta) : 0) + 1
-        // }
-
-        let respostaProcessamento = null
-        for (const file of req.files["pdfs"]) {
-            // const pdfBuffer = fs.readFileSync(file.path);
-
-            //chama sua função de parse
-            const dadosParseados = await pdfParser(file.path)
-
-            valor_conta = parseFloat(dadosParseados.total_recolher?.replace(/[R$\s.]/g, '').replace(',', '.')).toFixed(2)
-            numero_documento_origem = dadosParseados.numero_documento_origem
-            cpf_cnpj = dadosParseados.cpf_cnpj_destinatario
-            codigo_barras = dadosParseados.codigo_barras
-            uf_favorecida = dadosParseados.uf_favorecida
-            vencimento = dadosParseados.data_vencimento //?.split("/").reverse().join("-")
-
-
-
-            // recria o arquivo convertido
-            const fileName = file.filename.replace(/\.pdf$/i, `_NC-${numero_conta}.pdf`);
-            const newFilePath = path.join(uploadDir, fileName);
-
-
-            fs.renameSync(file.path, newFilePath);
-            
-            let body = { numero_conta, historico, valor_conta, fornecedor, via_pagamento, descricao, departamento, 
-                valor_dre, rateio_dre, vinculado_dre, categoria, grupo, subgrupo, forma_pagamento,
-                agendamento, pagamento, agencia, conta_corrente, num_cartao_cred, cheque_compens, situacao, banco,
-                protocolo_banco, comprovante_pag, cadastramento, doc_pagamento, vencimento, referencia,
-                relacao, numero_dias, fixar_parcelas, numero_parcelas, observacao, rateio, reembolso, 
-                num_pedido_compra, data_compra, emissao_nf, num_comprovante, data_entrega_mercad, 
-                mercadoria_entregue, comprovante_mercad, sistema_1, num_sistema_1, sistema_2, num_sistema_2, 
-                sistema_3, num_sistema_3, vinculado, parcelas_geradas, chave, numero_documento_origem,
-                uf_favorecida, cpf_cnpj, codigo_barras, fileName
-            }
-
-            respostaProcessamento = await processamentoCriacaoContaMassa(req, body, true)
-            if ( !respostaProcessamento.erro ) {
-                numero_conta = respostaProcessamento.numero_conta
-            }
-        } 
-        const retornos = {
-            "1": function(erros){return res.json({ erro: `campos não preenchidos` })},
-            "2": function(erros){return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })},
-            "3": function(erros){return res.json({ erro: `situação não cadastrada` })},
-            "4": function(erros){return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}itens-conta?situacao=` + situacao))},
-            "5": function(erros, numero_conta){return res.json({ numero_conta: numero_conta })},
-            "6": function(erros){return res.redirect(`/`)},
-            "7": function(erros){return res.json({ erro: `OK` })},
-            "8": function(erros){return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })},
-            "9": function(erros){return res.json({ erro: `campos não preenchidos` })},
-            "10": function(erros){return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })},
-            "11": function(erros){return res.json({ erro: `OK` })}
-        }
-
-        return retornos[respostaProcessamento.codigo](respostaProcessamento.erros, respostaProcessamento?.numero_conta)
-    }
     
-    //   //////if ( req.file.filename ) comprovante_pag = uploadDir + `${barraRoute}` + req.file.filename // forma antiga
+    // Normalizar numero_conta para string
+    const numeroContaNormalizado = String(numero_conta).trim()
+    const situacaoNormalizada = situacao ? situacao.toUpperCase().trim() : situacao
+
+    // Processar arquivos de comprovante se houver
     if (req.files["comprovante_pag"]) {
         for (const file of req.files["comprovante_pag"]) {
             comprovante_pag = path.join(uploadDir, file.filename)
         } 
     }
-    let fileName = "" // aqui é porque não teremos arquivos pdfs para enviar o nome dos arquivos
 
     try {
+        // Validação básica
         let erros = []
         let situacoes = { "Aberto": true, "Pago": true, "Em andamento": true, "Cancelado": true }
         if (typeof situacoes[situacao] == 'undefined') {
-            let erros = [{ text: 'O campo `Situação` deve ser preenchido corretamente.' }]
             if (cadastrarDuplicar == `sim` || qtdeDre) {
                 return res.json({ erro: `campos não preenchidos` })
             } else {
-                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros: [{ text: 'O campo `Situação` deve ser preenchido corretamente.' }], dados: req.body })
             }
         }
-        let item = await ItensConta.findOne({ where: { tipo_situacao: situacao } })
-        if (!item) {
-            if (cadastrarDuplicar == `sim` || qtdeDre) {
-                return res.json({ erro: `situação não cadastrada` })
-            } else {
-                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}configuracao${barraRoute}itens-conta?situacao=` + situacao))
-            }
-        }
-        item = JSON.parse(JSON.stringify(item, null, 2))
 
-        for (let entreis of Object.entries(req.body)) {
-            let key = entreis[0]
-            let value = entreis[1]
-            if (item[key] && (!value || typeof value == undefined || value == null)) {
-                erros.push({ text: key.replaceAll('_', ' ').replace('num', 'número').replace('doc', 'documento').replace('mercad', 'mercadoria') + ` inválido.` })
+        // Buscar todas as contas existentes com este numero_conta (independente da situação)
+        const contasExistentes = await conta.findAll({ 
+            where: { numero_conta: numeroContaNormalizado } 
+        })
+        
+        console.log('Contas encontradas:', contasExistentes.length, 'para numero_conta:', numeroContaNormalizado)
+        
+        if (contasExistentes.length === 0) {
+            if (cadastrarDuplicar == `sim` || qtdeDre) {
+                return res.json({ erro: `Conta não encontrada com número: ${numeroContaNormalizado}` })
+            } else {
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros: [{ text: `Conta não encontrada com número: ${numeroContaNormalizado}` }], dados: req.body })
             }
         }
-        if (erros.length == 0) {
-            let num_parc = 0
-            // console.log(typeof parcelas_geradas)
-            for ( let parcela of JSON.parse(parcelas_geradas) ) {
-                numero_conta = Number(numero_conta) + num_parc
-                if ( num_parc == 0 ) { num_parc = 1 }
-                for ( let num_dre = 1; num_dre <= qtdeDre; num_dre++ ) {
-                    // console.log(numero_conta, parcela)
-                    if (num_dre == 1) {
-                        var departamento_edit = `departamento`
-                        var descricao_edit = `descricao`
-                        var valor_dre_edit = `valor_dre`
-                        var rateio_dre_edit = `rateio_dre`
-                        var vinculado_dre_edit = `vinculado_dre`
-                        var categoria_edit = `categoria`
-                        var grupo_edit = `grupo`
-                        var subgrupo_edit = `subgrupo`
-                        var sistema_1_edit = `sistema_1`
-                        var num_sistema_1_edit = `num_sistema_1`
-                        var sistema_2_edit = `sistema_2`
-                        var num_sistema_2_edit = `num_sistema_2`
-                        var sistema_3_edit = `sistema_3`
-                        var num_sistema_3_edit = `num_sistema_3`
-                    } else {
-                        var departamento_edit = `departamento_` + num_dre
-                        var descricao_edit = `descricao_` + num_dre
-                        var valor_dre_edit = `valor_dre_` + num_dre
-                        var rateio_dre_edit = `rateio_dre_` + num_dre
-                        var vinculado_dre_edit = `vinculado_dre_` + num_dre
-                        var categoria_edit = `categoria_` + num_dre
-                        var grupo_edit = `grupo_` + num_dre
-                        var subgrupo_edit = `subgrupo_` + num_dre
-                        var sistema_1_edit = `sistema_1_` + num_dre
-                        var num_sistema_1_edit = `num_sistema_1_` + num_dre
-                        var sistema_2_edit = `sistema_2_` + num_dre
-                        var num_sistema_2_edit = `num_sistema_2_` + num_dre
-                        var sistema_3_edit = `sistema_3_` + num_dre
-                        var num_sistema_3_edit = `num_sistema_3_` + num_dre
+
+        // Processar parcelas e DREs
+        let atualizacoesRealizadas = 0
+        let parcelas = []
+        
+        try {
+            parcelas = JSON.parse(parcelas_geradas || '[]')
+        } catch (e) {
+            console.error('Erro ao parsear parcelas_geradas:', e)
+            parcelas = []
+        }
+        
+        console.log('Parcelas para processar:', parcelas.length, 'qtdeDre:', qtdeDre)
+        console.log('parcelas_geradas recebido:', parcelas_geradas ? parcelas_geradas.substring(0, 200) : 'vazio')
+        
+        // Se não há parcelas, criar parcelas baseadas nas contas existentes
+        if (parcelas.length === 0 && contasExistentes.length > 0) {
+            console.log('Nenhuma parcela encontrada, criando parcelas baseadas nas contas existentes')
+            // Agrupar contas por numero_parcela
+            const parcelasMap = new Map()
+            contasExistentes.forEach(conta => {
+                const numParcela = conta.numero_parcela || '1'
+                if (!parcelasMap.has(numParcela)) {
+                    parcelasMap.set(numParcela, {
+                        numero_parcela: numParcela,
+                        valor_parcela: conta.valor_parcela || valor_conta,
+                        vencimento_parcela: conta.vencimento_parcela || vencimento || conta.vencimento,
+                        numero_dias: conta.numero_dias || numero_dias
+                    })
+                }
+            })
+            parcelas = Array.from(parcelasMap.values())
+            console.log('Parcelas criadas a partir das contas existentes:', parcelas.length)
+        }
+        
+        // Se ainda não há parcelas, criar uma parcela padrão
+        if (parcelas.length === 0) {
+            console.log('Criando parcela padrão')
+            parcelas = [{
+                numero_parcela: '1',
+                valor_parcela: valor_conta,
+                vencimento_parcela: vencimento,
+                numero_dias: numero_dias
+            }]
+        }
+        
+        for (let parcela of parcelas) {
+            console.log('Processando parcela:', parcela.numero_parcela)
+            for (let num_dre = 1; num_dre <= qtdeDre; num_dre++) {
+                // Determinar nomes dos campos
+                const campos = {
+                    departamento: num_dre === 1 ? 'departamento' : `departamento_${num_dre}`,
+                    descricao: num_dre === 1 ? 'descricao' : `descricao_${num_dre}`,
+                    valor_dre: num_dre === 1 ? 'valor_dre' : `valor_dre_${num_dre}`,
+                    rateio_dre: num_dre === 1 ? 'rateio_dre' : `rateio_dre_${num_dre}`,
+                    vinculado_dre: num_dre === 1 ? 'vinculado_dre' : `vinculado_dre_${num_dre}`,
+                    categoria: num_dre === 1 ? 'categoria' : `categoria_${num_dre}`,
+                    grupo: num_dre === 1 ? 'grupo' : `grupo_${num_dre}`,
+                    subgrupo: num_dre === 1 ? 'subgrupo' : `subgrupo_${num_dre}`,
+                    sistema_1: num_dre === 1 ? 'sistema_1' : `sistema_1_${num_dre}`,
+                    num_sistema_1: num_dre === 1 ? 'num_sistema_1' : `num_sistema_1_${num_dre}`,
+                    sistema_2: num_dre === 1 ? 'sistema_2' : `sistema_2_${num_dre}`,
+                    num_sistema_2: num_dre === 1 ? 'num_sistema_2' : `num_sistema_2_${num_dre}`,
+                    sistema_3: num_dre === 1 ? 'sistema_3' : `sistema_3_${num_dre}`,
+                    num_sistema_3: num_dre === 1 ? 'num_sistema_3' : `num_sistema_3_${num_dre}`
+                }
+
+                const new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (parseInt((numero_dias || '0').replace(' dias', '')) * num_dre)
+                
+                // Para cada DRE, precisamos encontrar o registro correspondente
+                // Como não há um campo único para identificar cada DRE, vamos buscar por:
+                // numero_conta + numero_parcela + campos específicos do DRE (departamento, descricao, valor_dre)
+                const numeroParcela = parcela.numero_parcela || '1'
+                const numeroParcelaStr = String(numeroParcela)
+                
+                // Buscar registros existentes que correspondem a este numero_conta e numero_parcela
+                // Vamos buscar todos e depois tentar encontrar o que corresponde a este DRE específico
+                const registrosExistentes = await conta.findAll({ 
+                    where: {
+                        numero_conta: numeroContaNormalizado,
+                        numero_parcela: numeroParcelaStr
                     }
-                    // console.log('\n\n', parcela, 'num-dre', num_dre)
-                    var new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (parseInt(numero_dias.replace(' dias', '')) * num_dre) 
-                    //console.log('\n\n', new_numero_dias, '--', numero_dias, '---', parcela.numero_dias, '\n\n')
-                    var contaNova = await conta.update({
-                        departamento: req.body[departamento_edit],
-                        descricao: req.body[descricao_edit],
-                        valor_dre: req.body[valor_dre_edit],
-                        rateio_dre: req.body[rateio_dre_edit],
-                        vinculado_dre: req.body[vinculado_dre_edit],
-                        numero_parcela: parcela.numero_parcela, 
-                        valor_parcela: parcela.valor_parcela, 
-                        vencimento_parcela: parcela.vencimento_parcela,
-                        vencimento: parcela.vencimento_parcela,
-                        uf_favorecida,
-                        categoria: req.body[categoria_edit],
-                        grupo: req.body[grupo_edit],
-                        subgrupo: req.body[subgrupo_edit],
-                        sistema_1: req.body[sistema_1_edit],
-                        num_sistema_1: req.body[num_sistema_1_edit], 
-                        sistema_2: req.body[sistema_2_edit], 
-                        num_sistema_2: req.body[num_sistema_2_edit], 
-                        sistema_3: req.body[sistema_3_edit], 
-                        num_sistema_3: req.body[num_sistema_3_edit],
-                        numero_dias: new_numero_dias,
-                        numero_conta, historico, valor_conta, fornecedor, via_pagamento, forma_pagamento,
-                        agendamento, pagamento, agencia, conta_corrente, num_cartao_cred, cheque_compens, situacao, banco,
-                        protocolo_banco, comprovante_pag, cadastramento, doc_pagamento, referencia,
-                        relacao, numero_parcelas, fixar_parcelas, observacao, rateio, reembolso,
-                        num_pedido_compra, data_compra, emissao_nf, vinculado, chave,
-                        num_comprovante, data_entrega_mercad, mercadoria_entregue, comprovante_mercad
-                    }, {where: { numero_conta }})
+                })
+                
+                console.log(`Encontrados ${registrosExistentes.length} registros para numero_conta: ${numeroContaNormalizado}, numero_parcela: ${numeroParcelaStr}`)
+                
+                // Tentar encontrar um registro que corresponda a este DRE específico
+                // Usar os campos do DRE para identificar
+                const valorDreAtual = req.body[campos.valor_dre]
+                const departamentoAtual = req.body[campos.departamento]
+                const descricaoAtual = req.body[campos.descricao]
+                
+                let registroExistente = null
+                if (num_dre === 1) {
+                    // Para o primeiro DRE, usar o primeiro registro encontrado
+                    registroExistente = registrosExistentes[0] || null
+                } else {
+                    // Para DREs subsequentes, tentar encontrar por valor_dre, departamento ou descricao
+                    registroExistente = registrosExistentes.find(reg => {
+                        return (reg.valor_dre === valorDreAtual) ||
+                               (reg.departamento === departamentoAtual) ||
+                               (reg.descricao === descricaoAtual)
+                    }) || registrosExistentes[num_dre - 1] || null
+                }
+                
+                // Construir where clause baseado no registro encontrado ou criar novo
+                let whereClause = null
+                if (registroExistente) {
+                    // Usar o ID do registro existente para atualização precisa
+                    whereClause = { id: registroExistente.id }
+                    console.log(`Atualizando registro existente com ID: ${registroExistente.id} para DRE ${num_dre}`)
+                } else {
+                    // Se não encontrou, criar novo registro
+                    whereClause = null
+                    console.log(`Criando novo registro para DRE ${num_dre}`)
+                }
+
+                // Dados para atualizar
+                const dadosUpdate = {
+                    departamento: req.body[campos.departamento],
+                    descricao: req.body[campos.descricao],
+                    valor_dre: req.body[campos.valor_dre],
+                    rateio_dre: req.body[campos.rateio_dre],
+                    vinculado_dre: req.body[campos.vinculado_dre],
+                    numero_parcela: parcela.numero_parcela || '1',
+                    valor_parcela: parcela.valor_parcela,
+                    vencimento_parcela: parcela.vencimento_parcela,
+                    vencimento: parcela.vencimento_parcela,
+                    uf_favorecida,
+                    categoria: req.body[campos.categoria],
+                    grupo: req.body[campos.grupo],
+                    subgrupo: req.body[campos.subgrupo],
+                    sistema_1: req.body[campos.sistema_1],
+                    num_sistema_1: req.body[campos.num_sistema_1],
+                    sistema_2: req.body[campos.sistema_2],
+                    num_sistema_2: req.body[campos.num_sistema_2],
+                    sistema_3: req.body[campos.sistema_3],
+                    num_sistema_3: req.body[campos.num_sistema_3],
+                    numero_dias: new_numero_dias,
+                    numero_conta: numeroContaNormalizado,
+                    historico,
+                    valor_conta,
+                    fornecedor,
+                    via_pagamento,
+                    forma_pagamento,
+                    agendamento,
+                    pagamento,
+                    agencia,
+                    conta_corrente,
+                    num_cartao_cred,
+                    cheque_compens,
+                    situacao: situacaoNormalizada,
+                    banco,
+                    protocolo_banco,
+                    comprovante_pag,
+                    cadastramento,
+                    doc_pagamento,
+                    referencia,
+                    relacao,
+                    numero_parcelas,
+                    fixar_parcelas,
+                    observacao,
+                    rateio,
+                    reembolso,
+                    num_pedido_compra,
+                    data_compra,
+                    emissao_nf,
+                    vinculado,
+                    chave,
+                    num_comprovante,
+                    data_entrega_mercad,
+                    mercadoria_entregue,
+                    comprovante_mercad
+                }
+
+                // Atualizar ou criar
+                if (whereClause && registroExistente) {
+                    // Atualizar registro existente
+                    const resultadoUpdate = await conta.update(dadosUpdate, { where: whereClause })
+                    const linhasAfetadas = Array.isArray(resultadoUpdate) ? resultadoUpdate[0] : resultadoUpdate
+                    
+                    console.log('Resultado update:', linhasAfetadas, 'linhas afetadas para parcela', numeroParcelaStr, 'DRE', num_dre)
+                    
+                    if (linhasAfetadas > 0) {
+                        atualizacoesRealizadas++
+                        console.log('✓ Atualização bem-sucedida!')
+                    } else {
+                        console.log('⚠ Nenhuma linha afetada na atualização')
+                    }
+                } else {
+                    // Criar novo registro
+                    console.log('Criando novo registro para parcela', numeroParcelaStr, 'DRE', num_dre)
+                    await conta.create(dadosUpdate)
+                    atualizacoesRealizadas++
+                    console.log('✓ Novo registro criado!')
                 }
             }
-            if (contaNova) {
-                contaNova = JSON.parse(JSON.stringify(contaNova, null, 2))
-                if (cadastrarDuplicar == `sim` || qtdeDre) {
-                    res.json({ numero_conta: (Number(contaNova.numero_conta)) })
-                } else {
-                    req.flash(`success_msg`, `Conta cadastrada com sucesso!`)
-                    res.redirect(`/`)
-                }
+        }
+
+        // Retornar sucesso
+        if (atualizacoesRealizadas > 0) {
+            if (cadastrarDuplicar == `sim` || qtdeDre) {
+                return res.json({ numero_conta: numeroContaNormalizado })
             } else {
-                if (cadastrarDuplicar == `sim` || qtdeDre) {
-                    res.json({ erro: `OK` })
-                } else {
-                    let erros = [{ text: `Erro ao cadastrar conta, se persistir informar o desenvolvedor.` }]
-                    res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })
-                }
+                req.flash(`success_msg`, `Conta editada com sucesso!`)
+                return res.redirect(`/`)
             }
         } else {
             if (cadastrarDuplicar == `sim` || qtdeDre) {
-                res.json({ erro: `campos não preenchidos` })
+                return res.json({ erro: `Nenhuma atualização foi realizada.` })
             } else {
-                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros, dados: req.body })
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros: [{ text: `Nenhuma atualização foi realizada.` }], dados: req.body })
             }
         }
+
     } catch (e) {
-        console.log(e)
-        res.json({ erro: `OK` })
+        console.error('Erro ao editar conta:', e)
+        if (cadastrarDuplicar == `sim` || qtdeDre) {
+            return res.json({ erro: `Erro ao editar conta: ${e.message || 'Erro desconhecido'}` })
+        } else {
+            return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros: [{ text: `Erro ao editar conta: ${e.message || 'Erro desconhecido'}` }], dados: req.body })
+        }
     }
 })
 
@@ -1260,9 +1421,16 @@ async function processamentoCriacaoContaMassa(req, body, pdf=false) {
                         var sistema_3_edit = `sistema_3_` + num_dre
                         var num_sistema_3_edit = `num_sistema_3_` + num_dre
                     }
-                    // console.log('\n\n', parcela, 'num-dre', num_dre)
-                    var new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (parseInt(numero_dias.replace(' dias', '')) * num_dre) 
-                    //console.log('\n\n', new_numero_dias, '--', numero_dias, '---', parcela.numero_dias, '\n\n')
+                    
+
+                    if ( fixar_parcelas == "Desabilitado" ) {
+                        console.log('\n\n', parcela, 'num-dre', num_dre)
+                        var new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (parseInt(numero_dias.replace(' dias', '')) * num_dre) 
+                        console.log('\n\n', new_numero_dias, '--', numero_dias, '---', parcela.numero_dias, '\n\n')
+                    } else {
+                        var new_numero_dias = "Desabilitado"
+                    }
+
                     var contaNova = await conta.create({
                         departamento: req.body[departamento_edit],
                         descricao: req.body[descricao_edit],

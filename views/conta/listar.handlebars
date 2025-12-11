@@ -883,7 +883,7 @@
 <script>
     let objContasPorSituacao = {}
     let objDres = {{{dres}}}
-    const baseUrl = "http://localhost:8089" //bruno.local
+    const baseUrl = window.location.origin //"http://localhost:8089" //bruno.local
     var mudancaPosicaoColunas = false
     var objFiltroColuna = {}
     var objTamanhoColunasTemp = {}
@@ -1519,20 +1519,28 @@
         }
     }
     async function showHideDre(numero_conta, acao, indexBtnShowHide) {
+        // Encontrar a linha da conta usando o numero_conta (que é o name da tr), não o índice
+        // O índice pode não corresponder à posição real da linha quando as contas estão em diferentes situações
+        let trConta = document.querySelector(`#table-conta > tbody > tr[name="${numero_conta}"]`)
+        
+        if (!trConta) {
+            console.error('Linha da conta não encontrada para numero_conta:', numero_conta)
+            return
+        }
+        
         let linhasConta = document.getElementsByName(numero_conta)
         let visibles = await getVisibilidadeColunas()
+        
         if (acao == "show") {
-            //for (let linhaConta of linhasConta) {
-            //    linhaConta.classList.remove('d-none')
-            //}
             document.querySelector('#btn-show-dre' + numero_conta).classList.add('d-none')
             document.querySelector('#btn-hide-dre' + numero_conta).classList.remove('d-none')
-            //for (let visible of Object.keys(visibles.resultado)) {
-            //    let col = document.getElementsByName('tab-' + visible)
-            //    for (let linhaCol of col) {
-            //        linhaCol.classList.remove('d-none')
-            //    }
-            //}
+            
+            // Verificar se objDres tem dados para este numero_conta
+            if (!objDres[numero_conta] || objDres[numero_conta].length === 0) {
+                console.warn('Nenhum DRE encontrado para a conta:', numero_conta)
+                return
+            }
+            
             let addDre = `
                 <tr class="text-center text-nowrap text-light bg-blue-dark" name="show-dre-${numero_conta}">
                     <th>Valor</th>
@@ -1551,29 +1559,27 @@
                     <th colspan="1">N° sistema 3</th>
                 </tr>
             `
-            let arrayTrs = [].slice.call(document.querySelectorAll(`#table-conta > tbody > tr`))
-            arrayTrs.splice((indexBtnShowHide+1), 0, addDre)
+            
             for ( let dre of objDres[numero_conta] ) {
-            addDre += `
+                addDre += `
                     <tr class="text-nowrap table-primary" name="show-dre-${numero_conta}">
-                        <td class="text-center">${dre.valor_dre}</td>
-                        <td class="text-center">${dre.descricao}</td>
-                        <td class="text-center" colspan="2">${dre.departamento}</td>
-                        <td class="text-center" colspan="2">${dre.rateio_dre}</td>
-                        <td class="text-center" colspan="2">${dre.vinculado_dre}</td>
-                        <td class="text-center" colspan="1">${dre.categoria}</td>
-                        <td class="text-center" colspan="1">${dre.grupo}</td>
-                        <td class="text-center" colspan="1">${dre.subgrupo}</td>
-                        <td class="text-center" colspan="1">${dre.sistema_1}</td>
-                        <td class="text-center" colspan="1">${dre.num_sistema_1}</td>
-                        <td class="text-center" colspan="1">${dre.sistema_2}</td>
-                        <td class="text-center" colspan="1">${dre.num_sistema_2}</td>
-                        <td class="text-center" colspan="1">${dre.sistema_3}</td>
-                        <td class="text-center" colspan="1">${dre.num_sistema_3}</td>
+                        <td class="text-center">${dre.valor_dre || ''}</td>
+                        <td class="text-center">${dre.descricao || ''}</td>
+                        <td class="text-center" colspan="2">${dre.departamento || ''}</td>
+                        <td class="text-center" colspan="2">${dre.rateio_dre || ''}</td>
+                        <td class="text-center" colspan="2">${dre.vinculado_dre || ''}</td>
+                        <td class="text-center" colspan="1">${dre.categoria || ''}</td>
+                        <td class="text-center" colspan="1">${dre.grupo || ''}</td>
+                        <td class="text-center" colspan="1">${dre.subgrupo || ''}</td>
+                        <td class="text-center" colspan="1">${dre.sistema_1 || ''}</td>
+                        <td class="text-center" colspan="1">${dre.num_sistema_1 || ''}</td>
+                        <td class="text-center" colspan="1">${dre.sistema_2 || ''}</td>
+                        <td class="text-center" colspan="1">${dre.num_sistema_2 || ''}</td>
+                        <td class="text-center" colspan="1">${dre.sistema_3 || ''}</td>
+                        <td class="text-center" colspan="1">${dre.num_sistema_3 || ''}</td>
                     </tr>`
             }
-            let trConta = document.querySelector(`#table-conta > tbody > tr[name="${indexBtnShowHide}"]`) //(`#table-conta > tbody > tr:nth-child(${(indexBtnShowHide)})`)
-            //console.log(trConta, indexBtnShowHide)
+            
             trConta.classList.add("table-primary")
             trConta.classList.add("fw-bold")
             trConta.insertAdjacentHTML('afterend', addDre)
@@ -1586,28 +1592,14 @@
             }
             document.querySelector('#btn-show-dre' + numero_conta).classList.remove('d-none')
             document.querySelector('#btn-hide-dre' + numero_conta).classList.add('d-none')
-            let trConta = document.querySelector(`#table-conta > tbody > tr[name="${indexBtnShowHide}"]`) //(`#table-conta > tbody > tr:nth-child(${(indexBtnShowHide)})`)
+            
             trConta.classList.remove("table-primary")
             trConta.classList.remove("fw-bold")
-            document.getElementsByName(`show-dre-${numero_conta}`).forEach(item=>{
-                return item.remove()
-            })
-            for ( let it of document.getElementsByName(`show-dre-${numero_conta}`) ) {
-                it.remove()
-            }
+            
+            // Remover todas as linhas de DRE relacionadas a esta conta
+            const linhasDre = document.querySelectorAll(`tr[name="show-dre-${numero_conta}"]`)
+            linhasDre.forEach(linha => linha.remove())
 
-            //if (qtdeDreAbertos == 1) {
-            //    for (let visible of Object.entries(visibles.resultado)) {
-            //        let col = document.getElementsByName('tab-' + visible[0])
-            //        for (let linhaCol of col) {
-            //            if (visible[1]) {
-            //                linhaCol.classList.remove('d-none')
-            //            } else {
-            //                linhaCol.classList.add('d-none')
-            //            }
-            //        }
-            //    }
-            //}
             qtdeDreAbertos--
         }
     }

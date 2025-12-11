@@ -4,12 +4,11 @@
 {{#if error_msg}}
     <div id="alert-temp" class="alert alert-danger">{{error_msg}} <strong>{{error_msg_destaque}}</strong></div>
 {{/if}}
-<h2>Página Home</h2>
-<div class="container d-flex justify-content-center align-items-center"><h4>Em construção...</h4></div>
+<div class="container d-flex justify-content-center align-items-center h-100"><img src="/img/logo-3.png" alt="logo"></div>
 <a href="" id="redirect-page-incial"></a>
 
 <script>
-    const baseUrl = "http://localhost:8089"
+    const baseUrl = window.location.origin //"http://localhost:8089"
     async function setPageHome() {
        let resultado = await fetch(`${ baseUrl }/configuracao/set-page-home`)
         resultado = await resultado.json()

@@ -121,7 +121,7 @@
 
 
 <script>
-    const baseUrl = "http://localhost:8089"
+    const baseUrl = window.location.origin //"http://localhost:8089"
     async function listDados(tipo) {
         let resultado = await fetch(`${ baseUrl }/${ tipo.slice(0, -1) }/obter`)//http://localhost:8089
         resultado = await resultado.json()

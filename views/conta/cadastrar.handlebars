@@ -1437,7 +1437,7 @@
                         <a onclick="esquecerConta(true)" class="btn btn-danger fw-bold w-100 rem0788">Esquecer Conta</a>
                     </div>
                     <div class="col-sm-12 col-md-6 col-lg-3 mb-2 d-flex justify-content-center">
-                        <a id="btn-gerar-parcelas" class="btn btn-warning fw-bold w-100 rem0788">Gerar parcelas</a>
+                        <a id="btn-gerar-parcelas" class="btn btn-warning fw-bold w-100 rem0788">Visualizar Parcelas</a>
                     </div>
                     <div class="col-sm-12 col-md-6 col-lg-3 mb-2 d-flex justify-content-center">
                         <a id="btn-salvar-duplicar" class="btn btn-success fw-bold w-100 rem0788">Salvar e Duplicar</a>
@@ -1492,7 +1492,7 @@
     var objParcelasGeradas = []
     var mostrarDreParcelas = 1
     var qtdeDre = 0
-    const baseUrl = "http://localhost:8089"
+    const baseUrl = window.location.origin //"http://localhost:8089"
 
 
     if ( document.getElementsByName("codigo_barras")[0].value != "" ) {
@@ -1927,7 +1927,7 @@
         popupGerarParcelas.innerHTML = ""
         let numeroDias = document.getElementsByName('numero_dias')[0].value
         let qtdeParcelas = document.getElementsByName('numero_parcelas')[0].value
-        let valorConta = document.getElementsByName("valor_conta")[0].value.replace("R$ ", "")
+        let valorConta = parseFloat(parseFloat(document.getElementsByName("valor_conta")[0].value.replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2)) || 0
         let fixarParcelas = document.getElementsByName("fixar_parcelas")[0].value
         let arquivosPdfs = document.getElementsByName("pdfs")[0].value
 
@@ -2027,9 +2027,10 @@
                 if ( qtdeParcelas == 1 ) {
                     var numero_dias = calcularDiferencaEmDias(new Date(), new Date(vencimento.value))
                 }else {
-                    var numero_dias = null
+                    var numero_dias = false
                 }
                 objParcelasGeradas.push({numero_dias, numero_parcela: i, valor_parcela: valorString, vencimento_parcela: diaParcela})
+                //console.log(objParcelasGeradas)
                 parcelas += `
                     <div class="p-2 bg-gray-1 mb-1">
                         <strong class="rem0888">${i}° parcela de R$ ${valorString} vencimento em ${diaParcela}</strong>
@@ -2040,6 +2041,11 @@
                 <div class="p-2 w-100">
                     <div class="col-12 mt-2">
                         <button onclick="fecharPopupParcelas()" class="btn btn-primary bg-blue-pk w-100 fw-bolder">Fechar</button>
+                    </div>
+                </div>
+                <div class="p-2 w-100">
+                    <div class="col-12 mt-1">
+                        <button onclick="alertParcelasGeradas()" class="btn btn-warning w-100 fw-bolder">Gerar Parcelas</button>
                     </div>
                 </div>
                 </div>
@@ -2133,15 +2139,14 @@
         // Processa os campos numéricos sem transformar em JSON
         let somaDres = 0;
         for (let [key, value] of formData.entries()) {
+            console.log('dentro for formdata salvar contas')
             if (key.includes("valor_dre")) {
             const val = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2);
-            console.log(key, value, val, 'valor_dre')
             formData.set(key, val);
             somaDres += parseFloat(val);
             }
             if (key.includes("valor_conta")) {
             const val = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.') || 0).toFixed(2);
-            console.log(key, value, val, 'valor_conta')
             formData.set(key, val);
             }
         }
@@ -2419,6 +2424,10 @@
     }
     function carregaSemelhanteNoDre(e) {
         for ( let element of document.getElementsByName(e.name + '_dre') ) { element.value = e.value }
+    }
+    function alertParcelasGeradas() {
+        alert('Parcelas geradas com sucesso!')
+        return fecharPopupParcelas()
     }
     async function cadastrarFornecedor() {
         let inputCadastrarFornecedor = document.querySelector('#input-cadastrar-fornecedor')

@@ -18,6 +18,7 @@ const sistema = require('./routes/sistema')
 const descricao = require('./routes/descricao')
 const departamento = require('./routes/departamento')
 const configuracao = require('./routes/configuracao')
+const dashboard = require('./routes/dashboard')
 
 const passport = require("passport")
 require("./config/auth")(passport)
@@ -99,6 +100,7 @@ app.use("/sistema", authenticationMiddleware, sistema)
 app.use("/descricao", authenticationMiddleware, descricao)
 app.use("/departamento", authenticationMiddleware, departamento)
 app.use("/configuracao", authenticationMiddleware, configuracao)
+app.use("/dashboard", authenticationMiddleware, dashboard)
 
 app.get('/', authenticationMiddleware, (req, res) => {
     res.render("home")

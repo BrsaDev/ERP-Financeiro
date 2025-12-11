@@ -1,0 +1,1534 @@
+<div class="container-fluid p-4">
+    <!-- Cabeçalho -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0 rem0888">
+                    <i class="fas fa-chart-line me-2 fs-5"></i>
+                    Dashboard Financeiro
+                </h2>
+                <div>
+                    <button class="btn btn-sm btn-outline-info me-2 rem0788" onclick="toggleTooltips()" id="btn-toggle-tooltips" title="Clique para habilitar ou desabilitar as dicas de ajuda (tooltips)">
+                        <i class="fas fa-question-circle me-1"></i> <span id="texto-toggle-tooltips">Desabilitar Dicas</span>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning me-2 rem0788" onclick="limparCache()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Limpa o cache do dashboard e força a atualização de todos os dados. Use quando os dados parecerem desatualizados.">
+                        <i class="fas fa-sync-alt me-1"></i> Limpar Cache
+                    </button>
+                    <a href="/" class="btn btn-sm btn-outline-secondary rem0788" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Retorna para a página inicial do sistema">
+                        <i class="bi bi-house me-1"></i> Voltar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Use os filtros para refinar a análise dos dados. Selecione período, datas personalizadas ou situação das contas para visualizar informações específicas.">
+                <div class="card-body">
+                    <h5 class="card-title mb-3 rem0888">
+                        <i class="fas fa-filter me-2 fs-5"></i>Filtros
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label" data-bs-toggle="tooltip" data-bs-placement="top" title="Selecione um período pré-definido ou escolha 'Personalizado' para definir datas específicas">Período</label>
+                            <select class="form-select form-select-sm" id="filtro-periodo">
+                                <option value="mes_atual">Mês Atual</option>
+                                <option value="mes_anterior">Mês Anterior</option>
+                                <option value="ano_atual">Ano Atual</option>
+                                <option value="ano_anterior">Ano Anterior</option>
+                                <option value="ultimos_30_dias">Últimos 30 dias</option>
+                                <option value="ultimos_90_dias">Últimos 90 dias</option>
+                                <option value="personalizado">Personalizado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3" id="filtro-data-inicio-container" style="display: none;">
+                            <label class="form-label" data-bs-toggle="tooltip" data-bs-placement="top" title="Data inicial do período a ser analisado">Data Início</label>
+                            <input type="date" class="form-control form-control-sm" id="filtro-data-inicio">
+                        </div>
+                        <div class="col-md-3" id="filtro-data-fim-container" style="display: none;">
+                            <label class="form-label" data-bs-toggle="tooltip" data-bs-placement="top" title="Data final do período a ser analisado">Data Fim</label>
+                            <input type="date" class="form-control form-control-sm" id="filtro-data-fim">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" data-bs-toggle="tooltip" data-bs-placement="top" title="Filtre contas por situação: Aberto (pendente), Pago (liquidado), Em andamento (processando) ou Cancelado">Situação</label>
+                            <select class="form-select form-select-sm" id="filtro-situacao">
+                                <option value="">Todas</option>
+                                <option value="Aberto">Aberto</option>
+                                <option value="Pago">Pago</option>
+                                <option value="Em andamento">Em andamento</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <button class="btn btn-primary btn-sm" onclick="aplicarFiltros()" data-bs-toggle="tooltip" data-bs-placement="top" title="Aplica os filtros selecionados e atualiza todos os gráficos e indicadores">
+                                <i class="fas fa-search me-1"></i>Aplicar Filtros
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="limparFiltros()" data-bs-toggle="tooltip" data-bs-placement="top" title="Remove todos os filtros e retorna à visualização padrão (mês atual)">
+                                <i class="fas fa-times me-1"></i>Limpar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading-dashboard" class="text-center py-5" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="mt-2">Carregando dados do dashboard...</p>
+    </div>
+
+    <!-- Alertas -->
+    <div class="row mb-4" id="alertas-container">
+        <div class="col-12">
+            <div class="card shadow-sm border-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Alertas importantes do sistema: contas vencidas, próximas do vencimento, valores altos e contas sem fornecedor. Clique nos botões para ver detalhes.">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0 rem0888">
+                        <i class="fas fa-bell me-2 fs-5"></i>Alertas do Sistema
+                    </h5>
+                </div>
+                <div class="card-body" id="alertas-body">
+                    <div class="text-center py-3">
+                        <div class="spinner-border spinner-border-sm text-warning" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2 mb-0">Carregando alertas...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row mb-4" id="kpis-container">
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-primary border-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Total de contas cadastradas no período selecionado, independente da situação (Pago, Aberto, Em andamento, Cancelado). Mostra a quantidade total de registros financeiros.">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Total de Contas</h6>
+                            <h3 class="mb-0" id="kpi-total-contas">-</h3>
+                        </div>
+                        <div class="text-primary">
+                            <i class="fas fa-file-invoice fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-success border-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Soma de TODAS as contas no período, independente da situação (Pago + Aberto + Em andamento + Cancelado). Representa o valor total financeiro processado.">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Valor Total</h6>
+                            <h3 class="mb-0" id="kpi-valor-total">-</h3>
+                        </div>
+                        <div class="text-success">
+                            <i class="fas fa-dollar-sign fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-info border-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Valor médio por conta. Calculado dividindo o valor total pelo número de contas. Útil para identificar o ticket médio.">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Valor Médio</h6>
+                            <h3 class="mb-0" id="kpi-valor-medio">-</h3>
+                        </div>
+                        <div class="text-info">
+                            <i class="fas fa-chart-bar fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-warning border-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade de contas que já passaram da data de vencimento e ainda não foram pagas. Requer atenção imediata.">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Contas Vencidas</h6>
+                            <h3 class="mb-0" id="kpi-contas-vencidas">-</h3>
+                        </div>
+                        <div class="text-warning">
+                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-success border-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Soma apenas das contas com situação 'Pago'. Indica o volume financeiro já liquidado no período. Diferente do Valor Total, este mostra apenas o que foi efetivamente pago.">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Valor Pago</h6>
+                            <h3 class="mb-0" id="kpi-valor-pago">-</h3>
+                        </div>
+                        <div class="text-success">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-danger border-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Valor total das contas ainda em aberto. Representa o valor pendente de pagamento que precisa ser acompanhado.">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Valor em Aberto</h6>
+                            <h3 class="mb-0" id="kpi-valor-aberto">-</h3>
+                        </div>
+                        <div class="text-danger">
+                            <i class="fas fa-clock fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-info border-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Percentual de contas pagas em relação ao total. Indica a eficiência no pagamento das obrigações financeiras.">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Taxa de Pagamento</h6>
+                            <h3 class="mb-0" id="kpi-taxa-pagamento">-</h3>
+                        </div>
+                        <div class="text-info">
+                            <i class="fas fa-percentage fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-start border-warning border-4" data-bs-toggle="tooltip" data-bs-placement="top" title="Valor total das contas vencidas. Representa o montante em atraso que precisa ser quitado urgentemente.">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Valor Vencido</h6>
+                            <h3 class="mb-0" id="kpi-valor-vencido">-</h3>
+                        </div>
+                        <div class="text-warning">
+                            <i class="fas fa-exclamation-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos Principais -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Mostra a distribuição percentual das contas por situação (Aberto, Pago, Em andamento, Cancelado). Útil para visualizar o status geral das obrigações financeiras.">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 rem0888">
+                        <i class="fas fa-chart-pie me-2 fs-5"></i>Distribuição por Situação
+                    </h5>
+                    <button class="btn btn-sm btn-light rem0788" onclick="exportarGrafico('chart-situacao', 'distribuicao-situacao')" title="Exportar gráfico como imagem PNG">
+                        <i class="fas fa-download me-1"></i> Exportar
+                    </button>
+                </div>
+                <div class="card-body">
+                    <canvas id="chart-situacao" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Evolução do fluxo de caixa ao longo do tempo, mostrando valores abertos, pagos, em andamento e cancelados. Ajuda a identificar tendências e padrões de pagamento.">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 rem0888">
+                        <i class="fas fa-chart-line me-2 fs-5"></i>Fluxo de Caixa
+                    </h5>
+                    <button class="btn btn-sm btn-light rem0788" onclick="exportarGrafico('chart-fluxo-caixa', 'fluxo-caixa')" title="Exportar gráfico como imagem PNG">
+                        <i class="fas fa-download me-1"></i> Exportar
+                    </button>
+                </div>
+                <div class="card-body">
+                    <canvas id="chart-fluxo-caixa" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Novos Gráficos -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Compara receitas (contas pagas) vs despesas (contas abertas) ao longo do tempo. Permite visualizar o equilíbrio financeiro e identificar períodos de maior ou menor fluxo.">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 rem0888">
+                        <i class="fas fa-chart-area me-2 fs-5"></i>Evolução Temporal
+                    </h5>
+                    <button class="btn btn-sm btn-light rem0788" onclick="exportarGrafico('chart-evolucao-temporal', 'evolucao-temporal')" title="Exportar gráfico como imagem PNG">
+                        <i class="fas fa-download me-1"></i> Exportar
+                    </button>
+                </div>
+                <div class="card-body">
+                    <canvas id="chart-evolucao-temporal" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Distribuição das contas por categoria, grupo ou subgrupo. Mostra onde os recursos estão sendo alocados, facilitando a análise de gastos por área de negócio.">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 rem0888">
+                        <i class="fas fa-tags me-2 fs-5"></i>Distribuição por Categoria
+                    </h5>
+                    <div>
+                        <select class="form-select form-select-sm d-inline-block w-auto me-2" id="filtro-tipo-categoria" onchange="carregarDistribuicaoCategoria()" title="Selecione o tipo de classificação">
+                            <option value="categoria">Categoria</option>
+                            <option value="grupo">Grupo</option>
+                            <option value="subgrupo">Subgrupo</option>
+                        </select>
+                        <button class="btn btn-sm btn-dark rem0788" onclick="exportarGrafico('chart-distribuicao-categoria', 'distribuicao-categoria')" title="Exportar gráfico como imagem PNG">
+                            <i class="fas fa-download me-1"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="chart-distribuicao-categoria" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Análises Detalhadas -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Valores de DRE (Demonstração do Resultado do Exercício) agrupados por departamento. Útil para análise de desempenho por área organizacional.">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 rem0888">
+                        <i class="fas fa-building me-2 fs-5"></i>DRE por Departamento
+                    </h5>
+                    <button class="btn btn-sm btn-light rem0788" onclick="exportarGrafico('chart-departamento', 'dre-departamento')" title="Exportar gráfico como imagem PNG">
+                        <i class="fas fa-download me-1"></i> Exportar
+                    </button>
+                </div>
+                <div class="card-body">
+                    <canvas id="chart-departamento" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Top 10 fornecedores com maior volume financeiro. Identifica os principais parceiros comerciais e ajuda na negociação e planejamento de compras.">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 rem0888">
+                        <i class="fas fa-truck me-2 fs-5"></i>Top 10 Fornecedores
+                    </h5>
+                    <button class="btn btn-sm btn-dark rem0788" onclick="exportarGrafico('chart-fornecedores', 'top-fornecedores')" title="Exportar gráfico como imagem PNG">
+                        <i class="fas fa-download me-1"></i> Exportar
+                    </button>
+                </div>
+                <div class="card-body">
+                    <canvas id="chart-fornecedores" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Análises Adicionais -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Análise de contas agrupadas por banco, mostrando valores pagos e em aberto. Facilita o controle bancário e a conciliação de contas.">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 rem0888">
+                        <i class="fas fa-university me-2 fs-5"></i>Análise por Banco
+                    </h5>
+                    <button class="btn btn-sm btn-light rem0788" onclick="exportarGrafico('chart-banco', 'analise-banco')" title="Exportar gráfico como imagem PNG">
+                        <i class="fas fa-download me-1"></i> Exportar
+                    </button>
+                </div>
+                <div class="card-body">
+                    <canvas id="chart-banco" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Comparação entre o mês atual e o mês anterior, mostrando variações em quantidade e valores. Ajuda a identificar tendências e mudanças no padrão de gastos.">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 rem0888">
+                        <i class="fas fa-balance-scale me-2 fs-5"></i>Comparativo Mensal
+                    </h5>
+                    <button class="btn btn-sm btn-light rem0788" onclick="exportarGrafico('chart-comparativo-mensal', 'comparativo-mensal')" title="Exportar gráfico como imagem PNG">
+                        <i class="fas fa-download me-1"></i> Exportar
+                    </button>
+                </div>
+                <div class="card-body">
+                    <canvas id="chart-comparativo-mensal" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top 10 Contas por Valor -->
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <div class="card shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Lista das 10 contas com maior valor no período selecionado. Útil para identificar as maiores transações e focar atenção nas operações mais significativas.">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 rem0888">
+                        <i class="fas fa-list-ol me-2 fs-5"></i>Top 10 Contas por Valor
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>N° Conta</th>
+                                    <th>Fornecedor</th>
+                                    <th>Valor</th>
+                                    <th>Situação</th>
+                                    <th>Vencimento</th>
+                                </tr>
+                            </thead>
+                            <tbody id="top-contas-tbody">
+                                <tr>
+                                    <td colspan="6" class="text-center">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    // URL base dinâmica baseada na origem atual
+    const baseUrl = window.location.origin
+    let charts = {}
+    let filtrosAtuais = {
+        periodo: 'mes_atual',
+        data_inicio: null,
+        data_fim: null,
+        situacao: ''
+    }
+    
+    console.log('[Dashboard] URL base:', baseUrl)
+
+    // Variável global para controlar tooltips
+    let tooltipsHabilitados = true
+    let tooltipInstances = []
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('[Dashboard] DOM carregado, inicializando...')
+        console.log('[Dashboard] URL base configurada:', baseUrl)
+        console.log('[Dashboard] URL completa:', window.location.href)
+        
+        configurarFiltros()
+        
+        // Verificar estado dos tooltips no localStorage
+        const tooltipsState = localStorage.getItem('dashboard-tooltips-enabled')
+        if (tooltipsState !== null) {
+            tooltipsHabilitados = tooltipsState === 'true'
+        }
+        
+        atualizarEstadoTooltips()
+        
+        // Aguardar um pouco para garantir que tudo está pronto
+        setTimeout(() => {
+            console.log('[Dashboard] Iniciando carregamento do dashboard...')
+            carregarDashboard()
+        }, 100)
+    })
+
+    // Função para inicializar tooltips
+    function inicializarTooltips() {
+        // Primeiro, remover todos os tooltips existentes usando a API do Bootstrap
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            try {
+                // Obter instância existente do Bootstrap
+                const existingTooltip = bootstrap.Tooltip.getInstance(tooltipTriggerEl)
+                if (existingTooltip) {
+                    // Verificar se tem método dispose (Bootstrap 5) ou destroy (Bootstrap 4)
+                    if (typeof existingTooltip.dispose === 'function') {
+                        existingTooltip.dispose()
+                    } else if (typeof existingTooltip.destroy === 'function') {
+                        existingTooltip.destroy()
+                    }
+                }
+            } catch (e) {
+                // Ignorar erros silenciosamente
+            }
+        })
+        
+        // Limpar array de instâncias
+        tooltipInstances = []
+
+        // Se tooltips estão habilitados, criar novas instâncias
+        if (tooltipsHabilitados) {
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                try {
+                    // Garantir que não há instância existente
+                    const existing = bootstrap.Tooltip.getInstance(tooltipTriggerEl)
+                    if (existing) {
+                        if (typeof existing.dispose === 'function') {
+                            existing.dispose()
+                        } else if (typeof existing.destroy === 'function') {
+                            existing.destroy()
+                        }
+                    }
+                    
+                    // Criar nova instância
+                    const tooltip = new bootstrap.Tooltip(tooltipTriggerEl)
+                    tooltipInstances.push(tooltip)
+                } catch (e) {
+                    // Ignorar erros silenciosamente
+                }
+            })
+        }
+    }
+
+    // Função para atualizar estado dos tooltips
+    function atualizarEstadoTooltips() {
+        const btn = document.getElementById('btn-toggle-tooltips')
+        const texto = document.getElementById('texto-toggle-tooltips')
+        
+        if (btn && texto) {
+            if (tooltipsHabilitados) {
+                texto.textContent = 'Desabilitar Dicas'
+                btn.classList.remove('btn-outline-secondary')
+                btn.classList.add('btn-outline-info')
+            } else {
+                texto.textContent = 'Habilitar Dicas'
+                btn.classList.remove('btn-outline-info')
+                btn.classList.add('btn-outline-secondary')
+            }
+        }
+        
+        // Salvar estado no localStorage
+        localStorage.setItem('dashboard-tooltips-enabled', tooltipsHabilitados.toString())
+    }
+
+    // Função para alternar tooltips
+    function toggleTooltips() {
+        tooltipsHabilitados = !tooltipsHabilitados
+        atualizarEstadoTooltips()
+        inicializarTooltips()
+    }
+
+    // Configuração de filtros
+    function configurarFiltros() {
+        const selectPeriodo = document.getElementById('filtro-periodo')
+        const containerDataInicio = document.getElementById('filtro-data-inicio-container')
+        const containerDataFim = document.getElementById('filtro-data-fim-container')
+
+        if (!selectPeriodo) {
+            console.warn('[Dashboard] Elemento filtro-periodo não encontrado')
+            return
+        }
+
+        if (containerDataInicio) {
+            containerDataInicio.style.display = 'none'
+        }
+        if (containerDataFim) {
+            containerDataFim.style.display = 'none'
+        }
+
+        selectPeriodo.addEventListener('change', function() {
+            if (this.value === 'personalizado') {
+                if (containerDataInicio) containerDataInicio.style.display = 'block'
+                if (containerDataFim) containerDataFim.style.display = 'block'
+            } else {
+                if (containerDataInicio) containerDataInicio.style.display = 'none'
+                if (containerDataFim) containerDataFim.style.display = 'none'
+            }
+        })
+    }
+
+    // Aplicar filtros
+    function aplicarFiltros() {
+        const periodo = document.getElementById('filtro-periodo').value
+        const dataInicio = document.getElementById('filtro-data-inicio').value
+        const dataFim = document.getElementById('filtro-data-fim').value
+        const situacao = document.getElementById('filtro-situacao').value
+
+        filtrosAtuais = {
+            periodo: periodo === 'personalizado' ? null : periodo,
+            data_inicio: periodo === 'personalizado' ? dataInicio : null,
+            data_fim: periodo === 'personalizado' ? dataFim : null,
+            situacao: situacao
+        }
+
+        carregarDashboard()
+    }
+
+    // Limpar filtros
+    function limparFiltros() {
+        document.getElementById('filtro-periodo').value = 'mes_atual'
+        document.getElementById('filtro-data-inicio').value = ''
+        document.getElementById('filtro-data-fim').value = ''
+        document.getElementById('filtro-situacao').value = ''
+        document.getElementById('filtro-data-inicio-container').style.display = 'none'
+        document.getElementById('filtro-data-fim-container').style.display = 'none'
+
+        filtrosAtuais = {
+            periodo: 'mes_atual',
+            data_inicio: null,
+            data_fim: null,
+            situacao: ''
+        }
+
+        carregarDashboard()
+    }
+
+    // Carregar dashboard completo
+    async function carregarDashboard() {
+        console.log('[Dashboard] Iniciando carregamento do dashboard...')
+        mostrarLoading(true)
+        
+        try {
+            console.log('[Dashboard] Carregando todos os componentes...')
+            await Promise.all([
+                carregarKPIs(),
+                carregarResumoGeral(),
+                carregarFluxoCaixa(),
+                carregarDreDepartamento(),
+                carregarTopFornecedores(),
+                carregarEvolucaoTemporal(),
+                carregarDistribuicaoCategoria(),
+                carregarAnalisePorBanco(),
+                carregarComparativoMensal(),
+                carregarTopContasPorValor(),
+                carregarAlertas()
+            ])
+            console.log('[Dashboard] Todos os componentes carregados com sucesso!')
+        } catch (error) {
+            console.error('[Dashboard] Erro ao carregar dashboard:', error)
+            console.error('[Dashboard] Stack trace:', error.stack)
+            alert('Erro ao carregar dados do dashboard. Verifique o console para mais detalhes.')
+        } finally {
+            mostrarLoading(false)
+            // Inicializar tooltips do Bootstrap
+            setTimeout(() => {
+                inicializarTooltips()
+            }, 500)
+        }
+    }
+
+    // Mostrar/ocultar loading
+    function mostrarLoading(mostrar) {
+        document.getElementById('loading-dashboard').style.display = mostrar ? 'block' : 'none'
+        document.getElementById('kpis-container').style.display = mostrar ? 'none' : 'flex'
+    }
+
+    // Formatar valor monetário
+    function formatarValor(valor) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(valor)
+    }
+
+    // Formatar data para dd/MM/yyyy
+    function formatarData(data) {
+        if (!data || data === '-' || data === '') {
+            return '-'
+        }
+        
+        // Se já estiver no formato dd/MM/yyyy, retornar como está
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(data)) {
+            return data
+        }
+        
+        // Converter de YYYY-MM-DD para dd/MM/yyyy
+        if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+            const partes = data.split('-')
+            return `${partes[2]}/${partes[1]}/${partes[0]}`
+        }
+        
+        // Tentar parsear como Date
+        try {
+            const date = new Date(data)
+            if (!isNaN(date.getTime())) {
+                const dia = String(date.getDate()).padStart(2, '0')
+                const mes = String(date.getMonth() + 1).padStart(2, '0')
+                const ano = date.getFullYear()
+                return `${dia}/${mes}/${ano}`
+            }
+        } catch (e) {
+            // Se falhar, retornar o valor original
+        }
+        
+        return data
+    }
+
+    // Normalizar situação para o formato correto do select
+    function normalizarSituacao(situacao) {
+        if (!situacao) return 'Aberto'
+        
+        const situacaoLower = situacao.toLowerCase().trim()
+        
+        // Mapeamento de variações para o formato correto
+        const mapeamento = {
+            'aberto': 'Aberto',
+            'pago': 'Pago',
+            'em andamento': 'Em andamento',
+            'em_andamento': 'Em andamento',
+            'cancelado': 'Cancelado'
+        }
+        
+        // Verifica se existe no mapeamento
+        if (mapeamento[situacaoLower]) {
+            return mapeamento[situacaoLower]
+        }
+        
+        // Se não encontrar, tenta capitalizar a primeira letra de cada palavra
+        return situacao.split(' ').map(palavra => 
+            palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase()
+        ).join(' ')
+    }
+
+    // Carregar KPIs
+    async function carregarKPIs() {
+        try {
+            const params = new URLSearchParams()
+            if (filtrosAtuais.periodo) params.append('periodo', filtrosAtuais.periodo)
+            if (filtrosAtuais.data_inicio) params.append('data_inicio', filtrosAtuais.data_inicio)
+            if (filtrosAtuais.data_fim) params.append('data_fim', filtrosAtuais.data_fim)
+            if (filtrosAtuais.situacao) params.append('situacao', filtrosAtuais.situacao)
+
+            const response = await fetch(`${baseUrl}/dashboard/api/kpis?${params}`)
+            const resultado = await response.json()
+
+            if (resultado.sucesso && resultado.dados) {
+                const kpis = resultado.dados.kpis
+                document.getElementById('kpi-total-contas').textContent = kpis.total_contas || 0
+                document.getElementById('kpi-valor-total').textContent = formatarValor(kpis.total_valor || 0)
+                document.getElementById('kpi-valor-medio').textContent = formatarValor(kpis.valor_medio || 0)
+                document.getElementById('kpi-contas-vencidas').textContent = kpis.contas_vencidas || 0
+                document.getElementById('kpi-valor-pago').textContent = formatarValor(kpis.total_pago || 0)
+                document.getElementById('kpi-valor-aberto').textContent = formatarValor(kpis.total_aberto || 0)
+                document.getElementById('kpi-taxa-pagamento').textContent = (kpis.taxa_pagamento || 0).toFixed(1) + '%'
+                document.getElementById('kpi-valor-vencido').textContent = formatarValor(kpis.valor_vencido || 0)
+            }
+        } catch (error) {
+            console.error('Erro ao carregar KPIs:', error)
+        }
+    }
+
+    // Carregar resumo geral e criar gráfico de situação
+    async function carregarResumoGeral() {
+        try {
+            const params = new URLSearchParams()
+            if (filtrosAtuais.periodo) params.append('periodo', filtrosAtuais.periodo)
+            if (filtrosAtuais.data_inicio) params.append('data_inicio', filtrosAtuais.data_inicio)
+            if (filtrosAtuais.data_fim) params.append('data_fim', filtrosAtuais.data_fim)
+            if (filtrosAtuais.situacao) params.append('situacao', filtrosAtuais.situacao)
+
+            const url = `${baseUrl}/dashboard/api/resumo-geral?${params}`
+            console.log('[Dashboard] Carregando resumo geral:', url)
+            
+            const response = await fetch(url)
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+            
+            const resultado = await response.json()
+            console.log('[Dashboard] Resumo geral recebido:', resultado)
+
+            if (resultado.sucesso && resultado.dados) {
+                const porSituacao = resultado.dados.por_situacao
+                
+                const labels = []
+                const valores = []
+                const cores = {
+                    'Aberto': '#ffc107',
+                    'Pago': '#28a745',
+                    'Em andamento': '#17a2b8',
+                    'Cancelado': '#dc3545'
+                }
+
+                Object.keys(porSituacao).forEach(situacao => {
+                    labels.push(situacao)
+                    valores.push(porSituacao[situacao].total)
+                })
+
+                criarGraficoSituacao(labels, valores, cores)
+            } else {
+                console.warn('[Dashboard] Resumo geral não retornou dados válidos:', resultado)
+            }
+        } catch (error) {
+            console.error('[Dashboard] Erro ao carregar resumo geral:', error)
+        }
+    }
+
+    // Criar gráfico de situação (Pizza)
+    function criarGraficoSituacao(labels, valores, cores) {
+        const ctx = document.getElementById('chart-situacao')
+        
+        if (charts.situacao) {
+            charts.situacao.destroy()
+        }
+
+        charts.situacao = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: valores,
+                    backgroundColor: labels.map(l => cores[l] || '#6c757d')
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || ''
+                                const value = formatarValor(context.parsed)
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0)
+                                const percent = ((context.parsed / total) * 100).toFixed(2)
+                                return `${label}: ${value} (${percent}%)`
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    // Carregar fluxo de caixa
+    async function carregarFluxoCaixa() {
+        try {
+            const params = new URLSearchParams()
+            if (filtrosAtuais.periodo) params.append('periodo', filtrosAtuais.periodo)
+            if (filtrosAtuais.data_inicio) params.append('data_inicio', filtrosAtuais.data_inicio)
+            if (filtrosAtuais.data_fim) params.append('data_fim', filtrosAtuais.data_fim)
+            params.append('agrupamento', 'mes')
+
+            const response = await fetch(`${baseUrl}/dashboard/api/fluxo-caixa?${params}`)
+            const resultado = await response.json()
+
+            if (resultado.sucesso && resultado.dados) {
+                const fluxo = resultado.dados.fluxo
+                
+                const labels = fluxo.map(f => f.periodo)
+                const aberto = fluxo.map(f => f.aberto)
+                const pago = fluxo.map(f => f.pago)
+                const emAndamento = fluxo.map(f => f.em_andamento)
+
+                criarGraficoFluxoCaixa(labels, aberto, pago, emAndamento)
+            }
+        } catch (error) {
+            console.error('Erro ao carregar fluxo de caixa:', error)
+        }
+    }
+
+    // Criar gráfico de fluxo de caixa (Linha)
+    function criarGraficoFluxoCaixa(labels, aberto, pago, emAndamento) {
+        const ctx = document.getElementById('chart-fluxo-caixa')
+        
+        if (charts.fluxoCaixa) {
+            charts.fluxoCaixa.destroy()
+        }
+
+        charts.fluxoCaixa = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Aberto',
+                        data: aberto,
+                        borderColor: '#ffc107',
+                        backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Pago',
+                        data: pago,
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Em Andamento',
+                        data: emAndamento,
+                        borderColor: '#17a2b8',
+                        backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${formatarValor(context.parsed.y)}`
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatarValor(value)
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    // Carregar DRE por departamento
+    async function carregarDreDepartamento() {
+        try {
+            const params = new URLSearchParams()
+            if (filtrosAtuais.periodo) params.append('periodo', filtrosAtuais.periodo)
+            if (filtrosAtuais.data_inicio) params.append('data_inicio', filtrosAtuais.data_inicio)
+            if (filtrosAtuais.data_fim) params.append('data_fim', filtrosAtuais.data_fim)
+            params.append('limite', '10')
+
+            const response = await fetch(`${baseUrl}/dashboard/api/dre-departamento?${params}`)
+            const resultado = await response.json()
+
+            if (resultado.sucesso && resultado.dados) {
+                const departamentos = resultado.dados.departamentos
+                
+                const labels = departamentos.map(d => d.key)
+                const valores = departamentos.map(d => d.total)
+
+                criarGraficoDepartamento(labels, valores)
+            }
+        } catch (error) {
+            console.error('Erro ao carregar DRE por departamento:', error)
+        }
+    }
+
+    // Criar gráfico de departamento (Barras)
+    function criarGraficoDepartamento(labels, valores) {
+        const ctx = document.getElementById('chart-departamento')
+        
+        if (charts.departamento) {
+            charts.departamento.destroy()
+        }
+
+        charts.departamento = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Valor DRE',
+                    data: valores,
+                    backgroundColor: 'rgba(40, 167, 69, 0.8)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return formatarValor(context.parsed.y)
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatarValor(value)
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    // Carregar top fornecedores
+    async function carregarTopFornecedores() {
+        try {
+            const params = new URLSearchParams()
+            if (filtrosAtuais.periodo) params.append('periodo', filtrosAtuais.periodo)
+            if (filtrosAtuais.data_inicio) params.append('data_inicio', filtrosAtuais.data_inicio)
+            if (filtrosAtuais.data_fim) params.append('data_fim', filtrosAtuais.data_fim)
+            params.append('limite', '10')
+
+            const response = await fetch(`${baseUrl}/dashboard/api/top-fornecedores?${params}`)
+            const resultado = await response.json()
+
+            if (resultado.sucesso && resultado.dados) {
+                const fornecedores = resultado.dados.fornecedores
+                
+                const labels = fornecedores.map(f => f.key)
+                const valores = fornecedores.map(f => f.total)
+
+                criarGraficoFornecedores(labels, valores)
+            }
+        } catch (error) {
+            console.error('Erro ao carregar top fornecedores:', error)
+        }
+    }
+
+    // Criar gráfico de fornecedores (Barras horizontais)
+    function criarGraficoFornecedores(labels, valores) {
+        const ctx = document.getElementById('chart-fornecedores')
+        
+        if (charts.fornecedores) {
+            charts.fornecedores.destroy()
+        }
+
+        charts.fornecedores = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Valor Total',
+                    data: valores,
+                    backgroundColor: 'rgba(255, 193, 7, 0.8)'
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return formatarValor(context.parsed.x)
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatarValor(value)
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+
+    // Carregar alertas
+    async function carregarAlertas() {
+        try {
+            const response = await fetch(`${baseUrl}/dashboard/api/alertas`)
+            const resultado = await response.json()
+
+            if (resultado.sucesso && resultado.dados) {
+                const alertas = resultado.dados.alertas
+                const container = document.getElementById('alertas-body')
+                
+                if (alertas.length === 0) {
+                    container.innerHTML = '<div class="alert alert-success mb-0"><i class="fas fa-check-circle me-2"></i>Nenhum alerta no momento. Tudo está em ordem!</div>'
+                    return
+                }
+
+                container.innerHTML = alertas.map(alerta => {
+                    const severidadeClass = {
+                        'alta': 'danger',
+                        'media': 'warning',
+                        'baixa': 'info'
+                    }[alerta.severidade] || 'info'
+                    
+                    const icon = {
+                        'vencidas': 'fa-exclamation-triangle',
+                        'proximas_vencimento': 'fa-clock',
+                        'valores_altos': 'fa-chart-line',
+                        'sem_fornecedor': 'fa-user-slash'
+                    }[alerta.tipo] || 'fa-info-circle'
+                    
+                    let contasHTML = ''
+                    if (alerta.contas && alerta.contas.length > 0) {
+                        contasHTML = `
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-${severidadeClass} mb-2 rem0788" type="button" 
+                                        aria-expanded="false"
+                                        aria-controls="contas-${alerta.tipo}"
+                                        id="btn-toggle-${alerta.tipo}">
+                                    <i class="fas fa-list me-1"></i><span id="texto-btn-${alerta.tipo}">Ver ${alerta.contas.length} conta(s)</span>
+                                </button>
+                                <div class="collapse" id="contas-${alerta.tipo}" data-quantidade="${alerta.contas.length}">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-hover table-bordered rem0788">
+                                            <thead>
+                                                <tr class="text-center text-nowrap text-light bg-blue-pk">
+                                                    <th>N° Conta</th>
+                                                    <th>Fornecedor</th>
+                                                    <th>Histórico</th>
+                                                    <th>Valor</th>
+                                                    ${alerta.tipo === 'vencidas' || alerta.tipo === 'proximas_vencimento' ? '<th>Vencimento</th><th>Dias</th>' : ''}
+                                                    ${alerta.tipo === 'valores_altos' || alerta.tipo === 'sem_fornecedor' ? '<th>Cadastramento</th>' : ''}
+                                                    <th>Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${alerta.contas.map(conta => {
+                                                    let diasHTML = ''
+                                                    if (alerta.tipo === 'vencidas' && conta.dias_atraso && conta.dias_atraso > 0) {
+                                                        diasHTML = `<td class="text-nowrap text-danger">${conta.dias_atraso} dias atrás</td>`
+                                                    } else if (alerta.tipo === 'proximas_vencimento' && conta.dias_ate_vencimento !== null) {
+                                                        const diasClass = conta.dias_ate_vencimento <= 3 ? 'text-danger' : 'text-warning'
+                                                        diasHTML = `<td class="text-nowrap ${diasClass}">${conta.dias_ate_vencimento} dias</td>`
+                                                    } else if (alerta.tipo === 'vencidas' || alerta.tipo === 'proximas_vencimento') {
+                                                        diasHTML = `<td class="text-nowrap">-</td>`
+                                                    }
+                                                    
+                                                    // Normalizar situação para o formato correto
+                                                    const situacaoNormalizada = normalizarSituacao(conta.situacao || 'Aberto')
+                                                    
+                                                    return `
+                                                        <tr class="text-center">
+                                                            <td class="text-nowrap"><strong>${conta.numero_conta}</strong></td>
+                                                            <td class="text-nowrap">${conta.fornecedor || '-'}</td>
+                                                            <td class="text-nowrap">${conta.historico || '-'}</td>
+                                                            <td class="text-nowrap">${formatarValor(conta.valor_conta)}</td>
+                                                            ${alerta.tipo === 'vencidas' || alerta.tipo === 'proximas_vencimento' ? `<td class="text-nowrap">${formatarData(conta.vencimento)}</td>${diasHTML}` : ''}
+                                                            ${alerta.tipo === 'valores_altos' || alerta.tipo === 'sem_fornecedor' ? `<td class="text-nowrap">${formatarData(conta.cadastramento)}</td>` : ''}
+                                                            <td class="text-nowrap">
+                                                                <a href="/conta/editar?numero_conta=${conta.numero_conta}&situacao=${encodeURIComponent(situacaoNormalizada)}" 
+                                                                   class="btn btn-sm btn-outline-primary p-1" 
+                                                                   target="_blank" 
+                                                                   title="Editar conta">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </a>
+                                                                <a href="/conta/listar?situacao_select=${encodeURIComponent(situacaoNormalizada)}" 
+                                                                   class="btn btn-sm btn-outline-info ms-1 p-1" 
+                                                                   target="_blank" 
+                                                                   title="Ver na listagem">
+                                                                    <i class="fas fa-list"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    `
+                                                }).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    }
+                    
+                    return `
+                        <div class="alert alert-${severidadeClass} mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <i class="fas ${icon} me-2"></i>
+                                    <strong>${alerta.titulo}:</strong> ${alerta.mensagem}
+                                    ${alerta.valor ? ` - <strong>${formatarValor(alerta.valor)}</strong>` : ''}
+                                    ${contasHTML}
+                                </div>
+                            </div>
+                        </div>
+                    `
+                }).join('')
+                
+                // Inicializar event listeners para os botões de toggle após renderizar
+                setTimeout(() => {
+                    alertas.forEach(alerta => {
+                        if (alerta.contas && alerta.contas.length > 0) {
+                            const collapseId = `contas-${alerta.tipo}`
+                            const botaoId = `btn-toggle-${alerta.tipo}`
+                            const textoId = `texto-btn-${alerta.tipo}`
+                            
+                            const collapseElement = document.getElementById(collapseId)
+                            const textoElement = document.getElementById(textoId)
+                            const botaoElement = document.getElementById(botaoId)
+                            const quantidade = alerta.contas.length
+                            
+                            if (collapseElement && textoElement && botaoElement) {
+                                // Inicializar estado (fechado por padrão)
+                                collapseElement.classList.remove('show')
+                                collapseElement.style.display = 'none'
+                                textoElement.textContent = `Ver ${quantidade} conta(s)`
+                                botaoElement.setAttribute('aria-expanded', 'false')
+                                
+                                // Adicionar event listener ao botão usando onclick para garantir que funcione
+                                botaoElement.onclick = function(e) {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    
+                                    const isExpanded = collapseElement.classList.contains('show') || 
+                                                      collapseElement.style.display === 'block'
+                                    
+                                    if (isExpanded) {
+                                        // Fechar
+                                        collapseElement.classList.remove('show')
+                                        collapseElement.style.display = 'none'
+                                        textoElement.textContent = `Ver ${quantidade} conta(s)`
+                                        botaoElement.setAttribute('aria-expanded', 'false')
+                                    } else {
+                                        // Abrir
+                                        collapseElement.classList.add('show')
+                                        collapseElement.style.display = 'block'
+                                        textoElement.textContent = `Fechar ${quantidade} conta(s)`
+                                        botaoElement.setAttribute('aria-expanded', 'true')
+                                    }
+                                    
+                                    return false
+                                }
+                            }
+                        }
+                    })
+                }, 500)
+            }
+        } catch (error) {
+            console.error('Erro ao carregar alertas:', error)
+            document.getElementById('alertas-body').innerHTML = 
+                '<div class="alert alert-danger mb-0">Erro ao carregar alertas. Verifique o console para mais detalhes.</div>'
+        }
+    }
+
+    // Exportar gráfico como PNG
+    function exportarGrafico(canvasId, nomeArquivo) {
+        const canvas = document.getElementById(canvasId)
+        if (!canvas) {
+            alert('Gráfico não encontrado')
+            return
+        }
+
+        // Cria link de download
+        const url = canvas.toDataURL('image/png')
+        const link = document.createElement('a')
+        link.download = `${nomeArquivo}-${new Date().toISOString().split('T')[0]}.png`
+        link.href = url
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
+
+    // Limpar cache
+    async function limparCache() {
+        if (!confirm('Deseja realmente limpar o cache do dashboard?')) {
+            return
+        }
+
+        try {
+            const response = await fetch(`${baseUrl}/dashboard/api/limpar-cache`, {
+                method: 'POST'
+            })
+            const resultado = await response.json()
+
+            if (resultado.sucesso) {
+                alert('Cache limpo com sucesso! Recarregando dados...')
+                carregarDashboard()
+            } else {
+                alert('Erro ao limpar cache')
+            }
+        } catch (error) {
+            console.error('Erro ao limpar cache:', error)
+            alert('Erro ao limpar cache')
+        }
+    }
+
+    // Carregar evolução temporal
+    async function carregarEvolucaoTemporal() {
+        try {
+            const params = new URLSearchParams()
+            if (filtrosAtuais.periodo) params.append('periodo', filtrosAtuais.periodo)
+            if (filtrosAtuais.data_inicio) params.append('data_inicio', filtrosAtuais.data_inicio)
+            if (filtrosAtuais.data_fim) params.append('data_fim', filtrosAtuais.data_fim)
+            params.append('agrupamento', 'dia')
+
+            const response = await fetch(`${baseUrl}/dashboard/api/evolucao-temporal?${params}`)
+            const resultado = await response.json()
+
+            if (resultado.sucesso && resultado.dados) {
+                const evolucao = resultado.dados.evolucao
+                const labels = evolucao.map(e => formatarData(e.periodo))
+                const receitas = evolucao.map(e => e.receitas)
+                const despesas = evolucao.map(e => e.despesas)
+
+                const ctx = document.getElementById('chart-evolucao-temporal')
+                if (charts['evolucao-temporal']) {
+                    charts['evolucao-temporal'].destroy()
+                }
+
+                charts['evolucao-temporal'] = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Receitas',
+                            data: receitas,
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            tension: 0.4
+                        }, {
+                            label: 'Despesas',
+                            data: despesas,
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: { mode: 'index', intersect: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                })
+            }
+        } catch (error) {
+            console.error('Erro ao carregar evolução temporal:', error)
+        }
+    }
+
+    // Carregar distribuição por categoria
+    async function carregarDistribuicaoCategoria() {
+        try {
+            const tipo = document.getElementById('filtro-tipo-categoria')?.value || 'categoria'
+            const params = new URLSearchParams()
+            if (filtrosAtuais.periodo) params.append('periodo', filtrosAtuais.periodo)
+            if (filtrosAtuais.data_inicio) params.append('data_inicio', filtrosAtuais.data_inicio)
+            if (filtrosAtuais.data_fim) params.append('data_fim', filtrosAtuais.data_fim)
+            params.append('tipo', tipo)
+
+            const response = await fetch(`${baseUrl}/dashboard/api/distribuicao-categoria?${params}`)
+            const resultado = await response.json()
+
+            if (resultado.sucesso && resultado.dados) {
+                const distribuicao = resultado.dados.distribuicao
+                const labels = distribuicao.map(d => d.nome || 'Não informado')
+                const valores = distribuicao.map(d => d.valor)
+
+                const ctx = document.getElementById('chart-distribuicao-categoria')
+                if (charts['distribuicao-categoria']) {
+                    charts['distribuicao-categoria'].destroy()
+                }
+
+                charts['distribuicao-categoria'] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Valor',
+                            data: valores,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                })
+            }
+        } catch (error) {
+            console.error('Erro ao carregar distribuição por categoria:', error)
+        }
+    }
+
+    // Carregar análise por banco
+    async function carregarAnalisePorBanco() {
+        try {
+            const params = new URLSearchParams()
+            if (filtrosAtuais.periodo) params.append('periodo', filtrosAtuais.periodo)
+            if (filtrosAtuais.data_inicio) params.append('data_inicio', filtrosAtuais.data_inicio)
+            if (filtrosAtuais.data_fim) params.append('data_fim', filtrosAtuais.data_fim)
+
+            const response = await fetch(`${baseUrl}/dashboard/api/analise-banco?${params}`)
+            const resultado = await response.json()
+
+            if (resultado.sucesso && resultado.dados) {
+                const bancos = resultado.dados.bancos.slice(0, 10)
+                const labels = bancos.map(b => b.nome || 'Não informado')
+                const pago = bancos.map(b => b.pago)
+                const aberto = bancos.map(b => b.aberto)
+
+                const ctx = document.getElementById('chart-banco')
+                if (charts['banco']) {
+                    charts['banco'].destroy()
+                }
+
+                charts['banco'] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Pago',
+                            data: pago,
+                            backgroundColor: '#28a745'
+                        }, {
+                            label: 'Em Aberto',
+                            data: aberto,
+                            backgroundColor: '#ffc107'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' }
+                        },
+                        scales: {
+                            x: { stacked: true },
+                            y: { stacked: true, beginAtZero: true }
+                        }
+                    }
+                })
+            }
+        } catch (error) {
+            console.error('Erro ao carregar análise por banco:', error)
+        }
+    }
+
+    // Carregar comparativo mensal
+    async function carregarComparativoMensal() {
+        try {
+            const response = await fetch(`${baseUrl}/dashboard/api/comparativo-mensal`)
+            const resultado = await response.json()
+
+            if (resultado.sucesso && resultado.dados) {
+                const { mes_atual, mes_anterior, variacao } = resultado.dados
+                const labels = ['Mês Anterior', 'Mês Atual']
+                const valores = [mes_anterior.total, mes_atual.total]
+                const cores = ['#6c757d', '#007bff']
+
+                const ctx = document.getElementById('chart-comparativo-mensal')
+                if (charts['comparativo-mensal']) {
+                    charts['comparativo-mensal'].destroy()
+                }
+
+                charts['comparativo-mensal'] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Valor Total',
+                            data: valores,
+                            backgroundColor: cores,
+                            borderColor: cores,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    afterLabel: function(context) {
+                                        const index = context.dataIndex
+                                        const variacaoValor = index === 1 ? variacao.total : 0
+                                        return `Variação: ${variacaoValor > 0 ? '+' : ''}${variacaoValor.toFixed(2)}%`
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                })
+            }
+        } catch (error) {
+            console.error('Erro ao carregar comparativo mensal:', error)
+        }
+    }
+
+    // Carregar top contas por valor
+    async function carregarTopContasPorValor() {
+        try {
+            const params = new URLSearchParams()
+            if (filtrosAtuais.periodo) params.append('periodo', filtrosAtuais.periodo)
+            if (filtrosAtuais.data_inicio) params.append('data_inicio', filtrosAtuais.data_inicio)
+            if (filtrosAtuais.data_fim) params.append('data_fim', filtrosAtuais.data_fim)
+            params.append('limite', '10')
+
+            const response = await fetch(`${baseUrl}/dashboard/api/top-contas-valor?${params}`)
+            const resultado = await response.json()
+
+            if (resultado.sucesso && resultado.dados) {
+                const contas = resultado.dados.contas
+                const tbody = document.getElementById('top-contas-tbody')
+                
+                if (!tbody) {
+                    console.warn('[Dashboard] Elemento top-contas-tbody não encontrado')
+                    return
+                }
+                
+                if (contas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhuma conta encontrada</td></tr>'
+                    return
+                }
+
+                tbody.innerHTML = contas.map((conta, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${conta.numero_conta}</strong></td>
+                        <td>${conta.fornecedor || '-'}</td>
+                        <td>${formatarValor(conta.valor_conta)}</td>
+                        <td><span class="badge bg-${conta.situacao === 'Pago' ? 'success' : conta.situacao === 'Aberto' ? 'warning' : 'info'}">${conta.situacao}</span></td>
+                        <td>${formatarData(conta.vencimento) || '-'}</td>
+                    </tr>
+                `).join('')
+            }
+        } catch (error) {
+            console.error('Erro ao carregar top contas por valor:', error)
+        }
+    }
+
+    // Atualizar alertas periodicamente (a cada 2 minutos)
+    setInterval(() => {
+        carregarAlertas()
+    }, 120000) // 2 minutos
+</script>
+
