@@ -267,7 +267,7 @@ router.get('/editar', eAdmin, async (req, res) => {
         
     if ( contas.length == 0 ) {
         let itens = {proximo_numero_conta: 1, tipo_situacao: situacao}
-        return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { itens })
+        return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}editar`), { itens })
     }
     let item = await ItensConta.findOne({ where: { tipo_situacao: situacao } })
     item = JSON.parse(JSON.stringify(item, null, 2))
@@ -433,6 +433,7 @@ router.get('/editar', eAdmin, async (req, res) => {
         dadosFormatados.valor_dre = String(dadosFormatados.valor_dre).replace('.', ',')
     }
     
+    console.log(dadosFormatados, 'dados formatados')
     return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}editar`), { 
         parcela_atual, 
         itens, 
@@ -1094,7 +1095,7 @@ router.post('/editar', eAdmin, multiUpload, async (req, res) => {
             if (cadastrarDuplicar == `sim` || qtdeDre) {
                 return res.json({ erro: `campos não preenchidos` })
             } else {
-                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros: [{ text: 'O campo `Situação` deve ser preenchido corretamente.' }], dados: req.body })
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}editar`), { erros: [{ text: 'O campo `Situação` deve ser preenchido corretamente.' }], dados: req.body })
             }
         }
 
@@ -1109,7 +1110,7 @@ router.post('/editar', eAdmin, multiUpload, async (req, res) => {
             if (cadastrarDuplicar == `sim` || qtdeDre) {
                 return res.json({ erro: `Conta não encontrada com número: ${numeroContaNormalizado}` })
             } else {
-                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros: [{ text: `Conta não encontrada com número: ${numeroContaNormalizado}` }], dados: req.body })
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}editar`), { erros: [{ text: `Conta não encontrada com número: ${numeroContaNormalizado}` }], dados: req.body })
             }
         }
 
@@ -1179,7 +1180,41 @@ router.post('/editar', eAdmin, multiUpload, async (req, res) => {
                     num_sistema_3: num_dre === 1 ? 'num_sistema_3' : `num_sistema_3_${num_dre}`
                 }
 
-                const new_numero_dias = parcela.numero_dias ? (parcela.numero_dias * num_dre) : (parseInt((numero_dias || '0').replace(' dias', '')) * num_dre)
+                // Processar numero_dias corretamente
+                let new_numero_dias = null
+                if (parcela.numero_dias) {
+                    // Se parcela tem numero_dias, verificar se é numérico
+                    const diasParcela = String(parcela.numero_dias).trim()
+                    if (diasParcela === 'Desabilitado' || diasParcela === '' || diasParcela === 'null') {
+                        new_numero_dias = 'Desabilitado'
+                    } else {
+                        const numDias = parseInt(diasParcela.replace(/[^0-9]/g, ''))
+                        if (!isNaN(numDias) && numDias > 0) {
+                            new_numero_dias = String(numDias * num_dre) + ' dias'
+                        } else {
+                            new_numero_dias = 'Desabilitado'
+                        }
+                    }
+                } else if (numero_dias) {
+                    const diasStr = String(numero_dias).trim()
+                    if (diasStr === 'Desabilitado' || diasStr === '' || diasStr === 'null') {
+                        new_numero_dias = 'Desabilitado'
+                    } else {
+                        const numDias = parseInt(diasStr.replace(/[^0-9]/g, ''))
+                        if (!isNaN(numDias) && numDias > 0) {
+                            new_numero_dias = String(numDias * num_dre) + ' dias'
+                        } else {
+                            new_numero_dias = 'Desabilitado'
+                        }
+                    }
+                } else {
+                    new_numero_dias = 'Desabilitado'
+                }
+                
+                // Limitar tamanho do campo (máximo 50 caracteres para evitar erro de banco)
+                if (new_numero_dias && new_numero_dias.length > 50) {
+                    new_numero_dias = new_numero_dias.substring(0, 50)
+                }
                 
                 // Para cada DRE, precisamos encontrar o registro correspondente
                 // Como não há um campo único para identificar cada DRE, vamos buscar por:
@@ -1323,7 +1358,7 @@ router.post('/editar', eAdmin, multiUpload, async (req, res) => {
             if (cadastrarDuplicar == `sim` || qtdeDre) {
                 return res.json({ erro: `Nenhuma atualização foi realizada.` })
             } else {
-                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros: [{ text: `Nenhuma atualização foi realizada.` }], dados: req.body })
+                return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}editar`), { erros: [{ text: `Nenhuma atualização foi realizada.` }], dados: req.body })
             }
         }
 
@@ -1332,7 +1367,7 @@ router.post('/editar', eAdmin, multiUpload, async (req, res) => {
         if (cadastrarDuplicar == `sim` || qtdeDre) {
             return res.json({ erro: `Erro ao editar conta: ${e.message || 'Erro desconhecido'}` })
         } else {
-            return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}cadastrar`), { erros: [{ text: `Erro ao editar conta: ${e.message || 'Erro desconhecido'}` }], dados: req.body })
+            return res.render(path.join(__dirname.toString().replace(`${barraRoute}routes`, ``), `${barraRoute}views${barraRoute}conta${barraRoute}editar`), { erros: [{ text: `Erro ao editar conta: ${e.message || 'Erro desconhecido'}` }], dados: req.body })
         }
     }
 })

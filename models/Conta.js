@@ -36,7 +36,7 @@ const Conta = db.sequelize.define('contas', {
     referencia:      { type: db.Sequelize.STRING },
     relacao:         { type: db.Sequelize.STRING },
     numero_parcelas: { type: db.Sequelize.STRING },
-    numero_dias:     { type: db.Sequelize.STRING },
+    numero_dias:     { type: db.Sequelize.STRING(50) },
     fixar_parcelas:  { type: db.Sequelize.STRING },
     numero_parcela:  { type: db.Sequelize.STRING },
     valor_parcela:   { type: db.Sequelize.STRING },

@@ -322,7 +322,7 @@
                         {{else}}
                         <label for="chave" class="col-form-label">chave</label>
                         <div class="input-group input-group-sm">
-                            <select class="form-select form-select-sm" name="chave" required>
+                            <select class="form-select form-select-sm" name="chave">
                                 {{{optionsChavePix}}}
                             </select>
                         </div>
@@ -1477,6 +1477,7 @@
 </div>
 
 <script>
+    console.log('dataScript', 'dataScript')
     var dataScript = false
     try {
         // data_script já vem como JSON string, então precisamos fazer parse apenas uma vez
@@ -1566,9 +1567,12 @@
         return true
     }
 
-    document.querySelector('#btn-add-dre').addEventListener('click', function () {
-        let secaoDre = document.querySelector('#secao-dre')
-        let qtdeDre = secaoDre.querySelectorAll('#secao-dre > div.row').length
+    const btnAddDre = document.querySelector('#btn-add-dre')
+    if (btnAddDre) {
+        btnAddDre.addEventListener('click', function () {
+            let secaoDre = document.querySelector('#secao-dre')
+            if (!secaoDre) return
+            let qtdeDre = secaoDre.querySelectorAll('#secao-dre > div.row').length
         let hr = document.createElement('hr')
         hr.classList.add("mt-4")
         hr.id = `hrdre-${ qtdeDre + 1 }`
@@ -1585,7 +1589,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input type="text" autocomplete="off" onkeyup="filtro(this, 'descricoes')"
                         placeholder="busca inteligente..." class="form-control" name="descricao_${ qtdeDre + 1 }"
-                            value="{{dados.["descricao_${ qtdeDre + 1 }"]}}" required>
+                            value="{{dados.['descricao_${ qtdeDre + 1 }']}}" required>
                     <div id="popupFiltro-descricao_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1594,7 +1598,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input type="text" autocomplete="off" onkeyup="filtro(this, 'descricoes')"
                         placeholder="busca inteligente..." class="form-control" name="descricao_${ qtdeDre + 1 }"
-                            value="{{dados.["descricao_${ qtdeDre + 1 }"]}}">
+                            value="{{dados.['descricao_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-descricao_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1607,7 +1611,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="text" onkeyup="filtro(this, 'departamentos')"
                         placeholder="busca inteligente..." class="form-control" name="departamento_${ qtdeDre + 1 }"
-                        value="{{dados.["departamento_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['departamento_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-departamento_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1616,7 +1620,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" onkeyup="filtro(this, 'departamentos')"
                         placeholder="busca inteligente..." class="form-control" name="departamento_${ qtdeDre + 1 }"
-                        value="{{dados.["departamento_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['departamento_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-departamento_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1629,7 +1633,7 @@
                         class="text-danger fw-bolder">*</span></label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="text" onkeyup="filtro(this, 'dres', false,  '_${ qtdeDre + 1 }')"
-                        autocomplete="off" class="form-control" name="rateio_dre_${ qtdeDre + 1 }" value="{{dados.["rateio_dre_${ qtdeDre + 1 }"]}}">
+                        autocomplete="off" class="form-control" name="rateio_dre_${ qtdeDre + 1 }" value="{{dados.['rateio_dre_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-rateio_dre_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1637,7 +1641,7 @@
                 <label for="rateio_dre" class="col-form-label">Marcador 1</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" autocomplete="off" onkeyup="filtro(this, 'dres', false, '_${ qtdeDre + 1 }')"
-                        class="form-control" name="rateio_dre_${ qtdeDre + 1 }" value="{{dados.["rateio_dre_${ qtdeDre + 1 }"]}}">
+                        class="form-control" name="rateio_dre_${ qtdeDre + 1 }" value="{{dados.['rateio_dre_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-rateio_dre_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1650,7 +1654,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="text" onkeyup="filtro(this, 'categorias')"
                         placeholder="busca inteligente..." class="form-control" name="categoria_${ qtdeDre + 1 }"
-                        value="{{dados.["categoria_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['categoria_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-categoria_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1659,7 +1663,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" onkeyup="filtro(this, 'categorias')"
                         placeholder="busca inteligente..." class="form-control" name="categoria_${ qtdeDre + 1 }"
-                        value="{{dados.["categoria_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['categoria_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-categoria_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1672,14 +1676,14 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="text" step="0.01" placeholder="0"
                          onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" autocomplete="off" class="form-control" 
-                           name="valor_dre_${ qtdeDre + 1 }" value="{{dados.["valor_dre_${ qtdeDre + 1 }"]}}">
+                           name="valor_dre_${ qtdeDre + 1 }" value="{{dados.['valor_dre_${ qtdeDre + 1 }']}}">
                 </div>
                 {{else}}
                 <label class="col-form-label">Valor</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" step="0.01" placeholder="0" autocomplete="off"
                          onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" class="form-control" name="valor_dre_${ qtdeDre + 1 }" 
-                           value="{{dados.["valor_dre_${ qtdeDre + 1 }"]}}">
+                           value="{{dados.['valor_dre_${ qtdeDre + 1 }']}}">
                 </div>
                 {{/if}}
             </div>
@@ -1689,7 +1693,7 @@
                         class="text-danger fw-bolder">*</span></label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="text" autocomplete="off"  onkeyup="filtro(this, 'dres', false, '_${ qtdeDre + 1 }', true)"
-                       placeholder="busca inteligente..." class="form-control" name="vinculado_dre_${ qtdeDre + 1 }" value="{{dados.["vinculado_dre_${ qtdeDre + 1 }"]}}">
+                       placeholder="busca inteligente..." class="form-control" name="vinculado_dre_${ qtdeDre + 1 }" value="{{dados.['vinculado_dre_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-vinculado_dre_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1697,7 +1701,7 @@
                 <label for="vinculado_dre" class="col-form-label">Distribuição</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" autocomplete="off" onkeyup="filtro(this, 'dres', false, '_${ qtdeDre + 1 }', true)"
-                       placeholder="busca inteligente..." class="form-control" name="vinculado_dre_${ qtdeDre + 1 }" value="{{dados.["vinculado_dre_${ qtdeDre + 1 }"]}}">
+                       placeholder="busca inteligente..." class="form-control" name="vinculado_dre_${ qtdeDre + 1 }" value="{{dados.['vinculado_dre_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-vinculado_dre_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1707,14 +1711,14 @@
                 <label class="col-form-label">Grupo</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" class="form-control" name="grupo_${ qtdeDre + 1 }"
-                        value="{{dados.["grupo_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['grupo_${ qtdeDre + 1 }']}}">
                 </div>
             </div>
             <div class="d-none col-12 col-sm-6 col-pk">
                 <label for="subgrupo" class="col-form-label">Sub Grupo</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" class="form-control" name="subgrupo_${ qtdeDre + 1 }"
-                        value="{{dados.["subgrupo_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['subgrupo_${ qtdeDre + 1 }']}}">
                 </div>
             </div>
 
@@ -1724,13 +1728,13 @@
                         class="text-danger fw-bolder">*</span></label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="number" class="form-control" name="num_sistema_1_${ qtdeDre + 1 }"
-                        value="{{dados.["num_sistema_1_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['num_sistema_1_${ qtdeDre + 1 }']}}">
                 </div>
                 {{else}}
                 <label for="num_sistema_1_${ qtdeDre + 1 }" class="col-form-label">Número sistema 1</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="number" class="form-control" name="num_sistema_1_${ qtdeDre + 1 }"
-                        value="{{dados.["num_sistema_1_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['num_sistema_1_${ qtdeDre + 1 }']}}">
                 </div>
                 {{/if}}
             </div>
@@ -1741,7 +1745,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
                         placeholder="busca inteligente..." class="form-control" name="sistema_1_${ qtdeDre + 1 }"
-                        value="{{dados.["sistema_1_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['sistema_1_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-sistema_1_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1750,7 +1754,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
                         placeholder="busca inteligente..." class="form-control" name="sistema_1_${ qtdeDre + 1 }"
-                        value="{{dados.["sistema_1_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['sistema_1_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-sistema_1_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1762,13 +1766,13 @@
                         class="text-danger fw-bolder">*</span></label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="number" class="form-control" name="num_sistema_2_${ qtdeDre + 1 }"
-                        value="{{dados.["num_sistema_2_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['num_sistema_2_${ qtdeDre + 1 }']}}">
                 </div>
                 {{else}}
                 <label for="num_sistema_2_${ qtdeDre + 1 }" class="col-form-label">Número sistema 2</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="number" class="form-control" name="num_sistema_2_${ qtdeDre + 1 }"
-                        value="{{dados.["num_sistema_2_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['num_sistema_2_${ qtdeDre + 1 }']}}">
                 </div>
                 {{/if}}
             </div>
@@ -1779,7 +1783,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
                         placeholder="busca inteligente..." class="form-control" name="sistema_2_${ qtdeDre + 1 }"
-                        value="{{dados.["sistema_2_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['sistema_2_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-sistema_2_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1788,7 +1792,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
                         placeholder="busca inteligente..." class="form-control" name="sistema_2_${ qtdeDre + 1 }"
-                        value="{{dados.["sistema_2_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['sistema_2_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-sistema_2_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1800,13 +1804,13 @@
                         class="text-danger fw-bolder">*</span></label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="number" class="form-control" name="num_sistema_3_${ qtdeDre + 1 }"
-                        value="{{dados.["num_sistema_3_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['num_sistema_3_${ qtdeDre + 1 }']}}">
                 </div>
                 {{else}}
                 <label for="num_sistema_3_${ qtdeDre + 1 }" class="col-form-label">Número sistema 3</label>
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="number" class="form-control" name="num_sistema_3_${ qtdeDre + 1 }"
-                        value="{{dados.["num_sistema_3_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['num_sistema_3_${ qtdeDre + 1 }']}}">
                 </div>
                 {{/if}}
             </div>
@@ -1817,7 +1821,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" required type="text" onkeyup="filtro(this, 'sistemas')"
                         placeholder="busca inteligente..." class="form-control" name="sistema_3_${ qtdeDre + 1 }"
-                        value="{{dados.["sistema_3_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['sistema_3_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-sistema_3_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1826,7 +1830,7 @@
                 <div class="col-sm-12 input-group input-group-sm">
                     <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
                         placeholder="busca inteligente..." class="form-control" name="sistema_3_${ qtdeDre + 1 }"
-                        value="{{dados.["sistema_3_${ qtdeDre + 1 }"]}}">
+                        value="{{dados.['sistema_3_${ qtdeDre + 1 }']}}">
                     <div id="popupFiltro-sistema_3_${ qtdeDre + 1 }"
                         class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
                 </div>
@@ -1860,7 +1864,8 @@
         div.id = `dre-${ qtdeDre + 1 }`
         div.innerHTML = novoDre
         secaoDre.appendChild(div)
-    })
+        })
+    }
     function removeDre() { // lembrar de verificar quando for salvar a conta
         let secaoDre = document.querySelector('#secao-dre')
         let qtdeDre = secaoDre.querySelectorAll('#secao-dre > div.row').length
@@ -1904,31 +1909,42 @@
         
         return diferençaEmDias+1;
     }
-    document.querySelector('#btn-gerar-parcelas').addEventListener('click', function() {
-        let vencimento = document.getElementsByName("vencimento")[0]
-        if ( vencimento.value == "" ) {
-            alert('Preencha o vencimento')
-            vencimento.classList.add('border-danger')
-            vencimento.classList.add('border-3')
-            setTimeout(function(){
-                vencimento.classList.remove('border-danger')
-                vencimento.classList.remove('border-3')
-            }, 4000)
-            let cardConta = document.querySelector('#card-conta')
-            cardConta.scrollTo({
-                top: 500,
-                behavior: "smooth",
-            })
-            return true
-        }
-        let secaoDre = document.querySelector('#secao-dre')
-        qtdeDre = secaoDre.querySelectorAll('#secao-dre > div.row').length
+    const btnGerarParcelas = document.querySelector('#btn-gerar-parcelas')
+    if (btnGerarParcelas) {
+        btnGerarParcelas.addEventListener('click', function() {
+            const vencimento = document.getElementsByName("vencimento")[0]
+            if (!vencimento || vencimento.value == "" ) {
+                alert('Preencha o vencimento')
+                if (vencimento) {
+                    vencimento.classList.add('border-danger')
+                    vencimento.classList.add('border-3')
+                    setTimeout(function(){
+                        vencimento.classList.remove('border-danger')
+                        vencimento.classList.remove('border-3')
+                    }, 4000)
+                }
+                const cardConta = document.querySelector('#card-conta')
+                if (cardConta) {
+                    cardConta.scrollTo({
+                        top: 500,
+                        behavior: "smooth",
+                    })
+                }
+                return true
+            }
+            const secaoDre = document.querySelector('#secao-dre')
+            if (!secaoDre) return
+            qtdeDre = secaoDre.querySelectorAll('#secao-dre > div.row').length
         mostrarDreParcelas = 1
         var formulario = document.getElementsByTagName('form')[1]
         var formData = new FormData(formulario)
         objForm = Object.fromEntries(formData)
 
-        let popupGerarParcelas = document.querySelector('#popup-gerar-parcelas')
+        const popupGerarParcelas = document.querySelector('#popup-gerar-parcelas')
+        if (!popupGerarParcelas) {
+            console.error('[Editar Conta] Elemento popup-gerar-parcelas não encontrado')
+            return
+        }
         popupGerarParcelas.innerHTML = ""
         let numeroDias = document.getElementsByName('numero_dias')[0].value
         let qtdeParcelas = document.getElementsByName('numero_parcelas')[0].value
@@ -2058,7 +2074,8 @@
             }
         }
         showDreParcelas()
-    })
+        })
+    }
     function showDreParcelas() {
         for ( let i=1;i<=qtdeDre;i++ ) {
             document.querySelector("#parcelas-dre-"+i).classList.add("d-none")
@@ -2081,19 +2098,32 @@
     function fecharPopupParcelas() {
         document.querySelector('#popup-gerar-parcelas').classList.add('d-none')
     }
-    document.getElementsByName('fixar_parcelas')[0].addEventListener('change', function(e) {
-        if( e.target.value != "Desabilitado" ) {
-            document.getElementsByName('numero_dias')[0].value = "Desabilitado"
-        }
-    })
-    document.getElementsByName('numero_dias')[0].addEventListener('change', function(e) {
-        if( e.target.value != "Desabilitado" ) {
-            document.getElementsByName('fixar_parcelas')[0].value = "Desabilitado"
-        }
-    })
-    document.querySelector('#btn-editar').addEventListener('click', async function(e) {
+    const fixarParcelas = document.getElementsByName('fixar_parcelas')[0]
+    if (fixarParcelas) {
+        fixarParcelas.addEventListener('change', function(e) {
+            if( e.target.value != "Desabilitado" ) {
+                const numeroDias = document.getElementsByName('numero_dias')[0]
+                if (numeroDias) {
+                    numeroDias.value = "Desabilitado"
+                }
+            }
+        })
+    }
+    const numeroDias = document.getElementsByName('numero_dias')[0]
+    if (numeroDias) {
+        numeroDias.addEventListener('change', function(e) {
+            if( e.target.value != "Desabilitado" ) {
+                const fixarParcelas = document.getElementsByName('fixar_parcelas')[0]
+                if (fixarParcelas) {
+                    fixarParcelas.value = "Desabilitado"
+                }
+            }
+        })
+    }
+    const btnEditar = document.querySelector('#btn-editar')
+    if (btnEditar) {
+        btnEditar.addEventListener('click', async function(e) {
         e.preventDefault()
-        
         const formulario = document.getElementsByTagName('form')[1]
         const formData = new FormData(formulario); // Contém arquivo + campos
 
@@ -2123,7 +2153,7 @@
             if (document.URL.includes('editar')) {
             document.querySelector('#btn-gerar-parcelas').click();
             } else {
-            return alert("As parcelas não foram geradas, clique no botão gerar parcelas antes de salvar a conta.");
+                return alert("As parcelas não foram geradas, clique no botão gerar parcelas antes de salvar a conta.");
             }
         }
 
@@ -2158,7 +2188,11 @@
         }
         
         if ( cadastro.erro && cadastro.erro == "campos não preenchidos" ) {
-            return document.querySelector('#btn-editar-oculto').click()
+            const btnOculto = document.querySelector('#btn-editar-oculto')
+            if (btnOculto) {
+                return btnOculto.click()
+            }
+            return
         }
         // Na edição, não mostrar popup de situação não cadastrada
         // A edição permite mudar a situação mesmo sem itens configurados
@@ -2171,22 +2205,42 @@
             const mensagemErro = cadastro.erro || cadastro.mensagem || "Erro desconhecido"
             return alert("Erro ao editar a conta: " + mensagemErro) 
         }
-        let cardConta = document.querySelector('#card-conta')
-        cardConta.scrollTo({ top: 0, behavior: 'smooth' })
+        const cardConta = document.querySelector('#card-conta')
+        if (cardConta) {
+            cardConta.scrollTo({ top: 0, behavior: 'smooth' })
+        }
         alert("Conta foi salva com sucesso\n\nEste é o número da nova conta: "+ cadastro.numero_conta)
         esquecerConta(true)
-        formulario.reset()
-        document.getElementsByName('numero_conta')[0].value = cadastro.numero_conta
+        if (formulario) {
+            formulario.reset()
+        }
+        const numeroContaInput = document.getElementsByName('numero_conta')[0]
+        if (numeroContaInput) {
+            numeroContaInput.value = cadastro.numero_conta
+        }
 
-    })
-    document.querySelector('#scroll-top').addEventListener('click', function() {
-        let cardConta = document.querySelector('#card-conta')
-        cardConta.scrollTo({ top: 0, behavior: 'smooth' })
-    })
-    document.querySelector('#scroll-bottom').addEventListener('click', function() {
-        let cardConta = document.querySelector('#card-conta')
-        cardConta.scrollTo({ top: 100000, behavior: 'smooth' })
-    })
+        })
+    }
+    
+    const scrollTop = document.querySelector('#scroll-top')
+    if (scrollTop) {
+        scrollTop.addEventListener('click', function() {
+            const cardConta = document.querySelector('#card-conta')
+            if (cardConta) {
+                cardConta.scrollTo({ top: 0, behavior: 'smooth' })
+            }
+        })
+    }
+    
+    const scrollBottom = document.querySelector('#scroll-bottom')
+    if (scrollBottom) {
+        scrollBottom.addEventListener('click', function() {
+            const cardConta = document.querySelector('#card-conta')
+            if (cardConta) {
+                cardConta.scrollTo({ top: 100000, behavior: 'smooth' })
+            }
+        })
+    }
     window.onunload = function(e) {
         if ( window.location.href.toString().includes("conta/editar") ) {
             var formulario = document.getElementsByTagName('form')[1]
@@ -2256,6 +2310,7 @@
             let count = 1
             for ( let item of dataScript ) {
                 for ( let element of Object.entries(item) ) {
+                    console.log(element[0], 'element[0]')
                     // Ignorar campos que não são do DRE (campos principais da conta)
                     if ( element[0] === 'id' || element[0] === 'numero_conta' || element[0] === 'historico' || 
                          element[0] === 'valor_conta' || element[0] === 'fornecedor' || element[0] === 'via_pagamento' ||
@@ -2292,13 +2347,324 @@
         }
     }
     loadDataScriptLocalstorage()
+    
+    // Função para criar campos DRE dinamicamente a partir do dataScript
+    function criarDresDoDataScript() {
+        console.log('[Editar Conta] Verificando dataScript para criar DREs...', dataScript)
+        
+        if (!dataScript || !Array.isArray(dataScript)) {
+            console.log('[Editar Conta] dataScript não é um array válido')
+            return
+        }
+        
+        if (dataScript.length <= 1) {
+            console.log('[Editar Conta] Não há DREs adicionais para criar (apenas 1 item no dataScript)')
+            return // Não há DREs adicionais para criar
+        }
+        
+        const secaoDre = document.querySelector('#secao-dre')
+        if (!secaoDre) {
+            console.error('[Editar Conta] Elemento #secao-dre não encontrado')
+            return
+        }
+        
+        // Verificar quantos DREs já existem (sempre tem pelo menos 1 - o primeiro DRE)
+        const dresExistentes = secaoDre.querySelectorAll('#secao-dre > div.row').length
+        const dresNecessarios = dataScript.length - 1 // Total de DREs adicionais necessários
+        
+        console.log(`[Editar Conta] DREs existentes: ${dresExistentes}, DREs necessários: ${dresNecessarios}`)
+        
+        // Se já temos todos os DREs necessários, não criar mais
+        if (dresExistentes >= dataScript.length) {
+            console.log('[Editar Conta] Todos os DREs já foram criados, não criando mais')
+            return
+        }
+        
+        // Criar apenas os DREs que faltam
+        const dresParaCriar = dresNecessarios - (dresExistentes - 1) // -1 porque já temos o primeiro DRE
+        
+        console.log(`[Editar Conta] Criando ${dresParaCriar} DRE(s) adicional(is)...`)
+        
+        // Criar DREs adicionais (a partir do segundo item do dataScript)
+        for (let i = 1; i < dataScript.length && (i - 1) < dresParaCriar; i++) {
+            const dreData = dataScript[i]
+            const qtdeDre = secaoDre.querySelectorAll('#secao-dre > div.row').length
+            
+            // Verificar se este DRE já foi criado (verificando se tem dados válidos)
+            const temDadosValidos = dreData.descricao || dreData.departamento || dreData.valor_dre
+            
+            if (!temDadosValidos) {
+                console.log(`[Editar Conta] DRE ${i + 1} não tem dados válidos, pulando...`)
+                continue
+            }
+            
+            console.log(`[Editar Conta] Criando DRE ${i + 1} de ${dataScript.length}`, dreData)
+            
+            // Criar HR separador
+            const hr = document.createElement('hr')
+            hr.classList.add("mt-4")
+            hr.id = `hrdre-${qtdeDre + 1}`
+            secaoDre.appendChild(hr)
+            
+            // Obter valores dos campos principais
+            const cadastramentoEl = document.getElementsByName('cadastramento')[0]
+            const vencimentoEl = document.getElementsByName('vencimento')[0]
+            const relacaoEl = document.getElementsByName('relacao')[0]
+            
+            const cadastramento = cadastramentoEl ? cadastramentoEl.value : ''
+            const vencimento = vencimentoEl ? vencimentoEl.value : ''
+            const relacao = relacaoEl ? relacaoEl.value : ''
+            
+            // Criar HTML do novo DRE com valores do dataScript
+            const novoDre = criarHtmlDre(qtdeDre + 1, dreData, cadastramento, vencimento, relacao)
+            
+            const div = document.createElement('div')
+            div.classList.add("row", "p-0")
+            div.id = `dre-${qtdeDre + 1}`
+            div.innerHTML = novoDre
+            secaoDre.appendChild(div)
+            
+            console.log(`[Editar Conta] DRE ${i + 1} criado com sucesso`)
+        }
+        
+        console.log('[Editar Conta] Todos os DREs foram criados')
+    }
+    
+    // Função auxiliar para criar HTML do DRE (reutiliza a estrutura do btnAddDre)
+    function criarHtmlDre(numDre, dreData, cadastramento, vencimento, relacao) {
+        const getValue = (field) => {
+            const value = dreData[field]
+            if (value === null || value === undefined) return ''
+            // Escapar caracteres especiais para HTML
+            return String(value).replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+        }
+        
+        // Formatar valor para exibição
+        const formatarValor = (valor) => {
+            if (!valor) return ''
+            const str = String(valor)
+            return str.includes(',') ? str : str.replace('.', ',')
+        }
+        
+        // Formatar data para input type="date" (YYYY-MM-DD)
+        const formatarData = (data) => {
+            if (!data) return ''
+            const str = String(data)
+            // Se já está no formato YYYY-MM-DD
+            if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str
+            // Se está no formato DD/MM/YYYY, converter
+            if (str.includes('/')) {
+                const partes = str.split('/')
+                if (partes.length === 3) {
+                    return `${partes[2]}-${partes[1]}-${partes[0]}`
+                }
+            }
+            return str
+        }
+        
+        return `
+            <div class="col-12 col-sm-6 col-md-4">
+                <label for="descricao_${numDre}" class="col-form-label">Descrição</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="text" autocomplete="off" onkeyup="filtro(this, 'descricoes')"
+                        placeholder="busca inteligente..." class="form-control" name="descricao_${numDre}"
+                        value="${getValue('descricao')}">
+                    <div id="popupFiltro-descricao_${numDre}"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                <label for="departamento_${numDre}" class="col-form-label">Departamento</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'departamentos')"
+                        placeholder="busca inteligente..." class="form-control" name="departamento_${numDre}"
+                        value="${getValue('departamento')}">
+                    <div id="popupFiltro-departamento_${numDre}"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                <label for="rateio_dre_${numDre}" class="col-form-label">Marcador 1</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'dres', false, '_${numDre}')"
+                        class="form-control" name="rateio_dre_${numDre}" value="${getValue('rateio_dre')}">
+                    <div id="popupFiltro-rateio_dre_${numDre}"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                <label for="categoria_${numDre}" class="col-form-label">Categoria</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'categorias')"
+                        placeholder="busca inteligente..." class="form-control" name="categoria_${numDre}"
+                        value="${getValue('categoria')}">
+                    <div id="popupFiltro-categoria_${numDre}"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                <label class="col-form-label">Valor</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" step="0.01" placeholder="0"
+                        onchange="formataValorInput(this)" onkeyup="validarCaracter(this)" class="form-control" 
+                        name="valor_dre_${numDre}" value="${formatarValor(getValue('valor_dre'))}">
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                <label for="vinculado_dre_${numDre}" class="col-form-label">Distribuição</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'dres', false, '_${numDre}', true)"
+                        placeholder="busca inteligente..." class="form-control" name="vinculado_dre_${numDre}" 
+                        value="${getValue('vinculado_dre')}">
+                    <div id="popupFiltro-vinculado_dre_${numDre}"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+            </div>
+            <div class="d-none col-12 col-sm-6 col-pk">
+                <label class="col-form-label">Grupo</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" class="form-control" name="grupo_${numDre}"
+                        value="${getValue('grupo')}">
+                </div>
+            </div>
+            <div class="d-none col-12 col-sm-6 col-pk">
+                <label for="subgrupo_${numDre}" class="col-form-label">Sub Grupo</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" class="form-control" name="subgrupo_${numDre}"
+                        value="${getValue('subgrupo')}">
+                </div>
+            </div>
+            <div class="col-12 col-pk">
+                <label for="num_sistema_1_${numDre}" class="col-form-label">Número sistema 1</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="number" class="form-control" name="num_sistema_1_${numDre}"
+                        value="${getValue('num_sistema_1')}">
+                </div>
+            </div>
+            <div class="col-12 col-pk">
+                <label for="sistema_1_${numDre}" class="col-form-label">Sistema 1</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                        placeholder="busca inteligente..." class="form-control" name="sistema_1_${numDre}"
+                        value="${getValue('sistema_1')}">
+                    <div id="popupFiltro-sistema_1_${numDre}"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+            </div>
+            <div class="col-12 col-pk">
+                <label for="num_sistema_2_${numDre}" class="col-form-label">Número sistema 2</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="number" class="form-control" name="num_sistema_2_${numDre}"
+                        value="${getValue('num_sistema_2')}">
+                </div>
+            </div>
+            <div class="col-12 col-pk">
+                <label for="sistema_2_${numDre}" class="col-form-label">Sistema 2</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                        placeholder="busca inteligente..." class="form-control" name="sistema_2_${numDre}"
+                        value="${getValue('sistema_2')}">
+                    <div id="popupFiltro-sistema_2_${numDre}"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+            </div>
+            <div class="col-12 col-pk">
+                <label for="num_sistema_3_${numDre}" class="col-form-label">Número sistema 3</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="number" class="form-control" name="num_sistema_3_${numDre}"
+                        value="${getValue('num_sistema_3')}">
+                </div>
+            </div>
+            <div class="col-12 col-pk">
+                <label for="sistema_3_${numDre}" class="col-form-label">Sistema 3</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input autocomplete="off" type="text" onkeyup="filtro(this, 'sistemas')"
+                        placeholder="busca inteligente..." class="form-control" name="sistema_3_${numDre}"
+                        value="${getValue('sistema_3')}">
+                    <div id="popupFiltro-sistema_3_${numDre}"
+                        class="d-none card card-body mt-5 shadow-sm popupFiltro scroll"></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                <label class="col-form-label">Cadastramento</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="date" class="form-control" name="cadastramento_dre"
+                        value="${formatarData(getValue('cadastramento_dre') || cadastramento)}" readonly>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                <label for="vencimento" class="col-form-label">Vencimento</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="date" class="form-control" name="vencimento_dre" 
+                        value="${formatarData(getValue('vencimento_dre') || vencimento)}" readonly>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-pk">
+                <label for="relacao" class="col-form-label">Relação</label>
+                <div class="col-sm-12 input-group input-group-sm">
+                    <input type="text" class="form-control" name="relacao_dre" 
+                        value="${getValue('relacao_dre') || relacao}" readonly>
+                </div>
+            </div>
+        `
+    }
+    
+    // Criar DREs do dataScript quando a página carregar
+    // Esta função será chamada antes de loadDadosCadastroConta para garantir que os campos existam
+    function inicializarDres() {
+        console.log('[Editar Conta] Inicializando DREs do dataScript...', dataScript)
+        
+        // Criar DREs do dataScript primeiro
+        criarDresDoDataScript()
+        
+        // Após criar os DREs, carregar os dados
+        // Usar um delay maior para garantir que os DREs foram criados
+        setTimeout(() => {
+            loadDadosCadastroConta()
+        }, 150)
+    }
+    
+    // Aguardar o DOM estar completamente carregado antes de inicializar
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(inicializarDres, 200)
+        })
+    } else {
+        // DOM já carregado, executar após um pequeno delay para garantir que tudo está pronto
+        setTimeout(inicializarDres, 200)
+    }
+    
     function loadDadosCadastroConta() {
         //if ( document.URL.includes('editar') ) { return true } // para quando abrir nessa url não recarregue os dados como em cadastro
-        let btnAddDre = document.querySelector('#btn-add-dre')
-        let qtdeDre = Object.entries(localStorage).filter(function(item){
-            if ( item[0].includes("categoria") ) {return item}
-        })
-        for ( x of qtdeDre.slice(1) ) { btnAddDre.click() }
+        
+        // Verificar se já criamos DREs do dataScript
+        const secaoDre = document.querySelector('#secao-dre')
+        if (!secaoDre) return
+        
+        const dresExistentes = secaoDre.querySelectorAll('#secao-dre > div.row').length
+        
+        // Se já temos DREs criados do dataScript, não criar mais baseado no localStorage
+        // Apenas criar DREs adicionais se não tivermos nenhum DRE criado do dataScript
+        const temDataScriptComDres = dataScript && Array.isArray(dataScript) && dataScript.length > 1
+        
+        if (!temDataScriptComDres && dresExistentes <= 1) {
+            // Só criar DREs do localStorage se não tivermos dataScript com DREs
+            let btnAddDre = document.querySelector('#btn-add-dre')
+            if (btnAddDre) {
+                let qtdeDre = Object.entries(localStorage).filter(function(item){
+                    if ( item[0].includes("categoria") ) {return item}
+                })
+                // Criar apenas os DREs que faltam (não criar se já temos o número correto)
+                const dresParaCriar = qtdeDre.length - dresExistentes
+                if (dresParaCriar > 0) {
+                    for (let i = 0; i < dresParaCriar; i++) {
+                        btnAddDre.click()
+                    }
+                }
+            }
+        } else {
+            console.log('[Editar Conta] DREs já foram criados do dataScript, não criando mais do localStorage')
+        }
         for ( item of Object.entries(localStorage) ) {
             // Ignorar campos específicos e campos de arquivo
             if (item[0] != "numero_conta" &&  
@@ -2376,7 +2742,7 @@
             }
         }
     }
-    loadDadosCadastroConta()
+    // loadDadosCadastroConta() agora é chamado dentro de inicializarDres() após criar os DREs
     
     function popupCadastraFornecedor() {
         let popupCadastrarFornecedor = document.querySelector("#popup-cadastrar-fornecedor")
